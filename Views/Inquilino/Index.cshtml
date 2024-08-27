@@ -1,0 +1,62 @@
+@model IEnumerable<rivarola_riquelme_rastrilla.Models.Inquilino>
+
+@{
+    ViewData["Title"] = "Listado de personas";
+}
+
+<div class="text-center">
+    <div class="display-4">Lista de Personas</div>
+</div>
+
+<h3>
+    <a href="/Inquilino/AltaInquilino">Crear</a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Dni
+            </th>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Apellido
+            </th>
+            <th>
+                Telefono
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Accion
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Inquilino in Model)
+        {
+            <tr>
+                <td>
+                    @Inquilino.Dni
+                </td>
+                <td>
+                    @Inquilino.Nombre
+                </td>
+                <td>
+                    @Inquilino.Apellido
+                </td>
+                <td>
+                    @Inquilino.Telefono
+                </td>
+                <td>
+                    @Inquilino.Email
+                </td>
+                <td>
+                    <a href="/Inquilino/Editar/@Inquilino.Dni">Editar</a>
+                    @Html.ActionLink("Borrar", "Baja", new { dni = @Inquilino.Dni })
+                </td>
+            </tr>
+        }
+    </tbody>

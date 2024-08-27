@@ -1,0 +1,59 @@
+﻿@model IEnumerable<rivarola_riquelme_rastrilla.Models.Propietarios>
+
+@{
+    ViewData["Title"] = "Listado de Propietarios";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Lista de Propietarios</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            @Html.DisplayNameFor(model => model.Id)
+            <th></th>
+            @Html.DisplayNameFor(model => model.Nombre)
+            <th></th>
+            @Html.DisplayNameFor(model => model.Apellido)
+            <th></th>
+            @Html.DisplayNameFor(model => model.Dni)
+            <th></th>
+            @Html.DisplayNameFor(model => model.Telefono)
+            <th></th>
+            @Html.DisplayNameFor(model => model.Email)
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Apellido)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Dni)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id })
+                    @Html.ActionLink("Detalles", "Details", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

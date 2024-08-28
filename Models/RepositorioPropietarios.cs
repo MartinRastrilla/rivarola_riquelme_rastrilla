@@ -41,9 +41,9 @@ public class RepositorioPropietario
     }
     }
 
-    public Propietarios ObtenerPorId(int id)
+    public Propietarios? ObtenerPorId(int id)
     {
-        Propietarios propietario = null;
+        Propietarios? propietario = null;
 
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {

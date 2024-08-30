@@ -1,0 +1,71 @@
+@model IEnumerable<rivarola_riquelme_rastrilla.Models.Contratos>
+@{
+    ViewData["Title"] = "Listado de personas";
+}
+
+<div class="text-center">
+    <div class="display-4">Lista de Personas</div>
+</div>
+
+<h3>
+    <a href="/Contrato/AltaContrato">Crear Contrato</a>
+</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Dni Inquilino
+            </th>
+            <th>
+                Id Inmueble
+            </th>
+            <th>
+                Estado
+            </th>
+            <th>
+                Monto
+            </th>
+            <th>
+                Fecha Inicio
+            </th>
+            <th>
+                Fecha Fin
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Contrato in Model)
+        {
+            <tr>
+                <td>
+                    @Contrato.Id
+                </td>
+                <td>
+                    @Contrato.Inquilino_dni
+                </td>
+                <td>
+                    @Contrato.Inmueble_id
+                </td>
+                <td>
+                    @Contrato.Estado
+                </td>
+                <td>
+                    @Contrato.Monto
+                </td>
+                <td>
+                    @Contrato.Fecha_inicio
+                </td>
+                <td>
+                    @Contrato.Fecha_fin
+                </td>
+                <td>
+                    <a href="/Contrato/Editar/@Contrato.Id">Editar</a>
+                    @Html.ActionLink("Borrar", "Baja", new { Id = @Contrato.Id })
+                </td>
+            </tr>
+        }
+    </tbody>

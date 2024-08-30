@@ -1,0 +1,61 @@
+@model rivarola_riquelme_rastrilla.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Alta de Inmueble";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="AltaInmueble" method="post">
+    <div class="form-group">
+        <label asp-for="Direccion"></label>
+        <input asp-for="Direccion" class="form-control" />
+        <span asp-validation-for="Direccion" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Uso"></label>
+        <select asp-for="Uso" class="form-control">
+            <option value="Comercial">Comercial</option>
+            <option value="Residencial">Residencial</option>
+        </select>
+        <span asp-validation-for="Uso" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Tipo"></label>
+        <input asp-for="Tipo" class="form-control" />
+        <span asp-validation-for="Tipo" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Ambientes"></label>
+        <input asp-for="Ambientes" class="form-control" type="number" />
+        <span asp-validation-for="Ambientes" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Coordenadas"></label>
+        <input asp-for="Coordenadas" class="form-control" />
+        <span asp-validation-for="Coordenadas" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Precio"></label>
+        <input asp-for="Precio" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="Precio" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Propietario_dni"></label>
+        <select asp-for="Propietario_dni" class="form-control">
+            @foreach (var propietario in ViewBag.Propietarios)
+            {
+                <option value="@propietario.Dni">@propietario.Nombre</option>
+            }
+        </select>
+        <span asp-validation-for="Propietario_dni" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Crear Inmueble</button>
+</form>

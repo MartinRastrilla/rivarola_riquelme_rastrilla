@@ -8,7 +8,7 @@ public class Pagos
 
     public DateTime Fecha_pago { get; set; }
 
-    public string Detalle { get; set; }
+    public string Detalle { get; set; }  = "";
 
     public float Importe { get; set; }
 }

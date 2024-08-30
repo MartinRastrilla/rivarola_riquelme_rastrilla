@@ -79,7 +79,6 @@ public class PropietariosController : Controller
         return View();
     }
 
-
     [HttpPost]
     public IActionResult Crear(Propietarios propietario)
     {

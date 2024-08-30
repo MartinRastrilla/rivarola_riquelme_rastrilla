@@ -37,15 +37,8 @@ public class InquilinoController : Controller
     [HttpGet]
     public IActionResult Editar(long Id)
     {
-        if (Id == 0)
-        {
-            return View();
-        }
-        else
-        {
-            var inquilino = repo.Obtener(Id);
-            return View(inquilino);
-        }
+        var inquilino = repo.Obtener(Id);
+        return View(inquilino);
     }
 
     [HttpPost]
@@ -58,22 +51,17 @@ public class InquilinoController : Controller
     [HttpGet]
     public IActionResult Baja(long Dni)
     {
-        if (Dni == 0)
+
+        var result = repo.BorrarInquilino(Dni);
+        if (result > 0)
         {
-            return View();
+            return RedirectToAction(nameof(Index));
         }
         else
         {
-            var result = repo.BorrarInquilino(Dni);
-            if (result > 0)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                ModelState.AddModelError("", "No se pudo eliminar el inquilino.");
-                return View();
-            }
+            ModelState.AddModelError("", "No se pudo eliminar el inquilino.");
+            return View();
         }
     }
 }
+

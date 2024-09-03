@@ -5,7 +5,7 @@ namespace rivarola_riquelme_rastrilla.Controllers;
 
 public class RepositorioPropietario
 {
-    string Conexion = "Server=localhost;User=root;Password=;Database=bdinmobiliaria;SslMode=none";
+    string Conexion = "Server=localhost;User=root;Password=;Database=inmobiliaria;SslMode=none";
 
 
     public List<Propietario> ObtenerTodos()

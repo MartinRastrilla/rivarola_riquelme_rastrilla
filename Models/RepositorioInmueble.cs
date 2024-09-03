@@ -3,7 +3,7 @@ using rivarola_riquelme_rastrilla.Models;
 namespace rivarola_riquelme_rastrilla.Controllers;
 public class RepositorioInmueble
 {
-    string Conexion = "Server=localhost;User=root;Password=;Database=bdinmobiliaria;SslMode=none";
+    string Conexion = "Server=localhost;User=root;Password=;Database=inmobiliaria;SslMode=none";
     public List<Inmueble> ObtenerInmueble()
     {
         List<Inmueble> inmueble = new List<Inmueble>();
@@ -92,7 +92,7 @@ public class RepositorioInmueble
         int r = -1;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"INSERT INTO inmueble(direccion, uso, tipo, ambientes, coordenadas, precio, propietario_dni, estado) 
+            var sqlquery = @"INSERT INTO inmuebles(direccion, uso, tipo, ambientes, coordenadas, precio, propietario_dni, estado) 
                             VALUES (@direccion, @uso, @tipo, @ambientes, @coordenadas, @precio, @propietario_dni, @estado);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {

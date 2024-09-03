@@ -4,7 +4,7 @@ namespace rivarola_riquelme_rastrilla.Models;
 
 public class RepositorioContrato
 {
-    string Conexion = "Server=localhost;User=root;Password=;Database=bdinmobiliaria;SslMode=none";
+    string Conexion = "Server=localhost;User=root;Password=;Database=inmobiliaria;SslMode=none";
     public List<Contratos> ObtenerContratos()
     {
         List<Contratos> contratos = new List<Contratos>();

@@ -49,11 +49,20 @@ public class InmuebleController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public IActionResult Editar(int Id)
     {
         var inmueble = repoInmueble.Obtener(Id);
-        ViewBag.inquilinos = repoPropietario.ObtenerTodos();
+        ViewBag.propietarios = repoPropietario.ObtenerTodos();
         return View(inmueble);
+    }
+
+    [HttpPost]
+    public IActionResult Guardar(Inmueble inmueble)
+    {
+
+        repoInmueble.GuardarInmueble(inmueble);
+        return RedirectToAction(nameof(Index));
     }
 
 }

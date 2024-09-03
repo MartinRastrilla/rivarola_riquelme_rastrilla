@@ -1,0 +1,77 @@
+@model IEnumerable<rivarola_riquelme_rastrilla.Models.Inmueble>
+@{
+    ViewData["Title"] = "Listado de Inmuebles";
+}
+
+<div class="text-center">
+    <div class="display-4">Lista de Inmuebles</div>
+</div>
+
+<h3>
+    <a href="/Inmueble/AltaInmueble">Crear</a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Direccion
+            </th>
+            <th>
+                Uso
+            </th>
+            <th>
+                Tipo
+            </th>
+            <th>
+                Ambientes
+            </th>
+            <th>
+                Coordenadas
+            </th>
+            <th>
+                Precio
+            </th>
+            <th>
+                Propietario
+            </th>
+            <th>
+                Estado
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Inmuebles in Model)
+        {
+            <tr>
+                <td>
+                    @Inmuebles.Direccion
+                </td>
+                <td>
+                    @Inmuebles.Uso
+                </td>
+                <td>
+                    @Inmuebles.Tipo
+                </td>
+                <td>
+                    @Inmuebles.Ambientes
+                </td>
+                <td>
+                    @Inmuebles.Coordenadas
+                </td>
+                <td>
+                    @Inmuebles.Precio
+                </td>
+                <td>
+                    @Inmuebles.Propietario_dni
+                </td>
+                <td>
+                    @Inmuebles.Estado
+                </td>
+                <td>
+                    <a href="/Inmueble/Editar/@Inmuebles.Id">Editar</a>
+                    @Html.ActionLink("Desactivar", "Baja", new { Id = @Inmuebles.Id })
+                    @Html.ActionLink("Activar", "Activar", new { Id = @Inmuebles.Id })
+                </td>
+            </tr>
+        }
+    </tbody>

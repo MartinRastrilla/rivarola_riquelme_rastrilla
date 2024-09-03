@@ -1,0 +1,66 @@
+@model rivarola_riquelme_rastrilla.Models.Contratos
+
+@{
+    ViewData["Title"] = "Editar Contrato";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Guardar" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Inquilino_dni"></label>
+        <select asp-for="Inquilino_dni" class="form-control">
+            <option value="">Seleccione un inquilino</option>
+            @foreach (var inquilino in ViewBag.Inquilinos)
+            {
+                <option value="@inquilino.Dni">@inquilino.Dni</option>
+            }
+        </select>
+        <span asp-validation-for="Inquilino_dni" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Inmueble_id"></label>
+        <select asp-for="Inmueble_id" class="form-control">
+            <option value="">Seleccione un inmueble</option>
+            @foreach (var inmueble in ViewBag.Inmuebles)
+            {
+                <option value="@inmueble.Id">@inmueble.Direccion</option>
+            }
+        </select>
+        <span asp-validation-for="Inmueble_id" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Estado"></label>
+        <select asp-for="Estado" class="form-control">
+            <option value="0">Activo</option>
+            <option value="1">Finalizado</option>
+            <option value="2">Cancelado</option>
+        </select>
+        <span asp-validation-for="Estado" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Monto"></label>
+        <input asp-for="Monto" class="form-control" />
+        <span asp-validation-for="Monto" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Fecha_inicio"></label>
+        <input asp-for="Fecha_inicio" class="form-control" type="date" />
+        <span asp-validation-for="Fecha_inicio" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Fecha_fin"></label>
+        <input asp-for="Fecha_fin" class="form-control" type="date" />
+        <span asp-validation-for="Fecha_fin" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Actualizar Contrato</button>
+</form>

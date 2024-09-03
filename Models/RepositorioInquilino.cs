@@ -3,7 +3,7 @@ namespace rivarola_riquelme_rastrilla.Models;
 public class RepositorioInquilino
 {
     //Seteo la cadena de conexión
-    string Conexion = "Server=localhost;User=root;Password=;Database=bdinmobiliaria;SslMode=none";
+    string Conexion = "Server=localhost;User=root;Password=;Database=inmobiliaria;SslMode=none";
 
     //Obtener toda la lista de inquilinos
     public List<Inquilino> ObtenerInquilinos()

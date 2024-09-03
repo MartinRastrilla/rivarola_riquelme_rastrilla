@@ -4,8 +4,8 @@
     ViewData["Title"] = "Listado de personas";
 }
 
-<div class="text-center">
-    <div class="display-4">Lista de Inquilinos</div>
+<div>
+    <div class="display-5">Lista de Inquilinos</div>
 </div>
 
 <h3>
@@ -14,24 +14,12 @@
 <table class="table text-center">
     <thead>
         <tr>
-            <th>
-                Dni
-            </th>
-            <th>
-                Nombre
-            </th>
-            <th>
-                Apellido
-            </th>
-            <th>
-                Telefono
-            </th>
-            <th>
-                Email
-            </th>
-            <th>
-                Accion
-            </th>
+            <th>Dni</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Telefono</th>
+            <th>Email</th>
+            <th>Accion</th>
         </tr>
     </thead>
     <tbody>
@@ -57,8 +45,8 @@
                     <a href="/Inquilino/Delete/@Inquilino.Dni" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                     <a href="/Inquilino/Editar/@Inquilino.Dni" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Inquilino/Details/@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
-                    @Html.ActionLink("Borrar", "Baja", new { dni = @Inquilino.Dni })
                 </td>
             </tr>
         }
     </tbody>
+</table>

@@ -4,28 +4,36 @@
     ViewData["Title"] = "Alta de Inquilinos";
 }
 
-<h2>Alta de Inquilino</h2>
+<h2>Crear Inquilino</h2>
 
 <form asp-action="AltaInquilino" method="post">
-    <div>
-        <label for="Dni">DNI:</label>
-        <input type="text" id="Dni" name="Dni" required />
+    <div class="form-group">
+        <label asp-for="Dni" class="control-label"></label>
+        <input asp-for="Dni" class="form-control" />
+        <span asp-validation-for="Dni" class="text-danger"></span>
     </div>
-    <div>
-        <label for="Nombre">Nombre:</label>
-        <input type="text" id="Nombre" name="Nombre" required />
+    <div class="form-group">
+        <label asp-for="Nombre" class="control-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
     </div>
-    <div>
-        <label for="Apellido">Apellido:</label>
-        <input type="text" id="Apellido" name="Apellido" required />
+    <div class="form-group">
+        <label asp-for="Apellido" class="control-label"></label>
+        <input asp-for="Apellido" class="form-control" />
+        <span asp-validation-for="Apellido" class="text-danger"></span>
     </div>
-    <div>
-        <label for="Telefono">Teléfono:</label>
-        <input type="text" id="Telefono" name="Telefono" required />
+    <div class="form-group">
+        <label asp-for="Telefono" class="control-label"></label>
+        <input asp-for="Telefono" class="form-control" />
+        <span asp-validation-for="Telefono" class="text-danger"></span>
     </div>
-    <div>
-        <label for="Email">Email:</label>
-        <input type="email" id="Email" name="Email" required />
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <button type="submit">Guardar</button>
+    <div class="form-group">
+        <input type="submit" value="Crear" class="btn btn-custom" />
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</a>
+    </div>
 </form>

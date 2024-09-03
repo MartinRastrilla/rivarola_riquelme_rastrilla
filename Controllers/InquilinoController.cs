@@ -48,7 +48,7 @@ public class InquilinoController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet]
+    [HttpPost]
     public IActionResult Baja(long Dni)
     {
 
@@ -74,9 +74,10 @@ public class InquilinoController : Controller
         return View(inquilino);
     }
 
-    public IActionResult Delete(long Dni)
+    [HttpGet]
+    public IActionResult Delete(long Id)
     {
-        var inquilino = repo.Obtener(Dni);
+        var inquilino = repo.Obtener(Id);
         if (inquilino == null)
         {
             return NotFound();

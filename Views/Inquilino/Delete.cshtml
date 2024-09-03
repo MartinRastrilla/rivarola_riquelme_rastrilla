@@ -1,7 +1,7 @@
 @model rivarola_riquelme_rastrilla.Models.Inquilino
 
 @{
-    ViewData["Title"] = "Eliminar Propietario";
+    ViewData["Title"] = "Eliminar Inquilino";
 }
 
 <h2>Eliminar Inquilino</h2>
@@ -45,7 +45,7 @@
 
     <form asp-action="Baja">
         <input type="hidden" asp-for="Dni" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
         <a href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>

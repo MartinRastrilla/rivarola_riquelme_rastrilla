@@ -63,5 +63,25 @@ public class InquilinoController : Controller
             return View();
         }
     }
+
+    public IActionResult Details(long Id)
+    {
+        var inquilino = repo.Obtener(Id);
+        if (inquilino == null)
+        {
+            return NotFound();
+        }
+        return View(inquilino);
+    }
+
+    public IActionResult Delete(long Dni)
+    {
+        var inquilino = repo.Obtener(Dni);
+        if (inquilino == null)
+        {
+            return NotFound();
+        }
+        return View(inquilino);
+    }
 }
 

@@ -145,4 +145,27 @@ public class RepositorioInmueble
         }
         return r;
     }
+    public int GuardarInmueble(Inmueble inmueble)
+    {
+        int r = -1;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE inmuebles SET direccion=@direccion, uso=@uso, tipo=@tipo, ambientes=@ambientes, coordenadas=@coordenadas, precio=@precio, propietario_dni=@propietario_dni WHERE id=@Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Id", inmueble.Id);
+                command.Parameters.AddWithValue("@direccion", inmueble.Direccion);
+                command.Parameters.AddWithValue("@uso", inmueble.Uso.ToString());
+                command.Parameters.AddWithValue("@tipo", inmueble.Tipo);
+                command.Parameters.AddWithValue("@ambientes", inmueble.Ambientes);
+                command.Parameters.AddWithValue("@coordenadas", inmueble.Coordenadas);
+                command.Parameters.AddWithValue("@precio", inmueble.Precio);
+                command.Parameters.AddWithValue("@propietario_dni", inmueble.Propietario_dni);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
 }

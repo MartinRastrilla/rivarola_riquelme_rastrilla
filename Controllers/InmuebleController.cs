@@ -74,6 +74,7 @@ public IActionResult DeleteConfirmed(int Id)
         return View(inmueble);
     }
 
+
     [HttpPost]
     public IActionResult Guardar(Inmueble inmueble)
     {
@@ -81,5 +82,17 @@ public IActionResult DeleteConfirmed(int Id)
         repoInmueble.GuardarInmueble(inmueble);
         return RedirectToAction(nameof(Index));
     }
+
+    public IActionResult Details(int Id)
+{
+    var inmueble = repoInmueble.Obtener(Id);
+    if (inmueble == null)
+    {
+        return NotFound();
+    }
+    return View(inmueble);
+}
+
+
 
 }

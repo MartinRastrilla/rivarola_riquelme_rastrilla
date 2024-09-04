@@ -1,77 +1,65 @@
 @model IEnumerable<rivarola_riquelme_rastrilla.Models.Inmueble>
+
 @{
-    ViewData["Title"] = "Listado de Inmuebles";
+    ViewData["Title"] = "Inmuebles";
 }
 
-<div class="text-center">
-    <div class="display-4">Lista de Inmuebles</div>
+<div>
+    <h1 class="display-5">Lista de Inmuebles</h1>
 </div>
 
-<h3>
-    <a href="/Inmueble/AltaInmueble">Crear</a>
-</h3>
-<table class="table">
+<p>
+    <a asp-action="AltaInmueble" class="btn btn-custom">Agregar Inmueble</a>
+</p>
+
+<table class="table text-center">
     <thead>
         <tr>
-            <th>
-                Direccion
-            </th>
-            <th>
-                Uso
-            </th>
-            <th>
-                Tipo
-            </th>
-            <th>
-                Ambientes
-            </th>
-            <th>
-                Coordenadas
-            </th>
-            <th>
-                Precio
-            </th>
-            <th>
-                Propietario
-            </th>
-            <th>
-                Estado
-            </th>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.Direccion)</th>
+            <th>@Html.DisplayNameFor(model => model.Uso)</th>
+            <th>@Html.DisplayNameFor(model => model.Tipo)</th>
+            <th>@Html.DisplayNameFor(model => model.Ambientes)</th>
+            <th>@Html.DisplayNameFor(model => model.Precio)</th>
+            <th>@Html.DisplayNameFor(model => model.Propietario_dni)</th>
+            <th>@Html.DisplayNameFor(model => model.Estado)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var Inmuebles in Model)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>
-                    @Inmuebles.Direccion
+                    @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @Inmuebles.Uso
+                    @Html.DisplayFor(modelItem => item.Direccion)
                 </td>
                 <td>
-                    @Inmuebles.Tipo
+                    @Html.DisplayFor(modelItem => item.Uso)
                 </td>
                 <td>
-                    @Inmuebles.Ambientes
+                    @Html.DisplayFor(modelItem => item.Tipo)
                 </td>
                 <td>
-                    @Inmuebles.Coordenadas
+                    @Html.DisplayFor(modelItem => item.Ambientes)
                 </td>
                 <td>
-                    @Inmuebles.Precio
+                    @Html.DisplayFor(modelItem => item.Precio)
                 </td>
                 <td>
-                    @Inmuebles.Propietario_dni
+                    @Html.DisplayFor(modelItem => item.Propietario_dni)
                 </td>
                 <td>
-                    @Inmuebles.Estado
+                    @Html.DisplayFor(modelItem => item.Estado)
                 </td>
                 <td>
-                    <a href="/Inmueble/Editar/@Inmuebles.Id">Editar</a>
-                    @Html.ActionLink("Desactivar", "Baja", new { Id = @Inmuebles.Id })
-                    @Html.ActionLink("Activar", "Activar", new { Id = @Inmuebles.Id })
+                    <a href="/Inmueble/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    <a href="/Inmueble/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                    <a href="/Inmueble/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                 </td>
             </tr>
         }
     </tbody>
+</table>

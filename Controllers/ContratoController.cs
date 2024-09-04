@@ -32,6 +32,18 @@ public class ContratoController : Controller
     }
 
     [HttpGet]
+    public IActionResult Details(long Id)
+    {
+        var contrato = repo.Obtener(Id);
+        if (contrato == null)
+        {
+            return NotFound();
+        }
+        return View(contrato);
+    }
+
+
+    [HttpGet]
     public IActionResult AltaContrato()
     {
         ViewBag.inquilinos = repoInquilino.ObtenerInquilinos();
@@ -46,7 +58,19 @@ public class ContratoController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    public IActionResult Baja(long Id)
+    [HttpGet]
+    public IActionResult Delete(long Id)
+    {
+        var contrato = repo.Obtener(Id);
+        if (contrato == null)
+        {
+            return NotFound();
+        }
+        return View(contrato);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    public IActionResult DeleteConfirmed(long Id)
     {
         var result = repo.BorrarContrato(Id);
         if (result > 0)
@@ -59,7 +83,6 @@ public class ContratoController : Controller
             return View();
         }
     }
-
     public IActionResult Guardar(Contratos contrato)
     {
 

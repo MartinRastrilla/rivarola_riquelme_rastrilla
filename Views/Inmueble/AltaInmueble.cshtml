@@ -1,7 +1,7 @@
 @model rivarola_riquelme_rastrilla.Models.Inmueble
 
 @{
-    ViewData["Title"] = "Alta de Inmueble";
+    ViewData["Title"] = "Agregar Inmueble";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -47,15 +47,19 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Propietario_dni"></label>
-        <select asp-for="Propietario_dni" class="form-control">
+        <label asp-for="Propietario_dni">Propietario</label>
+        <input list="propietarios" asp-for="Propietario_dni" class="form-control" type="number" />
+        <datalist id="propietarios">
             @foreach (var propietario in ViewBag.Propietarios)
             {
                 <option value="@propietario.Dni">@propietario.Nombre</option>
             }
-        </select>
+        </datalist>
         <span asp-validation-for="Propietario_dni" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Crear Inmueble</button>
+
+
+    <br>
+    <button type="submit" class="btn btn-custom">Crear Inmueble</button>
 </form>

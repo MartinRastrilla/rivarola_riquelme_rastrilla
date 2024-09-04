@@ -16,11 +16,16 @@ public class RepositorioInmueble
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    Inmueble.UsoInmueble usoInmueble;
-
                     // Lee 'uso' como string y luego intenta convertirlo a enum
                     string usoString = reader.GetString(reader.GetOrdinal("uso"));
-                    Enum.TryParse(usoString, out usoInmueble);
+
+                    Inmueble.UsoInmueble usoInmueble = Inmueble.UsoInmueble.Residencial;
+
+                    if (!Enum.TryParse(usoString, true, out usoInmueble))
+                    {
+                        Console.WriteLine($"Error al convertir el uso '{usoString}' al enum UsoInmueble.");
+                        usoInmueble = Inmueble.UsoInmueble.Residencial;
+                    }
                     inmueble.Add(new Inmueble
                     {
                         Id = reader.GetInt32("id"),

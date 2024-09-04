@@ -5,7 +5,7 @@
 }
 
 <div>
-    <h1 class="display-5">Lista de Inmuebles</h1>
+    <h1 class="display-4">Lista de Inmuebles</h1>
 </div>
 
 <p>
@@ -52,7 +52,14 @@
                     @Html.DisplayFor(modelItem => item.Propietario_dni)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Estado)
+                    @if (item.Estado)
+                    {
+                        <a href="/Inmueble/Baja/@item.Id" class="btn btn-desactivar"></a>
+                    }
+                    else
+                    {
+                        <a href="/Inmueble/Activar/@item.Id" class="btn btn-activar"></a>
+                    }
                 </td>
                 <td>
                     <a href="/Inmueble/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
@@ -63,3 +70,97 @@
         }
     </tbody>
 </table>
+
+<style>
+    .btn-desactivar {
+        padding: 1.2rem 3.2rem;
+        background-color: #C0392B;
+        color: white;
+        border-radius: 7px;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .btn-desactivar::before {
+        content: 'Disponible';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        color: white;
+    }
+
+    .btn-desactivar::after {
+        content: 'Desactivar';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        color: white;
+        opacity: 0;
+    }
+
+    .btn-desactivar:hover {
+        background-color: #ff2c15;
+    }
+
+    .btn-desactivar:hover::before {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+    }
+
+    .btn-desactivar:hover::after {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+
+    .btn-activar {
+        padding: 1.2rem 3.2rem;
+        font-size: 1rem;
+        background-color: #C0392B;
+        color: white;
+        border-radius: 7px;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .btn-activar::before {
+        content: 'No Disponible';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        color: white;
+    }
+
+    .btn-activar::after {
+        content: 'Activar';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        color: white;
+        opacity: 0;
+    }
+
+    .btn-activar:hover {
+        background-color: #09ab03;
+    }
+
+    .btn-activar:hover::before {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+    }
+
+    .btn-activar:hover::after {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+</style>

@@ -1,0 +1,66 @@
+@model rivarola_riquelme_rastrilla.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Detalles del Inmueble";
+}
+
+<h2>Detalles del Inmueble</h2>
+
+<div>
+    <h4>Inmueble</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Direccion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Direccion)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Uso)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Uso)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tipo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tipo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ambientes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ambientes)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Coordenadas)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Coordenadas)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Precio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Precio)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Propietario_dni)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Propietario_dni)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Estado)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Estado)
+        </dd>
+    </dl>
+    <div>
+        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-custom">Editar</a>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Volver al Listado</a>
+    </div>
+</div>

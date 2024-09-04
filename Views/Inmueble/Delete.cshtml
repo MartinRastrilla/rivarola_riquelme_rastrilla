@@ -1,0 +1,57 @@
+@model rivarola_riquelme_rastrilla.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Eliminar Inmueble";
+}
+
+<h2>Eliminar Inmueble</h2>
+
+<h3>¿Estás seguro que deseas eliminar este Inmueble?</h3>
+<div>
+    <h4>Inmueble</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Direccion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Direccion)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Uso)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Uso)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tipo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tipo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ambientes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ambientes)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Coordenadas)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Coordenadas)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Precio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Precio)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

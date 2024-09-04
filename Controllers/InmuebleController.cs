@@ -37,6 +37,23 @@ public class InmuebleController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    public IActionResult Delete(int Id)
+{
+    var inmueble = repoInmueble.Obtener(Id);
+    if (inmueble == null)
+    {
+        return NotFound();
+    }
+    return View(inmueble);
+}
+
+[HttpPost, ActionName("Delete")]
+public IActionResult DeleteConfirmed(int Id)
+{
+    repoInmueble.BajaInmueble(Id);
+    return RedirectToAction(nameof(Index));
+}
+
     public IActionResult Baja(int Id)
     {
         var result = repoInmueble.BajaInmueble(Id);

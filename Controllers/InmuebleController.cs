@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
 
@@ -15,6 +16,8 @@ public class InmuebleController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Index()
     {
         var lista = repoInmueble.ObtenerInmueble();
@@ -22,6 +25,7 @@ public class InmuebleController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult AltaInmueble()
     {
         ViewBag.propietarios = repoPropietario.ObtenerTodos();
@@ -29,6 +33,7 @@ public class InmuebleController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult AltaInmueble(Inmueble Inmueble)
     {
         bool estado = Request.Form["Estado"] == "true";
@@ -37,29 +42,37 @@ public class InmuebleController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Delete(int Id)
-{
-    var inmueble = repoInmueble.Obtener(Id);
-    if (inmueble == null)
     {
-        return NotFound();
+        var inmueble = repoInmueble.Obtener(Id);
+        if (inmueble == null)
+        {
+            return NotFound();
+        }
+        return View(inmueble);
     }
-    return View(inmueble);
-}
 
-[HttpPost, ActionName("Delete")]
-public IActionResult DeleteConfirmed(int Id)
-{
-    repoInmueble.BajaInmueble(Id);
-    return RedirectToAction(nameof(Index));
-}
+    [HttpPost, ActionName("Delete")]
+    [Authorize(Policy = "Administrador")]
+    public IActionResult DeleteConfirmed(int Id)
+    {
+        repoInmueble.BajaInmueble(Id);
+        return RedirectToAction(nameof(Index));
+    }
 
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Baja(int Id)
     {
         var result = repoInmueble.BajaInmueble(Id);
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Activar(int Id)
     {
         var result = repoInmueble.ActivarInmueble(Id);
@@ -67,6 +80,7 @@ public IActionResult DeleteConfirmed(int Id)
     }
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Editar(int Id)
     {
         var inmueble = repoInmueble.Obtener(Id);
@@ -76,6 +90,7 @@ public IActionResult DeleteConfirmed(int Id)
 
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Guardar(Inmueble inmueble)
     {
 
@@ -83,15 +98,17 @@ public IActionResult DeleteConfirmed(int Id)
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Details(int Id)
-{
-    var inmueble = repoInmueble.Obtener(Id);
-    if (inmueble == null)
     {
-        return NotFound();
+        var inmueble = repoInmueble.Obtener(Id);
+        if (inmueble == null)
+        {
+            return NotFound();
+        }
+        return View(inmueble);
     }
-    return View(inmueble);
-}
 
 
 

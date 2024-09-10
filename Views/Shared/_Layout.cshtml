@@ -97,6 +97,18 @@
                         <li class="nav-item">
                             <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Contrato")">Contratos</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Logout", "Usuarios")">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Login", "Usuarios")">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

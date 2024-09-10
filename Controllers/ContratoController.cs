@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
 
@@ -16,6 +17,8 @@ public class ContratoController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Index()
     {
         var lista = repo.ObtenerContratos();
@@ -23,6 +26,7 @@ public class ContratoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Editar(long Id)
     {
         var contrato = repo.Obtener(Id);
@@ -32,6 +36,7 @@ public class ContratoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Details(long Id)
     {
         var contrato = repo.Obtener(Id);
@@ -44,6 +49,7 @@ public class ContratoController : Controller
 
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult AltaContrato()
     {
         ViewBag.inquilinos = repoInquilino.ObtenerInquilinos();
@@ -52,6 +58,7 @@ public class ContratoController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult AltaContrato(Contratos contrato)
     {
         int r = repo.AltaContrato(contrato);
@@ -59,6 +66,7 @@ public class ContratoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Delete(long Id)
     {
         var contrato = repo.Obtener(Id);
@@ -70,6 +78,7 @@ public class ContratoController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
+    [Authorize(Policy = "Administrador")]
     public IActionResult DeleteConfirmed(long Id)
     {
         var result = repo.BorrarContrato(Id);
@@ -83,6 +92,9 @@ public class ContratoController : Controller
             return View();
         }
     }
+
+    [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Guardar(Contratos contrato)
     {
 

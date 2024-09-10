@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
 
@@ -15,18 +16,31 @@ public class InquilinoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Index()
     {
-        var lista = repo.ObtenerInquilinos();
-        return View(lista);
+
+        if (User.Identity.IsAuthenticated)
+        {
+            var lista = repo.ObtenerInquilinos();
+            return View(lista);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        
+        
     }
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult AltaInquilino()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult AltaInquilino(Inquilino inquilino)
     {
         int r = repo.AltaInquilino(inquilino);
@@ -35,6 +49,7 @@ public class InquilinoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Editar(long Id)
     {
         var inquilino = repo.Obtener(Id);
@@ -42,6 +57,7 @@ public class InquilinoController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Guardar(Inquilino inquilino)
     {
         repo.EditarInquilino(inquilino);
@@ -49,6 +65,7 @@ public class InquilinoController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Baja(long Dni)
     {
 
@@ -64,6 +81,8 @@ public class InquilinoController : Controller
         }
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Details(long Id)
     {
         var inquilino = repo.Obtener(Id);
@@ -75,6 +94,7 @@ public class InquilinoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Delete(long Id)
     {
         var inquilino = repo.Obtener(Id);

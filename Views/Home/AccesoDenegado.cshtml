@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Acceso Denegado";
+}
+
+<div class="container text-center mt-5">
+    <h1 class="display-4 text-danger">Acceso Denegado</h1>
+    <p class="lead mt-4">
+        Lo sentimos, no tienes los permisos necesarios para acceder a esta página.
+    </p>
+    <a href="@Url.Action("Login", "Usuarios")" class="btn btn-primary mt-4">Iniciar Sesión</a>
+</div>
+
+<style>
+    body {
+        background-color: var(--gris-claro);
+        color: var(--gris-oscuro);
+    }
+    
+    .container {
+        background-color: var(--blanco);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    .btn-primary {
+        background-color: var(--rojo-principal);
+        border-color: var(--rojo-principal);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--rojo-oscuro);
+        border-color: var(--rojo-oscuro);
+    }
+</style>

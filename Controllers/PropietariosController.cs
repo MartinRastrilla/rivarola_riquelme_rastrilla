@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
 
@@ -15,12 +16,16 @@ public class PropietariosController : Controller
         repo = new RepositorioPropietario();
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Index()
     {
         var lista = repo.ObtenerTodos();
         return View(lista);
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Details(int id)
     {
         var propietario = repo.ObtenerPorId(id);
@@ -31,6 +36,8 @@ public class PropietariosController : Controller
         return View(propietario);
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Edit(int id)
     {
         var propietario = repo.ObtenerPorId(id);
@@ -42,6 +49,7 @@ public class PropietariosController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Edit(int id, Propietarios propietario)
     {
         if (id != propietario.Id)
@@ -57,6 +65,8 @@ public class PropietariosController : Controller
         return View(propietario);
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Delete(int id)
     {
         var propietario = repo.ObtenerPorId(id);
@@ -68,6 +78,7 @@ public class PropietariosController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
+    [Authorize(Policy = "Administrador")]
     public IActionResult DeleteConfirmed(int id)
     {
         repo.Eliminar(id);
@@ -81,6 +92,7 @@ public class PropietariosController : Controller
 
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Crear(Propietarios propietario)
     {
         if (ModelState.IsValid)

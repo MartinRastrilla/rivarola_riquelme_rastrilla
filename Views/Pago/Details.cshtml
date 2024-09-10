@@ -1,0 +1,42 @@
+@model rivarola_riquelme_rastrilla.Models.Pago
+
+@{
+    ViewData["Title"] = "Detalles del Pago";
+}
+
+<h2>Detalles del Pago</h2>
+
+<div>
+    <h4>Pago</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Contrato_id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Contrato_id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fecha_pago)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fecha_pago)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Detalle)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Detalle)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Importe)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Importe)
+        </dd>
+    </dl>
+    <div>
+        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-custom">Editar</a>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Volver al Listado</a>
+    </div>
+</div>

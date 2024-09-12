@@ -9,7 +9,12 @@ public class RepositorioInmueble
         List<Inmueble> inmueble = new List<Inmueble>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"SELECT id, direccion, uso, tipo, ambientes, coordenadas, precio, propietario_dni, estado FROM inmuebles;";
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                       p.nombre, p.apellido
+                FROM inmuebles i
+                JOIN propietarios p ON i.propietario_dni = p.dni;
+            ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 connection.Open();
@@ -18,7 +23,6 @@ public class RepositorioInmueble
                 {
                     // Lee 'uso' como string y luego intenta convertirlo a enum
                     string usoString = reader.GetString(reader.GetOrdinal("uso"));
-
                     Inmueble.UsoInmueble usoInmueble = Inmueble.UsoInmueble.Residencial;
 
                     if (!Enum.TryParse(usoString, true, out usoInmueble))
@@ -37,6 +41,11 @@ public class RepositorioInmueble
                         Precio = reader.GetDecimal("precio"),
                         Propietario_dni = reader.GetInt64("propietario_dni"),
                         Estado = reader.GetBoolean("estado"),
+                        Propietario = new Propietario
+                        {
+                            Nombre = reader.GetString("nombre"),
+                            Apellido = reader.GetString("apellido")
+                        }
                     });
 
                 }

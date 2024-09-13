@@ -43,4 +43,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Usuarios}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "propietarios_inmuebles",
+    pattern: "Propietarios/Inmuebles/{dni?}",
+    defaults: new { controller = "Propietarios", action = "Inmuebles" });
+
 app.Run();

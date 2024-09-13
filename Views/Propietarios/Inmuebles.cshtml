@@ -1,0 +1,38 @@
+@model IEnumerable<rivarola_riquelme_rastrilla.Models.Inmueble>
+
+@{
+    ViewData["Title"] = "Inmuebles del Propietario";
+}
+
+<h2>Lista de Inmuebles</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Dirección</th>
+                <th>Uso</th>
+                <th>Tipo</th>
+                <th>Ambientes</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inmueble in Model)
+            {
+                <tr>
+                    <td>@inmueble.Direccion</td>
+                    <td>@inmueble.Uso</td>
+                    <td>@inmueble.Tipo</td>
+                    <td>@inmueble.Ambientes</td>
+                    <td>@inmueble.Precio</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No se encontraron inmuebles para este propietario.</p>
+}

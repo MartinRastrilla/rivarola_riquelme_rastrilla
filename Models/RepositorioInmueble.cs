@@ -231,8 +231,6 @@ public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni)
                         }
                     }
                 }
-
-                Console.WriteLine($"Consulta ejecutada: {sqlquery} con propietario_dni = {propietarioDni}");
             }
 
         }

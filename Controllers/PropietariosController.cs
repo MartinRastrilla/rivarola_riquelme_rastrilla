@@ -28,10 +28,8 @@ public class PropietariosController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Inmuebles(int dni)
     {
-            Console.WriteLine($"DNI recibido: {dni}");
         var repoInmueble = new RepositorioInmueble();
         var inmuebles = repoInmueble.ObtenerInmueblesPorPropietario(dni);
-        Console.WriteLine($"Inmuebles encontrados: {inmuebles.Count}");
         return View(inmuebles);
     }
 

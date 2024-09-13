@@ -26,6 +26,17 @@ public class PropietariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
+    public IActionResult Inmuebles(int dni)
+    {
+            Console.WriteLine($"DNI recibido: {dni}");
+        var repoInmueble = new RepositorioInmueble();
+        var inmuebles = repoInmueble.ObtenerInmueblesPorPropietario(dni);
+        Console.WriteLine($"Inmuebles encontrados: {inmuebles.Count}");
+        return View(inmuebles);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Details(int id)
     {
         var propietario = repo.ObtenerPorId(id);

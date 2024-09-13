@@ -182,4 +182,67 @@ public class RepositorioInmueble
         }
         return r;
     }
+
+public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni)
+    {
+        var inmuebles = new List<Inmueble>();
+        try
+        {
+            using (MySqlConnection connection = new MySqlConnection(Conexion))
+            {
+                connection.Open();
+                var sqlquery = @"
+                    SELECT i.id, i.direccion, i.uso, i.tipo, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado
+                    FROM inmuebles i
+                    WHERE i.propietario_dni = @PropietarioDni;
+                ";
+
+                using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+                {
+                    // Asegúrate de que el parámetro se está añadiendo correctamente como entero
+                    command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string usoString = reader.GetString("uso");
+                            Inmueble.UsoInmueble usoInmueble;
+
+                            // Intentamos convertir el valor de la base de datos a enum, ignorando mayúsculas/minúsculas
+                            if (!Enum.TryParse(usoString, true, out usoInmueble))
+                            {
+                                Console.WriteLine($"Error al convertir el uso '{usoString}' al enum UsoInmueble. Asignando valor predeterminado 'Residencial'.");
+                                usoInmueble = Inmueble.UsoInmueble.Residencial; // Valor por defecto si falla la conversión
+                            }
+
+                            inmuebles.Add(new Inmueble
+                            {
+                                Id = reader.GetInt32("id"),
+                                Direccion = reader.GetString("direccion"),
+                                Uso = usoInmueble, // Aquí usamos el valor convertido
+                                Tipo = reader.GetString("tipo"),
+                                Ambientes = reader.GetInt32("ambientes"),
+                                Coordenadas = reader.GetString("coordenadas"),
+                                Precio = reader.GetDecimal("precio"),
+                                Propietario_dni = reader.GetInt64("propietario_dni"),
+                                Estado = reader.GetBoolean("estado")
+                            });
+                        }
+                    }
+                }
+
+                Console.WriteLine($"Consulta ejecutada: {sqlquery} con propietario_dni = {propietarioDni}");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al obtener inmuebles: " + ex.Message);
+        }
+
+        return inmuebles;
+    }
+
+    
 }

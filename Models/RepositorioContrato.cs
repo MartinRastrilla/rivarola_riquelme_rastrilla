@@ -131,4 +131,38 @@ public class RepositorioContrato
         }
         return r;
     }
+
+    public List<Contratos> verContratoInmueble(long Id)
+    {
+        List<Contratos> contratos = new List<Contratos>();
+        int r = -1;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"SELECT Id,inquilino_dni,inmueble_id,estado,monto,fecha_inicio,fecha_fin FROM contratos WHERE inmueble_id=@inmueble_id";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@inmueble_id", Id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Contratos contrato = new Contratos
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Inquilino_dni = reader.GetInt64("inquilino_dni"),
+                            Inmueble_id = reader.GetInt32("inmueble_id"),
+                            Estado = (Contratos.EstadoContrato)Enum.Parse(typeof(Contratos.EstadoContrato), reader.GetString("estado")),
+                            Monto = reader.GetDecimal("monto"),
+                            Fecha_inicio = reader.GetDateTime("fecha_inicio"),
+                            Fecha_fin = reader.GetDateTime("fecha_fin")
+                        };
+                        contratos.Add(contrato);
+                    }
+                }
+                connection.Close();
+                return contratos;
+            }
+        }
+    }
 }

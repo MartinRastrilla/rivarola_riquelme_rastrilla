@@ -1,0 +1,41 @@
+@model rivarola_riquelme_rastrilla.Models.ContratoViewModel
+
+@{
+    ViewData["Title"] = "Contratos del Inmueble";
+}
+
+<h2>Contratos del Inmueble</h2>
+<div>
+    @if (Model.ContratosInmueble != null && Model.ContratosInmueble.Any())
+{
+    @foreach (var contrato in Model.ContratosInmueble)
+    {
+        <div>
+            <p>Inquilino DNI: @contrato.Inquilino_dni</p>
+            <p>Inmueble ID: @contrato.Inmueble_id</p>
+            <p>Estado: @contrato.Estado</p>
+            <p>Monto: @contrato.Monto</p>
+            <p>Fecha de inicio: @contrato.Fecha_inicio.ToShortDateString()</p>
+            <p>Fecha de fin: @contrato.Fecha_fin.ToShortDateString()</p>
+        </div>
+    }
+}
+else
+{
+    <p>No hay contratos asociados a este inmueble.</p>
+}
+
+<h3>Información del Propietario</h3>
+@if (Model.Propietario != null)
+{
+    <p>Nombre: @Model.Propietario.Nombre</p>
+    <p>Apellido: @Model.Propietario.Apellido</p>
+    <p>DNI: @Model.Propietario.Dni</p>
+}
+else
+{
+    <p>No se encontró información del propietario.</p>
+}
+<a href="@Url.Action("Index")" class="btn btn-secondary">Volver al Listado</a>
+</div>
+

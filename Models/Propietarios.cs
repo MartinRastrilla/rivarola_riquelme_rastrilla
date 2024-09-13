@@ -4,7 +4,7 @@ namespace rivarola_riquelme_rastrilla.Models;
     {
         public int Id { get; set; }
 
-        public int Dni { get; set; }
+        public long Dni { get; set; }
 
         public string Apellido { get; set; } = "";
 

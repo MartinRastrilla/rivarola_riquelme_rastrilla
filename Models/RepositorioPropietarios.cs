@@ -10,18 +10,18 @@ public class RepositorioPropietario
     public List<Propietarios> ObtenerTodos()
     {
 
-    List<Propietarios> propietarios = new List<Propietarios>();
+        List<Propietarios> propietarios = new List<Propietarios>();
 
-    using (MySqlConnection connection = new MySqlConnection(ConnectionString))
-    {
-        var query = $@"SELECT {nameof(Propietarios.Id)}, {nameof(Propietarios.Nombre)} , {nameof(Propietarios.Apellido)} , {nameof(Propietarios.Dni)} , {nameof(Propietarios.Telefono)} , {nameof(Propietarios.Email)} FROM propietarios";
-
-        using (var command = new MySqlCommand(query, connection))
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
-            connection.Open();
+            var query = $@"SELECT {nameof(Propietarios.Id)}, {nameof(Propietarios.Nombre)} , {nameof(Propietarios.Apellido)} , {nameof(Propietarios.Dni)} , {nameof(Propietarios.Telefono)} , {nameof(Propietarios.Email)} FROM propietarios";
 
-            var reader = command.ExecuteReader();
-            
+            using (var command = new MySqlCommand(query, connection))
+            {
+                connection.Open();
+
+                var reader = command.ExecuteReader();
+
                 while (reader.Read())
                 {
                     propietarios.Add(new Propietarios
@@ -29,19 +29,19 @@ public class RepositorioPropietario
                         Id = reader.GetInt32("Id"),
                         Nombre = reader.GetString("Nombre"),
                         Apellido = reader.GetString("Apellido"),
-                        Dni = reader.GetInt32("Dni"),
+                        Dni = reader.GetInt64("Dni"),
                         Telefono = reader.GetString("Telefono"),
                         Email = reader.GetString("Email")
                     });
                 }
-            connection.Close();    
+                connection.Close();
+            }
+            return propietarios;
+
         }
-        return propietarios;
-
-    }
     }
 
-    public Propietarios? ObtenerPorId(int id)
+    public Propietarios? ObtenerPorId(long id)
     {
         Propietarios? propietario = null;
 
@@ -64,7 +64,7 @@ public class RepositorioPropietario
                         Id = reader.GetInt32("Id"),
                         Nombre = reader.GetString("Nombre"),
                         Apellido = reader.GetString("Apellido"),
-                        Dni = reader.GetInt32("Dni"),
+                        Dni = reader.GetInt64("Dni"),
                         Telefono = reader.GetString("Telefono"),
                         Email = reader.GetString("Email")
                     };
@@ -139,6 +139,37 @@ public class RepositorioPropietario
         }
     }
 
+    public Propietarios? ObtenerPorDni(long id)
+    {
+        Propietarios? propietario = null;
 
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+        {
+            var query = $@"SELECT {nameof(Propietarios.Id)}, {nameof(Propietarios.Nombre)}, {nameof(Propietarios.Apellido)}, 
+                           {nameof(Propietarios.Dni)}, {nameof(Propietarios.Telefono)}, {nameof(Propietarios.Email)} 
+                           FROM propietarios WHERE dni = @id";
 
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", id);
+                connection.Open();
+
+                var reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    propietario = new Propietarios
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Nombre = reader.GetString("Nombre"),
+                        Apellido = reader.GetString("Apellido"),
+                        Dni = reader.GetInt64("Dni"),
+                        Telefono = reader.GetString("Telefono"),
+                        Email = reader.GetString("Email")
+                    };
+                }
+                connection.Close();
+            }
+        }
+        return propietario;
+    }
 }

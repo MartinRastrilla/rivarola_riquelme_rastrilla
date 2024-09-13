@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
@@ -10,6 +9,7 @@ public class InmuebleController : Controller
 
     private RepositorioPropietario repoPropietario = new RepositorioPropietario();
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
+    private RepositorioContrato repoContrato = new RepositorioContrato();
 
     public InmuebleController(ILogger<InmuebleController> logger)
     {
@@ -110,6 +110,18 @@ public class InmuebleController : Controller
         return View(inmueble);
     }
 
+    public IActionResult verContrato(int Id)
+    {
+        var contratosInmueble = repoContrato.verContratoInmueble(Id);
+        var obtenerDni = repoInmueble.Obtener(Id);
+        long dni = obtenerDni.Propietario_dni;
+        var propietario = repoPropietario.ObtenerPorDni(dni);
 
-
+        var viewModel = new ContratoViewModel()
+        {
+            ContratosInmueble = contratosInmueble,
+            Propietario = propietario
+        };
+        return View(viewModel);
+    }
 }

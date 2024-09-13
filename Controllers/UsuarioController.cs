@@ -2,8 +2,10 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MySql.Data.MySqlClient;
 using rivarola_riquelme_rastrilla.Models;
 
@@ -19,22 +21,72 @@ public class UsuariosController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Index()
     {
-        return View();
+        var lista = repo.ObtenerUsuarios();
+        return View(lista);
     }
 
     [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Crear()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Crear(Usuarios usuario)
     {
         repo.Crear(usuario);
         return View();
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
+    public IActionResult Editar(int Id)
+    {
+        var usuario = repo.ObtenerById(Id);
+        ViewBag.Roles = new List<SelectListItem>
+        {
+            new SelectListItem { Text = "Administrador", Value = "Administrador" },
+            new SelectListItem { Text = "Empleado", Value = "Empleado" }
+        };
+        return View(usuario);
+    }
+
+    [HttpPost]
+    [Authorize(Policy = "Administrador")]
+    public IActionResult Editar(Usuarios usuario)
+    {
+        repo.Editar(usuario);
+        return RedirectToAction("Index", "Usuarios");
+    }
+
+
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
+    public IActionResult Delete(int Id)
+    {
+        var usuario = repo.ObtenerById(Id);
+        return View(usuario);
+    }
+    [HttpPost]
+    [Authorize(Policy = "Administrador")]
+    public IActionResult Baja(int Id)
+    {
+        repo.Borrar(Id);
+        return RedirectToAction("Index", "Usuarios");
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
+    public IActionResult Details(int Id)
+    {
+        var usuario = repo.ObtenerById(Id);
+        return View(usuario);
     }
 
     [HttpGet]
@@ -72,7 +124,7 @@ public class UsuariosController : Controller
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
 
-            return RedirectToAction("Index", "Inquilino");
+            return RedirectToAction("Index", "Home");
         }
         else
         {

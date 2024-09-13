@@ -1,0 +1,47 @@
+@model IEnumerable<rivarola_riquelme_rastrilla.Models.Usuarios>
+
+@{
+    ViewData["Title"] = "Listado de personas";
+}
+
+<div>
+    <div class="display-5">Lista de Usuarios</div>
+</div>
+
+<h3>
+    <a href="/Usuarios/Crear"  class="btn btn-custom">Agregar Usuarios</a>
+</h3>
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Rol</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Usuario in Model)
+        {
+            <tr>
+                <td>
+                    @Usuario.Nombre
+                </td>
+                <td>
+                    @Usuario.Apellido
+                </td>
+                <td>
+                    @Usuario.Email
+                </td>
+                <td>
+                    @Usuario.Rol
+                </td>
+                <td>
+                    <a href="/Usuarios/Delete/@Usuario.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    <a href="/Usuarios/Editar/@Usuario.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                    <a href="/Usuarios/Details/@Usuario.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

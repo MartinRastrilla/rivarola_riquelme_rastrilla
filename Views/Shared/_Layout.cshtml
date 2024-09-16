@@ -43,6 +43,10 @@
             margin-left: 50%;
         }
 
+        .navbar-nav {
+            margin-left: 60px;
+        }
+
         .navbar-nav .nav-link {
             color: var(--blanco) !important;
         }
@@ -50,7 +54,7 @@
         .btn-custom {
             background-color: var(--rojo-principal);
             color: var(--blanco);
-            border-radius: 10px;
+            border-radius: 7px;
         }
 
         .btn-custom:hover {
@@ -68,6 +72,20 @@
         .ic-color:hover {
             color: var(--rojo-principal);
         }
+
+        .navbar .dropdown-menu {
+        background-color: var(--rojo-principal);
+        border: none;
+        }
+    
+        .navbar .dropdown-menu a {
+            color: var(--blanco) !important;
+        }
+    
+        .navbar .dropdown-menu a:hover {
+            background-color: var(--rojo-oscuro);
+            color: var(--blanco) !important;
+        }
     </style>
 </head>
 <body>
@@ -81,12 +99,9 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <form class="d-flex mx-auto w-50">
-                        <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Buscar">
-                    </form>
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Movidos hacia la izquierda -->
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom" href="@Url.Action("Index", "Inquilino")">Inquilinos</a>
+                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Inquilino")">Inquilinos</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Propietarios")">Propietarios</a>
@@ -97,16 +112,41 @@
                         <li class="nav-item">
                             <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Contrato")">Contratos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Pago")">Pagos</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Logout", "Usuarios")">Logout</a>
+                            var avatar = User.Claims.FirstOrDefault(c => c.Type == "Avatar")?.Value;
+                            var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+                            var nombre = User.Claims.FirstOrDefault(c => c.Type == "Nombre")?.Value;
+                            var apellido = User.Claims.FirstOrDefault(c => c.Type == "Apellido")?.Value;
+                            <li class="nav-item dropdown" style="margin-right: 40px;">
+                                <a style="padding: 1px;" class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="@Url.Content(avatar)" alt="Avatar" class="avatar" style="width: 64px; height: 64px; border-radius: 50%;" />
+                                    <span class="text-dark"><strong>@nombre @apellido</strong></span>
+                                </a>
+                                
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Perfil", "Usuarios", new { id = userId })">
+                                            <i class="fas fa-user"></i> Perfil
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Logout", "Usuarios")">
+                                            <i class="fas fa-sign-out-alt"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Login", "Usuarios")">Login</a>
+                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Login", "Usuarios")">Iniciar Sesión</a>
                             </li>
                         }
                     </ul>

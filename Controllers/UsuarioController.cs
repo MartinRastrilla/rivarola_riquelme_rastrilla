@@ -15,10 +15,11 @@ public class UsuariosController : Controller
 {
     private readonly ILogger<UsuariosController> _logger;
     private RepositorioUsuarios repo = new RepositorioUsuarios();
+    private readonly IWebHostEnvironment environment;
 
-    public UsuariosController(ILogger<UsuariosController> logger)
+    public UsuariosController(IWebHostEnvironment environment)
     {
-        _logger = logger;
+        this.environment = environment;
     }
 
     [HttpGet]
@@ -89,6 +90,82 @@ public class UsuariosController : Controller
         return View(usuario);
     }
 
+
+    [HttpGet]
+    public IActionResult Perfil(int Id)
+    {
+        var usuario = repo.ObtenerById(Id);
+        return View(usuario);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> ActualizarPerfil(IFormFile avatar, string Nombre, string Apellido)
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var user = repo.ObtenerById(int.Parse(userId));
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        user.Nombre = Nombre;
+        user.Apellido = Apellido;
+
+        if (avatar != null && avatar.Length > 0)
+        {
+            string wwwPath = environment.WebRootPath;
+            string path = Path.Combine(wwwPath, "Uploads");
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            string fileName = "avatar_" + user.Id + Path.GetExtension(avatar.FileName);
+            string pathCompleto = Path.Combine(path, fileName);
+
+            user.Avatar = Path.Combine("Uploads", fileName);
+
+            using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+            {
+                await avatar.CopyToAsync(stream);
+            }
+            repo.EditarAvatar(user);
+        }
+        repo.Editar(user);
+
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.Nombre),
+        new Claim("Id", user.Id.ToString()),
+        new Claim("Avatar", user.Avatar ?? "/Uploads/perfil_default.jpg"),  // Ruta al avatar
+        new Claim("Nombre", user.Nombre),
+        new Claim("Apellido", user.Apellido),
+        new Claim(ClaimTypes.Role, user.Rol)
+    };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Crear un nuevo principal de usuario
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true
+        };
+
+        // Actualizar la cookie de autenticación
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+        return RedirectToAction("Index", "Home");
+    }
+
     [HttpGet]
     public IActionResult Login()
     {
@@ -104,7 +181,7 @@ public class UsuariosController : Controller
         string userRol = usuario.Rol;
         byte[] salt = new byte[10];
         string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            password: Contrasenia,  
+            password: Contrasenia,
             salt: salt,
             prf: KeyDerivationPrf.HMACSHA1,
             iterationCount: 10000,
@@ -115,7 +192,11 @@ public class UsuariosController : Controller
             var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, Email),
-                                new Claim(ClaimTypes.Role, userRol)
+                                new Claim(ClaimTypes.Role, userRol),
+                                new Claim("Id", usuario.Id+""),
+                                new Claim("Avatar", usuario.Avatar),
+                                new Claim("Nombre", usuario.Nombre),
+                                new Claim("Apellido", usuario.Apellido)
                             };
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);

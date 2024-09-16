@@ -29,7 +29,7 @@ public class RepositorioUsuarios
                         Email = reader.GetString("Email"),
                         Contrasenia = reader.GetString("Contrasenia"),
                         Rol = reader.GetString("Rol"),
-                        //Avatar
+                        Avatar = reader.GetString("Avatar"),
                     });
                 }
                 connection.Close();
@@ -44,7 +44,7 @@ public class RepositorioUsuarios
         Usuarios? usuario = null;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"SELECT Id, Nombre, Apellido, Email, Rol, Contrasenia FROM usuarios WHERE Email = @Email;";
+            var sqlquery = @"SELECT Id, Nombre, Apellido, Email, Rol, Contrasenia, Avatar FROM usuarios WHERE Email = @Email;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@Email", Email);
@@ -61,6 +61,7 @@ public class RepositorioUsuarios
                             Email = reader.GetString("Email"),
                             Rol = reader.GetString("Rol"),
                             Contrasenia = reader.GetString("Contrasenia"),
+                            Avatar = reader.GetString("Avatar"),
                         };
                     }
                 };
@@ -114,14 +115,19 @@ public class RepositorioUsuarios
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8
             ));
-            var sqlquery = @"INSERT INTO usuarios(Nombre,Apellido,Email,Contrasenia, Rol)
-            VALUES (@Nombre,@Apellido,@Email,@Contrasenia, 'Empleado');";
+
+            string defaultAvatarPath = "/Uploads/user_pic.jpg";
+            usuario.Avatar = usuario.Avatar ?? defaultAvatarPath;
+
+            var sqlquery = @"INSERT INTO usuarios(Nombre,Apellido,Email,Contrasenia, Rol, Avatar)
+            VALUES (@Nombre,@Apellido,@Email,@Contrasenia, 'Empleado',@Avatar);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 command.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 command.Parameters.AddWithValue("@Email", usuario.Email);
                 command.Parameters.AddWithValue("@Contrasenia", hashed);
+                command.Parameters.AddWithValue("@Avatar", usuario.Avatar);
                 connection.Open();
                 r = command.ExecuteNonQuery();
                 connection.Close();
@@ -143,6 +149,25 @@ public class RepositorioUsuarios
                 command.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 command.Parameters.AddWithValue("@Rol", usuario.Rol);
                 command.Parameters.AddWithValue("@Email", usuario.Email);
+                command.Parameters.AddWithValue("@Id", usuario.Id);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
+
+    public int EditarAvatar(Usuarios usuario)
+    {
+        int r = -1;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE usuarios SET Avatar=@Avatar
+            WHERE Id = @Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Avatar", usuario.Avatar);
                 command.Parameters.AddWithValue("@Id", usuario.Id);
                 connection.Open();
                 r = command.ExecuteNonQuery();

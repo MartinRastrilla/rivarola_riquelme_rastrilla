@@ -8,5 +8,6 @@ public class Usuarios
     public string Email { get; set; }
     public string Contrasenia { get; set; }
     public string Rol { get; set; }
-    public byte[]? Avatar { get; set; }
+    public string Avatar { get; set; }
+    public IFormFile AvatarFile { get; set; }
 }

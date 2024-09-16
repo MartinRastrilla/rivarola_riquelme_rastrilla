@@ -41,7 +41,7 @@ public class RepositorioInmueble
                         Precio = reader.GetDecimal("precio"),
                         Propietario_dni = reader.GetInt64("propietario_dni"),
                         Estado = reader.GetBoolean("estado"),
-                        Propietario = new Propietario
+                        Propietario = new Propietarios
                         {
                             Nombre = reader.GetString("nombre"),
                             Apellido = reader.GetString("apellido")

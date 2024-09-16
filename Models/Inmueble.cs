@@ -26,7 +26,7 @@ public class Inmueble
 
     [ForeignKey("Propietario")]
     public long Propietario_dni { get; set; }
-    public Propietario Propietario { get; set; }
+    public Propietarios Propietario { get; set; }
 
 
     public bool Estado { get; set; }

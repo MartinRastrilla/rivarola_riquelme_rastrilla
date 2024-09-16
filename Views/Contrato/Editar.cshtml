@@ -10,7 +10,7 @@
     <input type="hidden" asp-for="Id" />
 
     <div class="form-group">
-        <label asp-for="Inquilino_dni"></label>
+        <label asp-for="Inquilino_dni">Inquilino</label>
         <select asp-for="Inquilino_dni" class="form-control">
             <option value="">Seleccione un inquilino</option>
             @foreach (var inquilino in ViewBag.Inquilinos)
@@ -22,7 +22,7 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Inmueble_id"></label>
+        <label asp-for="Inmueble_id">Inmueble</label>
         <select asp-for="Inmueble_id" class="form-control">
             <option value="">Seleccione un inmueble</option>
             @foreach (var inmueble in ViewBag.Inmuebles)
@@ -34,7 +34,7 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Estado"></label>
+        <label asp-for="Estado">Estado del Contrato</label>
         <select asp-for="Estado" class="form-control">
             <option value="0">Activo</option>
             <option value="1">Finalizado</option>
@@ -51,16 +51,16 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Fecha_inicio"></label>
+        <label asp-for="Fecha_inicio">Fecha de Inicio</label>
         <input asp-for="Fecha_inicio" class="form-control" type="date" />
         <span asp-validation-for="Fecha_inicio" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Fecha_fin"></label>
+        <label asp-for="Fecha_fin">Fecha de Finalización</label>
         <input asp-for="Fecha_fin" class="form-control" type="date" />
         <span asp-validation-for="Fecha_fin" class="text-danger"></span>
     </div>
-
-    <button type="submit" class="btn btn-primary">Actualizar Contrato</button>
+    <br>
+    <button type="submit" class="btn btn-custom">Actualizar Contrato</button>
 </form>

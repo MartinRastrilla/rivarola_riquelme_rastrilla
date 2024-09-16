@@ -34,12 +34,9 @@
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-
+    <br>
     <div class="form-group">
-        <input type="submit" value="Guardar" class="btn btn-primary" />
+        <input type="submit" value="Guardar" class="btn btn-custom" /> | 
+        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
     </div>
 </form>
-
-<div>
-    <a asp-action="Index">Volver a la lista</a>
-</div>

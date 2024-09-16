@@ -19,9 +19,9 @@ public class Contratos
 
     public enum EstadoContrato
     {
-        activo = 0,
-        finalizado = 1,
-        cancelado = 2
+        Activo = 0,
+        Finalizado = 1,
+        Cancelado = 2
     }
 
 

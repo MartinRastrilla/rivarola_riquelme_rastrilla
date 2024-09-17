@@ -92,6 +92,7 @@ public class UsuariosController : Controller
 
 
     [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Perfil(int Id)
     {
         var usuario = repo.ObtenerById(Id);
@@ -100,6 +101,7 @@ public class UsuariosController : Controller
 
 
     [HttpPost]
+    [Authorize(Policy = "Empleado")]
     public async Task<IActionResult> ActualizarPerfil(IFormFile avatar, string Nombre, string Apellido)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
@@ -129,10 +131,19 @@ public class UsuariosController : Controller
                 Directory.CreateDirectory(path);
             }
 
+            if (!string.IsNullOrEmpty(user.Avatar))
+            {
+                string ruteAnterior = Path.Combine(wwwPath, user.Avatar);
+                if (System.IO.File.Exists(ruteAnterior) && ruteAnterior != "/Uploads/user_pic.jpg")
+                {
+                    System.IO.File.Delete(ruteAnterior);
+                }
+            }
+
             string fileName = "avatar_" + user.Id + Path.GetExtension(avatar.FileName);
             string pathCompleto = Path.Combine(path, fileName);
 
-            user.Avatar = Path.Combine("Uploads", fileName);
+            user.Avatar = Path.Combine("/Uploads", fileName);
 
             using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
             {
@@ -146,7 +157,7 @@ public class UsuariosController : Controller
     {
         new Claim(ClaimTypes.Name, user.Nombre),
         new Claim("Id", user.Id.ToString()),
-        new Claim("Avatar", user.Avatar ?? "/Uploads/perfil_default.jpg"),  // Ruta al avatar
+        new Claim("Avatar", user.Avatar ?? "/Uploads/user_pic.jpg"),  // Ruta al avatar
         new Claim("Nombre", user.Nombre),
         new Claim("Apellido", user.Apellido),
         new Claim(ClaimTypes.Role, user.Rol)

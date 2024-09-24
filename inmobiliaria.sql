@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-09-2024 a las 21:51:16
+-- Tiempo de generación: 24-09-2024 a las 14:14:01
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 8.1.10
 
@@ -31,7 +31,7 @@ CREATE TABLE `contratos` (
   `id` int(11) NOT NULL,
   `inquilino_dni` int(11) DEFAULT NULL,
   `inmueble_id` int(11) DEFAULT NULL,
-  `estado` enum('activo','finalizado','cancelado') DEFAULT NULL,
+  `estado` enum('Activo','Finalizado','Cancelado') DEFAULT NULL,
   `monto` decimal(10,2) DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL
@@ -42,7 +42,7 @@ CREATE TABLE `contratos` (
 --
 
 INSERT INTO `contratos` (`id`, `inquilino_dni`, `inmueble_id`, `estado`, `monto`, `fecha_inicio`, `fecha_fin`) VALUES
-(2, 123456, 4, 'finalizado', '230000.00', '2024-10-10', '2024-10-24');
+(2, 123456, 4, 'Activo', '230000.00', '2024-10-10', '2024-10-24');
 
 -- --------------------------------------------------------
 
@@ -71,7 +71,8 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `uso`, `tipo`, `ambientes`, `coorden
 (2, 'Av. Vertientes 1455', 'residencial', 'Wekereke', 45, 'none', '1900000.00', 43490178, 1),
 (4, 'Av. Plazota 987', 'residencial', 'Triplex', 6, 'none', '420000.00', 12303111, 1),
 (5, 'Las Weas 123', 'comercial', 'Triplex', 3, 'none', '310500.00', 12303111, 1),
-(6, 'Av. Testing 212', 'residencial', 'Dúplex', 4, 'none', '150000.00', 23404908, 1);
+(6, 'Av. Testing 212', 'residencial', 'Dúplex', 4, 'none', '150000.00', 23404908, 1),
+(8, 'Los Nogales', 'residencial', 'Departamento', 4, 'none', '150000.00', 12303111, 1);
 
 -- --------------------------------------------------------
 
@@ -93,7 +94,7 @@ CREATE TABLE `inquilinos` (
 --
 
 INSERT INTO `inquilinos` (`id`, `dni`, `nombre`, `apellido`, `telefono`, `email`) VALUES
-(5, 123456, 'Marta', 'Ramirez', '2665789256', 'marsan@gmail.com'),
+(5, 123456, 'Marta', 'Ramírez', '2665789256', 'marsan@gmail.com'),
 (16, 654321, 'Rodrigo', 'Pérez', '2664998899', 'rodri@gmail.com'),
 (17, 90909001, 'Paula', 'Perez', '266718705', 'pp@gmail.com');
 
@@ -131,9 +132,10 @@ CREATE TABLE `propietarios` (
 --
 
 INSERT INTO `propietarios` (`id`, `dni`, `apellido`, `nombre`, `telefono`, `email`) VALUES
-(2, 43490178, 'Rastrilla', 'Lucas', '2664778899', 'mr@gmail.com'),
+(2, 43490178, 'Rastrilla', 'Martin', '2664778899', 'mr@gmail.com'),
 (5, 12303111, 'Tobares', 'Fernando', '2667020202', 'ufa@gmail.com'),
-(7, 23404908, 'Vázquez', 'Pilar', '2654998877', 'pv@gmail.com');
+(7, 23404908, 'Vázquez', 'Pilar', '2654998877', 'pv@gmail.com'),
+(8, 12202124, 'Pagliani', 'Franco', '2667020201', 'fp@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -167,7 +169,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(255) NOT NULL,
   `contrasenia` varchar(255) NOT NULL,
   `Rol` varchar(30) NOT NULL,
-  `avatar` blob DEFAULT NULL
+  `avatar` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -175,10 +177,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `contrasenia`, `Rol`, `avatar`) VALUES
-(11, 'Martin', 'Rastrilla', 'mr@gmail.com', 'vrMlquXbQkWYuRsiMkOjPmsWLmHiRQdf2B0Wrut1vUY=', 'Empleado', NULL),
-(12, 'Pablito', 'Bersia', 'pm@gmail.com', 'vrMlquXbQkWYuRsiMkOjPmsWLmHiRQdf2B0Wrut1vUY=', 'Administrador', NULL),
-(13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', NULL),
-(14, 'Admin', 'Admin', 'admin@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Administrador', NULL);
+(13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', '/Uploads\\avatar_13.jpeg'),
+(14, 'Admin', 'Fort', 'admin@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Administrador', '/Uploads\\avatar_14.jpg');
 
 -- --------------------------------------------------------
 
@@ -267,7 +267,7 @@ ALTER TABLE `contratos`
 -- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilinos`
@@ -279,13 +279,13 @@ ALTER TABLE `inquilinos`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
@@ -297,7 +297,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios_roles`

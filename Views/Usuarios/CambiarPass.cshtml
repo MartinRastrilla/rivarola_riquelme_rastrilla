@@ -1,0 +1,114 @@
+@model rivarola_riquelme_rastrilla.Models.Usuarios
+
+@{
+    ViewData["Title"] = "Cambiar Contraseña";
+    var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+}
+
+<div class="cambio-contraseña-container">
+    <h2>Cambio de Contraseña</h2>
+    <form method="post" action="/Usuarios/CambiarPass">
+        <div class="form-group">
+            <label for="contraseñaActual">Contraseña Actual</label>
+            <input type="password" id="ContraseniaActual" name="ContraseniaActual" class="form-control" required />
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState["ContraseniaActual"]?.Errors.Count > 0)
+            {
+            <span class="text-danger">@ViewData.ModelState["ContraseniaActual"].Errors[0].ErrorMessage</span>
+            }
+        </div>
+        <div class="form-group">
+            <label for="ContraseniaNueva">Nueva Contraseña</label>
+            <input type="password" id="ContraseniaNueva" name="ContraseniaNueva" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label for="confirmarContraseña">Confirmar Contraseña</label>
+            <input type="password" id="confirmarContraseña" name="ConfirmarContraseña" class="form-control" required />
+            <span id="passwordError" class="error-message" style="display: none; color: red;">Las contraseñas no coinciden.</span>
+        </div>
+
+        <div class="action-buttons">
+            <button type="submit" class="btn btn-custom">Guardar</button>
+            <a href="/Usuarios/Perfil/@userId" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<!-- Estilos -->
+<style>
+    .cambio-contraseña-container {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: var(--rojo-principal);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    .btn-custom {
+        background-color: var(--rojo-principal);
+        border-color: var(--rojo-principal);
+        color: white;
+    }
+
+    .btn-custom:hover {
+        background-color: var(--rojo-oscuro);
+        border-color: var(--rojo-oscuro);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ContraseniaNueva = document.getElementById("ContraseniaNueva");
+        const confirmarContraseña = document.getElementById("confirmarContraseña");
+        const passwordError = document.getElementById("passwordError");
+        const guardarBtn = document.getElementById("guardarBtn");
+
+        function validatePasswords() {
+            if (ContraseniaNueva.value !== confirmarContraseña.value) {
+                passwordError.style.display = "block";
+                guardarBtn.disabled = true; // Deshabilitar botón de guardar
+            } else {
+                passwordError.style.display = "none";
+                guardarBtn.disabled = false; // Habilitar botón de guardar
+            }
+        }
+
+        ContraseniaNueva.addEventListener("input", validatePasswords);
+        confirmarContraseña.addEventListener("input", validatePasswords);
+    });
+</script>

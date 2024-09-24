@@ -158,6 +158,25 @@ public class RepositorioUsuarios
         return r;
     }
 
+    public int EditarContrasenia(Usuarios usuario)
+    {
+        int r = -1;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE usuarios SET Contrasenia=@Contrasenia
+            WHERE Id = @Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
+                command.Parameters.AddWithValue("@Id", usuario.Id);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
+
     public int EditarAvatar(Usuarios usuario)
     {
         int r = -1;

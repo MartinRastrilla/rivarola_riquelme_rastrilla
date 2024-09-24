@@ -177,6 +177,88 @@ public class UsuariosController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpPost]
+    [Authorize(Policy = "Empleado")]
+    public async Task<IActionResult> DeleteAvatar()
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+        if (userId == null){
+            return Unauthorized();
+        }
+
+        var user = repo.ObtenerById(int.Parse(userId));
+        user.Avatar = "/Uploads/user_pic.jpg";
+
+        repo.EditarAvatar(user);
+
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.Nombre),
+        new Claim("Id", user.Id.ToString()),
+        new Claim("Avatar", user.Avatar ?? "/Uploads/user_pic.jpg"),  // Ruta al avatar
+        new Claim("Nombre", user.Nombre),
+        new Claim("Apellido", user.Apellido),
+        new Claim(ClaimTypes.Role, user.Rol)
+    };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Crear un nuevo principal de usuario
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true
+        };
+
+        // Actualizar la cookie de autenticación
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+        return RedirectToAction("Index", "Home");
+    }
+    
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult CambiarPass()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Policy = "Empleado")]
+    public async Task<IActionResult> CambiarPass(string ContraseniaActual, string ContraseniaNueva)
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+        if (userId == null){
+            return Unauthorized();
+        }
+
+        var user = repo.ObtenerById(int.Parse(userId));
+        string oldHashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: ContraseniaActual,
+            salt: new byte[10],
+            prf: KeyDerivationPrf.HMACSHA1,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8
+        ));
+
+        if (oldHashed != user.Contrasenia)
+        {
+            ModelState.AddModelError("ContraseniaActual", "La contraseña actual es incorrecta.");
+            return View();
+        }
+
+        user.Contrasenia = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: ContraseniaNueva,
+            salt: new byte[10],
+            prf: KeyDerivationPrf.HMACSHA1,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8
+        ));
+
+        repo.EditarContrasenia(user);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Login", "Usuarios");
+    }
     [HttpGet]
     public IActionResult Login()
     {

@@ -16,6 +16,7 @@
             <input type="file" id="avatarInput" name="avatar" class="avatar-file-input"
                 accept="image/jpeg, image/png" />
         </div>
+        <button type="button" class="btn btn-secondary btn-remove-avatar" id="quitarAvatarBtn">Quitar Avatar</button>
     </div>
 
     <!-- Otros campos de nombre y apellido -->
@@ -34,6 +35,7 @@
         <div class="form-group action-buttons">
             <button type="submit" class="btn btn-custom">Guardar</button>
             <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Cancelar</a>
+            <a href="/Usuarios/cambiarPass" class="btn btn-custom">Cambiar Contraseña</a>
         </div>
     </div>
 </form>
@@ -52,6 +54,22 @@
     .avatar-section {
         margin-right: 20px;
         position: relative;
+    }
+
+    /* Botón de quitar avatar */
+    .btn-remove-avatar {
+        background-color: #6c757d; /* Mantiene el color de btn-secondary */
+        border: none; /* Eliminar bordes */
+        margin-top: 5px;
+        padding: 5px 15px; /* Reducir el tamaño del botón */
+        border-radius: 5px;
+        color: white;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .btn-remove-avatar:hover {
+        background-color: #5a6268; /* Oscurecer el color en hover */
     }
 
     /* Imagen del avatar */
@@ -150,6 +168,9 @@
     }
 </style>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!-- JavaScript -->
 <script>
     document.getElementById('avatarClickArea').addEventListener('click', function () {
@@ -165,5 +186,21 @@
             }
             reader.readAsDataURL(file);
         }
+    });
+
+    $(document).ready(function () {
+        $('#quitarAvatarBtn').click(function (e){
+            e.preventDefault();
+
+            $.ajax({
+                url: '/Usuarios/DeleteAvatar',
+                type: 'POST',
+                success: function (response) {
+                    $('#avatarImage').attr('src', '/Uploads/user_pic.jpg');
+                    alert('Avatar eliminado con éxito.');
+                    location.reload();
+                }
+            });
+        });
     });
 </script>

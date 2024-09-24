@@ -166,6 +166,16 @@
         border-color: #6c757d;
         color: white;
     }
+    .input-error {
+        border: 2px solid red;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
 </style>
 
 
@@ -201,6 +211,33 @@
                     location.reload();
                 }
             });
+        });
+    });
+    $(document).ready(function() {
+        $('form').on('submit', function(event) {
+            var nombre = $('#nombre').val();
+            var apellido = $('#apellido').val();
+            var isValid = true;
+
+            $('.error-message').remove();
+            $('#nombre').removeClass('input-error');
+            $('#apellido').removeClass('input-error');
+            
+            if (nombre.length === 0 || nombre.length > 255) {
+                $('#nombre').addClass('input-error');
+                $('#nombre').after('<div class="error-message">El nombre es obligatorio y no debe exceder los 255 caracteres.</div>');
+                isValid = false;
+            }
+
+            if (apellido.length === 0 || apellido.length > 50) {
+                $('#apellido').addClass('input-error'); 
+                $('#apellido').after('<div class="error-message">El apellido es obligatorio y no debe exceder los 50 caracteres.</div>');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
         });
     });
 </script>

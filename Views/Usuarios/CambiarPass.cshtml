@@ -28,7 +28,7 @@
         </div>
 
         <div class="action-buttons">
-            <button type="submit" class="btn btn-custom">Guardar</button>
+            <button type="submit" class="btn btn-custom" id="guardarBtn">Guardar</button>
             <a href="/Usuarios/Perfil/@userId" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
@@ -111,4 +111,31 @@
         ContraseniaNueva.addEventListener("input", validatePasswords);
         confirmarContraseña.addEventListener("input", validatePasswords);
     });
+    document.addEventListener("DOMContentLoaded", function () {
+    const ContraseniaActual = document.getElementById("ContraseniaActual");
+    const ContraseniaNueva = document.getElementById("ContraseniaNueva");
+    const confirmarContraseña = document.getElementById("confirmarContraseña");
+    const passwordError = document.getElementById("passwordError");
+    const guardarBtn = document.getElementById("guardarBtn");
+
+    function validatePasswords() {
+        if (ContraseniaNueva.value !== confirmarContraseña.value) {
+            passwordError.textContent = "Las contraseñas no coinciden.";
+            passwordError.style.display = "block";
+            guardarBtn.disabled = true;
+        } else if (ContraseniaActual.value === ContraseniaNueva.value) {
+            passwordError.textContent = "La nueva contraseña no puede ser igual a la actual.";
+            passwordError.style.display = "block";
+            guardarBtn.disabled = true;
+        } else {
+            passwordError.style.display = "none";
+            guardarBtn.disabled = false;
+        }
+    }
+
+    ContraseniaNueva.addEventListener("input", validatePasswords);
+    confirmarContraseña.addEventListener("input", validatePasswords);
+    ContraseniaActual.addEventListener("input", validatePasswords);
+});
+
 </script>

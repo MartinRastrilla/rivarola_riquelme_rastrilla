@@ -4,7 +4,7 @@ using rivarola_riquelme_rastrilla.Models;
 
 namespace rivarola_riquelme_rastrilla.Controllers
 {
-    [Authorize(Policy = "Administrador")]
+    [Authorize(Policy = "Empleado")]
     public class TipoController : Controller
     {
         private RepositorioTipo repoTipo = new RepositorioTipo();
@@ -56,6 +56,7 @@ namespace rivarola_riquelme_rastrilla.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "Administrador")]
         public IActionResult Delete(int id)
         {
             var tipo = repoTipo.ObtenerTipo(id);
@@ -67,6 +68,7 @@ namespace rivarola_riquelme_rastrilla.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Policy = "Administrador")]
         public IActionResult DeleteConfirmed(int id)
         {
             repoTipo.BorrarTipo(id);

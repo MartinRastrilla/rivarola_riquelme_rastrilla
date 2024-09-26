@@ -15,9 +15,9 @@
 <table class="table text-center">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Id)</th>
-            <th>@Html.DisplayNameFor(model => model.Contrato_id)</th>
-            <th>@Html.DisplayNameFor(model => model.Fecha_pago)</th>
+            <th>Inquilino</th>
+            <th>Dirección de Inmueble</th>
+            <th>Fecha de Pago</th>
             <th>@Html.DisplayNameFor(model => model.Detalle)</th>
             <th>@Html.DisplayNameFor(model => model.Importe)</th>
             <th>Acciones</th>
@@ -27,13 +27,16 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.Contrato_id)</td>
+                <td>@item.Contrato.Inquilino.Nombre @item.Contrato.Inquilino.Apellido</td>
+                <td>@Html.DisplayFor(modelItem => item.Contrato.Inmueble.Direccion)</td>
                 <td>@Html.DisplayFor(modelItem => item.Fecha_pago)</td>
                 <td>@Html.DisplayFor(modelItem => item.Detalle)</td>
-                <td>@Html.DisplayFor(modelItem => item.Importe)</td>
+                <td>$@Html.DisplayFor(modelItem => item.Importe)</td>
                 <td>
-                    <a href="/Pago/Delete/@item.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a href="/Pago/Delete/@item.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    }
                     <a href="/Pago/Edit/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Pago/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                 </td>

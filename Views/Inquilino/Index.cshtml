@@ -42,7 +42,10 @@
                     @Inquilino.Email
                 </td>
                 <td>
-                    <a href="/Inquilino/Delete/@Inquilino.Dni" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    @if(User.IsInRole("Administrador"))
+                    {
+                        <a href="/Inquilino/Delete/@Inquilino.Dni" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    }
                     <a href="/Inquilino/Editar/@Inquilino.Dni" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Inquilino/Details/@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                 </td>

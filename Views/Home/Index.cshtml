@@ -5,6 +5,8 @@
 <div class="container my-5">
     <div class="row justify-content-center">
         <!-- Panel de Usuarios -->
+        @if(User.IsInRole("Administrador"))
+        {
         <div class="col-md-5 mx-2">
             <a href="/Usuarios" style="text-decoration: none;">
                 <div class="card text-center shadow-lg" style="background-color: var(--blanco); border: 1px solid var(--gris-claro); border-radius: 10px;">
@@ -15,7 +17,7 @@
                 </div>
             </a>
         </div>
-
+        }
         <!-- Panel de Inmobiliaria -->
         <div class="col-md-5 mx-2">
             <a href="/Inquilino" style="text-decoration: none;">

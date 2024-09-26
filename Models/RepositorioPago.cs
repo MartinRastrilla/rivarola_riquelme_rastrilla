@@ -7,36 +7,79 @@ namespace rivarola_riquelme_rastrilla.Models
         string ConnectionString = "Server=localhost;Database=inmobiliaria;User=root;SslMode=none";
 
         public List<Pago> ObtenerTodos()
+{
+    List<Pago> pagos = new List<Pago>();
+
+    using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+    {
+        var query = $@"
+        SELECT 
+            p.{nameof(Pago.Id)} AS id, 
+            p.{nameof(Pago.Contrato_id)} AS contrato_id, 
+            p.fecha_pago AS {nameof(Pago.Fecha_pago)}, 
+            p.{nameof(Pago.Detalle)} AS detalle, 
+            p.{nameof(Pago.Importe)} AS importe, 
+            i.{nameof(Inmueble.Id)} AS inmueble_id, 
+            i.{nameof(Inmueble.Direccion)} AS inmueble_direccion, 
+            inq.{nameof(Inquilino.Dni)} AS inquilino_dni, 
+            inq.{nameof(Inquilino.Nombre)} AS inquilino_nombre, 
+            inq.{nameof(Inquilino.Apellido)} AS inquilino_apellido,
+            inq.{nameof(Inquilino.Email)} AS inquilino_email,
+            inq.{nameof(Inquilino.Telefono)} AS inquilino_telefono
+        FROM pagos p
+        JOIN contratos c ON p.{nameof(Pago.Contrato_id)} = c.{nameof(Contratos.Id)}
+        JOIN inmuebles i ON c.{nameof(Contratos.Inmueble_id)} = i.{nameof(Inmueble.Id)}
+        JOIN inquilinos inq ON c.{nameof(Contratos.Inquilino_dni)} = inq.{nameof(Inquilino.Dni)}";
+
+        using (var command = new MySqlCommand(query, connection))
         {
-            List<Pago> pagos = new List<Pago>();
+            connection.Open();
+            var reader = command.ExecuteReader();
 
-            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            while (reader.Read())
             {
-                var query = $@"SELECT {nameof(Pago.Id)} AS id, {nameof(Pago.Contrato_id)} AS contrato_id, 
-                              fecha_pago AS {nameof(Pago.Fecha_pago)}, {nameof(Pago.Detalle)} AS detalle, 
-                              {nameof(Pago.Importe)} AS importe FROM pagos";
-
-                using (var command = new MySqlCommand(query, connection))
+                var inquilino = new Inquilino
                 {
-                    connection.Open();
-                    var reader = command.ExecuteReader();
+                    Dni = reader.GetInt64("inquilino_dni"),  // Asegúrate de usar el alias de la columna en la consulta SQL
+                    Nombre = reader.GetString("inquilino_nombre"),
+                    Apellido = reader.GetString("inquilino_apellido"),
+                    Email = reader.GetString("inquilino_email"),
+                    Telefono = reader.GetInt64("inquilino_telefono")
+                };
 
-                    while (reader.Read())
-                    {
-                        pagos.Add(new Pago
-                        {
-                            Id = reader.GetInt32(nameof(Pago.Id)),
-                            Contrato_id = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.Contrato_id))) ? null : reader.GetInt32(nameof(Pago.Contrato_id)),
-                            Fecha_pago = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.Fecha_pago))) ? null : reader.GetDateTime(nameof(Pago.Fecha_pago)),
-                            Detalle = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.Detalle))) ? null : reader.GetString(nameof(Pago.Detalle)),
-                            Importe = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.Importe))) ? null : reader.GetDecimal(nameof(Pago.Importe))
-                        });
-                    }
-                    connection.Close();
-                }
-                return pagos;
+                var inmueble = new Inmueble
+                {
+                    Id = reader.GetInt32("inmueble_id"),
+                    Direccion = reader.GetString("inmueble_direccion")
+                };
+
+                var contrato = new Contratos
+                {
+                    Id = reader.GetInt32(nameof(Contratos.Id)),
+                    Inquilino_dni = reader.GetInt64(nameof(Contratos.Inquilino_dni)),
+                    Inmueble_id = reader.GetInt32(nameof(Contratos.Inmueble_id)),
+                    Inquilino = inquilino,
+                    Inmueble = inmueble
+                };
+
+                pagos.Add(new Pago
+                {
+                    Id = reader.GetInt32(nameof(Pago.Id)),
+                    Contrato_id = reader.GetInt32(nameof(Pago.Contrato_id)),
+                    Fecha_pago = reader.GetDateTime(nameof(Pago.Fecha_pago)),
+                    Detalle = reader.GetString(nameof(Pago.Detalle)),
+                    Importe = reader.GetDecimal(nameof(Pago.Importe)),
+                    Contrato = contrato  // Asegúrate de asignar el contrato al pago
+                });
             }
         }
+
+        connection.Close();
+        return pagos;
+    }
+}
+
+
 
         public Pago? ObtenerPorId(int id)
         {

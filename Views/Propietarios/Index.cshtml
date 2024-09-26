@@ -43,7 +43,10 @@
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    <a href="/Propietarios/Delete/@item.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a href="/Propietarios/Delete/@item.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    }
                     <a href="/Propietarios/Edit/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Propietarios/Details/@item.Id" class="me-2"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                     <a asp-controller="Propietarios" asp-action="Inmuebles" asp-route-dni="@item.Dni">

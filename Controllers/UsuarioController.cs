@@ -153,6 +153,8 @@ public class UsuariosController : Controller
         }
         repo.Editar(user);
 
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
         var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, user.Nombre),

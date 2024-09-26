@@ -39,7 +39,10 @@
                 <td>@Html.DisplayFor(modelItem => item.Fecha_inicio)</td>
                 <td>@Html.DisplayFor(modelItem => item.Fecha_fin)</td>
                 <td>
-                    <a href="/Contrato/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a href="/Contrato/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    }
                     <a href="/Contrato/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Contrato/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                 </td>

@@ -1,0 +1,19 @@
+@model rivarola_riquelme_rastrilla.Models.Tipo
+
+@{
+    ViewData["Title"] = "Agregar Tipo";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="AltaTipo" method="post">
+    <div class="form-group">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-custom">Crear Tipo</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

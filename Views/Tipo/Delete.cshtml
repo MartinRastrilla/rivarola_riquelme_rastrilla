@@ -1,0 +1,27 @@
+@model rivarola_riquelme_rastrilla.Models.Tipo
+
+@{
+    ViewData["Title"] = "Eliminar Tipo";
+}
+
+<h2>Eliminar Tipo</h2>
+
+<h3>¿Estás seguro que deseas eliminar este Tipo?</h3>
+<div>
+    <h4>Tipo</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

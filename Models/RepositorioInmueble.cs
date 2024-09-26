@@ -10,9 +10,11 @@ public class RepositorioInmueble
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             var sqlquery = @"
-                SELECT i.id, i.direccion, i.uso, i.tipo, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado,
-                       p.nombre, p.apellido
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                    t.nombre AS tipo_nombre,
+                    p.nombre, p.apellido
                 FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
                 JOIN propietarios p ON i.propietario_dni = p.dni;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
@@ -21,21 +23,20 @@ public class RepositorioInmueble
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    // Lee 'uso' como string y luego intenta convertirlo a enum
                     string usoString = reader.GetString(reader.GetOrdinal("uso"));
                     Inmueble.UsoInmueble usoInmueble = Inmueble.UsoInmueble.Residencial;
 
                     if (!Enum.TryParse(usoString, true, out usoInmueble))
                     {
-                        Console.WriteLine($"Error al convertir el uso '{usoString}' al enum UsoInmueble.");
                         usoInmueble = Inmueble.UsoInmueble.Residencial;
                     }
+
                     inmueble.Add(new Inmueble
                     {
                         Id = reader.GetInt32("id"),
                         Direccion = reader.GetString("direccion"),
                         Uso = usoInmueble,
-                        Tipo = reader.GetString("tipo"),
+                        Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
                         Ambientes = reader.GetInt32("ambientes"),
                         Coordenadas = reader.GetString("coordenadas"),
                         Precio = reader.GetDecimal("precio"),
@@ -47,7 +48,6 @@ public class RepositorioInmueble
                             Apellido = reader.GetString("apellido")
                         }
                     });
-
                 }
                 return inmueble;
             }
@@ -59,43 +59,44 @@ public class RepositorioInmueble
         Inmueble? inmueble = null;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"SELECT id, direccion, uso, tipo, ambientes, coordenadas, precio, propietario_dni, estado FROM inmuebles WHERE id=@Id;";
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                    i.coordenadas, i.precio, i.propietario_dni, i.estado
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                WHERE i.id = @Id;
+            ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@Id", Id);
-                // Se abre la conexión a la base de datos para permitir que el comando SQL se ejecute.
                 connection.Open();
-                // ExecuteReader ejecuta la consulta SQL y devuelve un MySqlDataReader, que se utiliza para leer los datos devueltos por la consulta.
                 using (var reader = command.ExecuteReader())
                 {
-                    // El método reader.Read() lee la primera fila del resultado de la consulta(si existe).
                     if (reader.Read())
                     {
-                        var usoString = reader.GetString("Uso");
+                        var usoString = reader.GetString("uso");
                         Inmueble.UsoInmueble uso;
                         if (!Enum.TryParse(usoString, true, out uso))
                         {
-                            // Manejar el caso en que el valor no se puede convertir
                             throw new ArgumentException($"El valor '{usoString}' no es válido para el enum UsoInmueble.");
                         }
-                        // Si se encuentra un registro, se crea una nueva instancia de Inmueble y se le asignan los valores obtenidos de la base de datos
+
                         inmueble = new Inmueble
                         {
                             Id = reader.GetInt32("id"),
                             Direccion = reader.GetString("direccion"),
                             Uso = uso,
-                            Tipo = reader.GetString("tipo"),
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
                             Ambientes = reader.GetInt32("ambientes"),
                             Coordenadas = reader.GetString("coordenadas"),
                             Precio = reader.GetDecimal("precio"),
                             Propietario_dni = reader.GetInt64("propietario_dni"),
-                            Estado = reader.GetBoolean("estado"),
+                            Estado = reader.GetBoolean("estado")
                         };
                     }
                 }
                 connection.Close();
             }
-
         }
         return inmueble;
     }
@@ -106,13 +107,13 @@ public class RepositorioInmueble
         int r = -1;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"INSERT INTO inmuebles(direccion, uso, tipo, ambientes, coordenadas, precio, propietario_dni, estado) 
-                            VALUES (@direccion, @uso, @tipo, @ambientes, @coordenadas, @precio, @propietario_dni, @estado);";
+            var sqlquery = @"INSERT INTO inmuebles (direccion, uso, tipo_id, ambientes, coordenadas, precio, propietario_dni, estado) 
+                            VALUES (@direccion, @uso, @tipo_id, @ambientes, @coordenadas, @precio, @propietario_dni, @estado);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@direccion", inmueble.Direccion);
                 command.Parameters.AddWithValue("@uso", inmueble.Uso.ToString());
-                command.Parameters.AddWithValue("@tipo", inmueble.Tipo);
+                command.Parameters.AddWithValue("@tipo_id", inmueble.Tipo.Id);  // Aquí se inserta el ID de Tipo
                 command.Parameters.AddWithValue("@ambientes", inmueble.Ambientes);
                 command.Parameters.AddWithValue("@coordenadas", inmueble.Coordenadas);
                 command.Parameters.AddWithValue("@precio", inmueble.Precio);
@@ -125,6 +126,7 @@ public class RepositorioInmueble
         }
         return r;
     }
+
 
     public int BajaInmueble(int Id)
     {
@@ -164,13 +166,16 @@ public class RepositorioInmueble
         int r = -1;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"UPDATE inmuebles SET direccion=@direccion, uso=@uso, tipo=@tipo, ambientes=@ambientes, coordenadas=@coordenadas, precio=@precio, propietario_dni=@propietario_dni WHERE id=@Id;";
+            var sqlquery = @"UPDATE inmuebles 
+                            SET direccion=@direccion, uso=@uso, tipo_id=@tipo_id, ambientes=@ambientes, 
+                                coordenadas=@coordenadas, precio=@precio, propietario_dni=@propietario_dni 
+                            WHERE id=@Id;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@Id", inmueble.Id);
                 command.Parameters.AddWithValue("@direccion", inmueble.Direccion);
                 command.Parameters.AddWithValue("@uso", inmueble.Uso.ToString());
-                command.Parameters.AddWithValue("@tipo", inmueble.Tipo);
+                command.Parameters.AddWithValue("@tipo_id", inmueble.Tipo.Id);  // Se actualiza el tipo por su ID
                 command.Parameters.AddWithValue("@ambientes", inmueble.Ambientes);
                 command.Parameters.AddWithValue("@coordenadas", inmueble.Coordenadas);
                 command.Parameters.AddWithValue("@precio", inmueble.Precio);
@@ -183,62 +188,49 @@ public class RepositorioInmueble
         return r;
     }
 
-public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni)
+    public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni)
     {
         var inmuebles = new List<Inmueble>();
-        try
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            using (MySqlConnection connection = new MySqlConnection(Conexion))
+            connection.Open();
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                    i.coordenadas, i.precio, i.propietario_dni, i.estado
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                WHERE i.propietario_dni = @PropietarioDni;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-                connection.Open();
-                var sqlquery = @"
-                    SELECT i.id, i.direccion, i.uso, i.tipo, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado
-                    FROM inmuebles i
-                    WHERE i.propietario_dni = @PropietarioDni;
-                ";
-
-                using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+                command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
+                using (var reader = command.ExecuteReader())
                 {
-                    // Asegúrate de que el parámetro se está añadiendo correctamente como entero
-                    command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
-
-                    using (var reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        string usoString = reader.GetString("uso");
+                        Inmueble.UsoInmueble usoInmueble;
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
                         {
-                            string usoString = reader.GetString("uso");
-                            Inmueble.UsoInmueble usoInmueble;
-
-                            // Intentamos convertir el valor de la base de datos a enum, ignorando mayúsculas/minúsculas
-                            if (!Enum.TryParse(usoString, true, out usoInmueble))
-                            {
-                                Console.WriteLine($"Error al convertir el uso '{usoString}' al enum UsoInmueble. Asignando valor predeterminado 'Residencial'.");
-                                usoInmueble = Inmueble.UsoInmueble.Residencial; // Valor por defecto si falla la conversión
-                            }
-
-                            inmuebles.Add(new Inmueble
-                            {
-                                Id = reader.GetInt32("id"),
-                                Direccion = reader.GetString("direccion"),
-                                Uso = usoInmueble, // Aquí usamos el valor convertido
-                                Tipo = reader.GetString("tipo"),
-                                Ambientes = reader.GetInt32("ambientes"),
-                                Coordenadas = reader.GetString("coordenadas"),
-                                Precio = reader.GetDecimal("precio"),
-                                Propietario_dni = reader.GetInt64("propietario_dni"),
-                                Estado = reader.GetBoolean("estado")
-                            });
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
                         }
+
+                        inmuebles.Add(new Inmueble
+                        {
+                            Id = reader.GetInt32("id"),
+                            Direccion = reader.GetString("direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                            Estado = reader.GetBoolean("estado")
+                        });
                     }
                 }
             }
-
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error al obtener inmuebles: " + ex.Message);
-        }
-
         return inmuebles;
     }
 

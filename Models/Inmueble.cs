@@ -18,7 +18,10 @@ public class Inmueble
 
 
     public UsoInmueble Uso { get; set; }
-    public string Tipo { get; set; }
+    
+    [ForeignKey("Tipo")]
+    public int TipoId { get; set; }
+    public Tipo Tipo { get; set; }    
     public int Ambientes { get; set; }
     public string Coordenadas { get; set; }
     public decimal Precio { get; set; }

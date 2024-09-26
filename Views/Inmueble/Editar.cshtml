@@ -24,11 +24,15 @@
         </select>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Tipo"></label>
-        <input asp-for="Tipo" class="form-control" />
-        <span asp-validation-for="Tipo" class="text-danger"></span>
-    </div>
+    <label for="Tipo">Tipo</label>
+    <select id="Tipo" name="Tipo.Id" class="form-control">
+        <option value="">Seleccione un tipo</option>
+        @foreach (var tipo in ViewBag.tipos)
+        {
+            <option value="@tipo.Id">@tipo.Nombre</option>
+        }
+    </select>
+
 
     <div class="form-group">
         <label asp-for="Ambientes"></label>

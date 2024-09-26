@@ -10,6 +10,8 @@ public class InmuebleController : Controller
 
     private RepositorioPropietario repoPropietario = new RepositorioPropietario();
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
+    private RepositorioTipo repoTipo = new RepositorioTipo();
+
 
     public InmuebleController(ILogger<InmuebleController> logger)
     {
@@ -29,6 +31,7 @@ public class InmuebleController : Controller
     public IActionResult AltaInmueble()
     {
         ViewBag.propietarios = repoPropietario.ObtenerTodos();
+        ViewBag.tipos = repoTipo.ObtenerTipos();
         return View();
     }
 
@@ -85,6 +88,7 @@ public class InmuebleController : Controller
     {
         var inmueble = repoInmueble.Obtener(Id);
         ViewBag.propietarios = repoPropietario.ObtenerTodos();
+        ViewBag.tipos = repoTipo.ObtenerTipos();
         return View(inmueble);
     }
 

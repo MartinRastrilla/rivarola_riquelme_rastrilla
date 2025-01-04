@@ -11,7 +11,7 @@
 <h3>
     <a href="/Inquilino/AltaInquilino"  class="btn btn-custom">Agregar Inquilino</a>
 </h3>
-<table class="table text-center">
+<table class="table table-striped table-hover text-center">
     <thead>
         <tr>
             <th>Dni</th>
@@ -44,10 +44,10 @@
                 <td>
                     @if(User.IsInRole("Administrador"))
                     {
-                        <a href="/Inquilino/Delete/@Inquilino.Dni" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                        <a href="/Inquilino/Delete?Id=@Inquilino.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                     }
-                    <a href="/Inquilino/Editar/@Inquilino.Dni" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                    <a href="/Inquilino/Details/@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                    <a href="/Inquilino/Editar?Id=@Inquilino.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                    <a href="/Inquilino/Details?Dni=@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                 </td>
             </tr>
         }

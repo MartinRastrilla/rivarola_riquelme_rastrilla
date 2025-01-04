@@ -272,6 +272,12 @@ public class UsuariosController : Controller
     {
         Usuarios? usuario = repo.ObtenerByEmail(Email);
 
+        if (usuario == null)
+        {
+            ViewBag.Error = "Usuario no encontrado";
+            return View("Login");
+        }
+
         string storedPass = usuario.Contrasenia;
         string userRol = usuario.Rol;
         byte[] salt = new byte[10];

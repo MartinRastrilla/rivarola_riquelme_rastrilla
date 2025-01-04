@@ -1,6 +1,7 @@
 namespace rivarola_riquelme_rastrilla.Models;
 public class Inquilino
 {
+    public long Id { get; set; }
     public required long Dni { get; set; }
     public required string Nombre { get; set; }
     public required string Apellido { get; set; }

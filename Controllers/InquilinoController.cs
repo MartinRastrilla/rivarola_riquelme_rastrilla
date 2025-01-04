@@ -20,7 +20,7 @@ public class InquilinoController : Controller
     public IActionResult Index()
     {
 
-        if (User.Identity.IsAuthenticated)
+        if (User?.Identity?.IsAuthenticated == true)
         {
             var lista = repo.ObtenerInquilinos();
             return View(lista);
@@ -43,6 +43,12 @@ public class InquilinoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult AltaInquilino(Inquilino inquilino)
     {
+        Inquilino? inquilinoExistente = repo.Obtener(Dni: inquilino.Dni);
+        if (inquilinoExistente != null)
+        {
+            ViewBag.Error = "Ya existe un inquilino con el Dni ingresado.";
+            return View(inquilino);
+        }
         int r = repo.AltaInquilino(inquilino);
         return RedirectToAction(nameof(Index));
 
@@ -52,14 +58,22 @@ public class InquilinoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Editar(long Id)
     {
-        var inquilino = repo.Obtener(Id);
+        var inquilino = repo.Obtener(Id: Id);
         return View(inquilino);
     }
 
     [HttpPost]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Guardar(Inquilino inquilino)
+    public IActionResult Editar(Inquilino inquilino)
     {
+        Inquilino? inquilinoExistente = repo.Obtener(Dni: inquilino.Dni);
+        Inquilino? inquilinoActual = repo.Obtener(Id: inquilino.Id);
+        if (inquilinoExistente != null && inquilinoExistente.Id != inquilino.Id)
+        {
+            ViewBag.Error = "Ya existe un inquilino con el Dni ingresado.";
+            return View(inquilino);
+        }
+
         repo.EditarInquilino(inquilino);
         return RedirectToAction(nameof(Index));
     }
@@ -83,9 +97,9 @@ public class InquilinoController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Details(long Id)
+    public IActionResult Details(long? Dni = null, long? Id = null)
     {
-        var inquilino = repo.Obtener(Id);
+        var inquilino = repo.Obtener(Dni: Dni, Id: Id);
         if (inquilino == null)
         {
             return NotFound();
@@ -97,7 +111,7 @@ public class InquilinoController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult Delete(long Id)
     {
-        var inquilino = repo.Obtener(Id);
+        var inquilino = repo.Obtener(Id: Id);
         if (inquilino == null)
         {
             return NotFound();

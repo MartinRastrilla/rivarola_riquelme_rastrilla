@@ -14,7 +14,7 @@ public class RepositorioInquilino
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             //query 
-            var sqlquery = @"SELECT Dni, Nombre, Apellido, Telefono, Email FROM inquilinos;";
+            var sqlquery = @"SELECT Id, Dni, Nombre, Apellido, Telefono, Email FROM inquilinos;";
             //Comando para ejecutar la query
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -24,6 +24,7 @@ public class RepositorioInquilino
                 {
                     inquilinos.Add(new Inquilino
                     {
+                        Id = reader.GetInt64("Id"),
                         Dni = reader.GetInt64("Dni"),
                         Nombre = reader.GetString("Nombre"),
                         Apellido = reader.GetString("Apellido"),
@@ -38,19 +39,32 @@ public class RepositorioInquilino
     }
 
     //Obtener solamente un inquilino por Dni
-    public Inquilino? Obtener(long Dni)
+    public Inquilino? Obtener(long? Dni = null, long? Id = null)
     {
+        if (Dni == null && Id == null) {
+            throw new ArgumentException("Debe ingresar un Dni o un Id");
+        }
+
         //variable a la que se le va almacenar el inquilino obtenido
         Inquilino? inquilino = null;
         //conexion a la bd
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             //query 
-            var sqlquery = @"SELECT Dni, Nombre, Apellido, Telefono, Email FROM inquilinos WHERE Dni=@Dni;";
+            var sqlquery = Dni != null
+                ? @"SELECT Id, Dni, Nombre, Apellido, Telefono, Email FROM inquilinos WHERE Dni = @Dni;"
+                : @"SELECT Id, Dni, Nombre, Apellido, Telefono, Email FROM inquilinos WHERE Id = @Id;";
             //Comando para ejecutar la query
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-                command.Parameters.AddWithValue("@Dni", Dni);
+                if (Dni != null)
+                {
+                    command.Parameters.AddWithValue("@Dni", Dni);
+                }
+                else if (Id != null)
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                }
                 connection.Open();
                 using (var reader = command.ExecuteReader())
                 {
@@ -58,6 +72,7 @@ public class RepositorioInquilino
                     {
                         inquilino = new Inquilino
                         {
+                            Id = reader.GetInt64("Id"),
                             Dni = reader.GetInt64("Dni"),
                             Nombre = reader.GetString("Nombre"),
                             Apellido = reader.GetString("Apellido"),
@@ -108,10 +123,11 @@ public class RepositorioInquilino
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             //query 
-            var sqlquery = @"UPDATE inquilinos SET Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email WHERE Dni=@Dni;";
+            var sqlquery = @"UPDATE inquilinos SET Dni=@Dni, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email WHERE Id=@Id;";
             //Comando para ejecutar la query
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Id", inquilino.Id);
                 command.Parameters.AddWithValue("@Dni", inquilino.Dni);
                 command.Parameters.AddWithValue("@Nombre", inquilino.Nombre);
                 command.Parameters.AddWithValue("@Apellido", inquilino.Apellido);

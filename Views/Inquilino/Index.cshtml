@@ -1,8 +1,10 @@
-@model IEnumerable<rivarola_riquelme_rastrilla.Models.Inquilino>
+@model InquilinosViewModel
 
 @{
     ViewData["Title"] = "Listado de personas";
 }
+
+<link href="~/css/InquilinoStyle/paginationInquilino.css" rel="stylesheet" />
 
 <div>
     <div class="display-5">Lista de Inquilinos</div>
@@ -23,33 +25,46 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var Inquilino in Model)
-        {
-            <tr>
-                <td>
-                    @Inquilino.Dni
-                </td>
-                <td>
-                    @Inquilino.Nombre
-                </td>
-                <td>
-                    @Inquilino.Apellido
-                </td>
-                <td>
-                    @Inquilino.Telefono
-                </td>
-                <td>
-                    @Inquilino.Email
-                </td>
-                <td>
-                    @if(User.IsInRole("Administrador"))
-                    {
-                        <a href="/Inquilino/Delete?Id=@Inquilino.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
-                    }
-                    <a href="/Inquilino/Editar?Id=@Inquilino.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                    <a href="/Inquilino/Details?Dni=@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
-                </td>
-            </tr>
-        }
+        @if (Model.Inquilinos != null)
+            @foreach (var Inquilino in Model.Inquilinos)
+            {
+                <tr>
+                    <td>
+                        @Inquilino.Dni
+                    </td>
+                    <td>
+                        @Inquilino.Nombre
+                    </td>
+                    <td>
+                        @Inquilino.Apellido
+                    </td>
+                    <td>
+                        @Inquilino.Telefono
+                    </td>
+                    <td>
+                        @Inquilino.Email
+                    </td>
+                    <td>
+                        @if(User.IsInRole("Administrador"))
+                        {
+                            <a href="/Inquilino/Delete?Id=@Inquilino.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                        }
+                        <a href="/Inquilino/Editar?Id=@Inquilino.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                        <a href="/Inquilino/Details?Dni=@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                    </td>
+                </tr>
+            }
     </tbody>
 </table>
+<div class="pagination">
+    @if (Model.CurrentPage > 1)
+    {
+        <a href="/Inquilino/Index?pagina=1" class="btn btn-custom">Primera</a>
+        <a href="/Inquilino/Index?pagina=@(Model.CurrentPage - 1)" class="btn btn-custom">Anterior</a>
+    }
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a href="/Inquilino/Index?pagina=@(Model.CurrentPage + 1)" class="btn btn-custom">Siguiente</a>
+        <a href="/Inquilino/Index?pagina=@Model.TotalPages" class="btn btn-custom">Última</a>
+    }
+</div>

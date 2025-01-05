@@ -17,13 +17,30 @@ public class InquilinoController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
+        const int pageSize = 5;
+        int totalInquilinos = repo.ObtenerTotalInquilinos();
+        int totalPages = (int)Math.Ceiling((double)totalInquilinos / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+        
+        var inquilinos = repo.ObtenerPaginado(pagina, pageSize);
+
+        var model = new InquilinosViewModel
+        {
+            Inquilinos = inquilinos,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+
 
         if (User?.Identity?.IsAuthenticated == true)
         {
-            var lista = repo.ObtenerInquilinos();
-            return View(lista);
+            //var lista = repo.ObtenerInquilinos();
+            return View(model);
         }
         else
         {

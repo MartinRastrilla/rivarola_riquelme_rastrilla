@@ -38,6 +38,53 @@ public class RepositorioInquilino
         }
     }
 
+    public int ObtenerTotalInquilinos()
+    {
+        int total = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"SELECT COUNT(*) FROM inquilinos;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                connection.Open();
+                total = Convert.ToInt32(command.ExecuteScalar());
+                connection.Close();
+            }
+        }
+        return total;
+    }
+
+    public List<Inquilino> ObtenerPaginado(int page, int pageSize) {
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"SELECT * FROM inquilinos LIMIT @Offset, @PageSize;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+
+                var inquilinos = new List<Inquilino>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        inquilinos.Add(new Inquilino
+                        {
+                            Id = reader.GetInt64("Id"),
+                            Dni = reader.GetInt64("Dni"),
+                            Nombre = reader.GetString("Nombre"),
+                            Apellido = reader.GetString("Apellido"),
+                            Telefono = reader.GetInt64("Telefono"),
+                            Email = reader.GetString("Email"),
+                        });
+                    }
+                }
+                return inquilinos;
+            }
+        }
+    }
+
     //Obtener solamente un inquilino por Dni
     public Inquilino? Obtener(long? Dni = null, long? Id = null)
     {

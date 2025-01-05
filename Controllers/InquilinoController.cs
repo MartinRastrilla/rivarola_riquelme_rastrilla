@@ -19,7 +19,7 @@ public class InquilinoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Index(int pagina = 1)
     {
-        const int pageSize = 5;
+        const int pageSize = 10;
         int totalInquilinos = repo.ObtenerTotalInquilinos();
         int totalPages = (int)Math.Ceiling((double)totalInquilinos / pageSize);
 

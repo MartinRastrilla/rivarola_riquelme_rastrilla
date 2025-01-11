@@ -118,6 +118,7 @@ public class UsuariosController : Controller
             return NotFound();
         }
 
+        //Actualizar datos básicos
         user.Nombre = Nombre;
         user.Apellido = Apellido;
 
@@ -131,10 +132,10 @@ public class UsuariosController : Controller
                 Directory.CreateDirectory(path);
             }
 
-            if (!string.IsNullOrEmpty(user.Avatar))
+            if (!string.IsNullOrEmpty(user.Avatar) && user.Avatar != "/Uploads/user_pic.jpg")
             {
                 string ruteAnterior = Path.Combine(wwwPath, user.Avatar);
-                if (System.IO.File.Exists(ruteAnterior) && ruteAnterior != "/Uploads/user_pic.jpg")
+                if (System.IO.File.Exists(ruteAnterior))
                 {
                     System.IO.File.Delete(ruteAnterior);
                 }
@@ -151,15 +152,20 @@ public class UsuariosController : Controller
             }
             repo.EditarAvatar(user);
         }
-        repo.Editar(user);
+        else
+        {
+            //Si no hay archivo, cambiar datos básicos
+            repo.Editar(user);
+        }
 
+        //Actualizar cookie
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, user.Nombre),
         new Claim("Id", user.Id.ToString()),
-        new Claim("Avatar", user.Avatar ?? "/Uploads/user_pic.jpg"),  // Ruta al avatar
+        new Claim("Avatar", user.Avatar),
         new Claim("Nombre", user.Nombre),
         new Claim("Apellido", user.Apellido),
         new Claim(ClaimTypes.Role, user.Rol)

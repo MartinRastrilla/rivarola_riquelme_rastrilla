@@ -76,7 +76,7 @@ public class RepositorioUsuarios
         Usuarios? usuario = null;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"SELECT Id, Nombre, Apellido, Email, Rol, Contrasenia FROM usuarios WHERE Id = @Id;";
+            var sqlquery = @"SELECT Id, Nombre, Apellido, Email, Rol, Contrasenia, Avatar FROM usuarios WHERE Id = @Id;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@Id", Id);
@@ -93,6 +93,7 @@ public class RepositorioUsuarios
                             Email = reader.GetString("Email"),
                             Rol = reader.GetString("Rol"),
                             Contrasenia = reader.GetString("Contrasenia"),
+                            Avatar = reader.GetString("Avatar"),
                         };
                     }
                 };

@@ -75,6 +75,40 @@ public class RepositorioPropietario
         return propietario;
     }
 
+    public Propietarios? ObtenerPorDni(int dni)
+    {
+        Propietarios? propietario = null;
+
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+        {
+            var query = $@"SELECT {nameof(Propietarios.Id)}, {nameof(Propietarios.Nombre)}, {nameof(Propietarios.Apellido)}, 
+                           {nameof(Propietarios.Dni)}, {nameof(Propietarios.Telefono)}, {nameof(Propietarios.Email)} 
+                           FROM propietarios WHERE Dni = @dni";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@dni", dni);
+                connection.Open();
+
+                var reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    propietario = new Propietarios
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Nombre = reader.GetString("Nombre"),
+                        Apellido = reader.GetString("Apellido"),
+                        Dni = reader.GetInt32("Dni"),
+                        Telefono = reader.GetString("Telefono"),
+                        Email = reader.GetString("Email")
+                    };
+                }
+                connection.Close();
+            }
+        }
+        return propietario;
+    }
+
     public void Editar(Propietarios propietario)
     {
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))

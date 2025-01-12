@@ -67,6 +67,8 @@ public class InquilinoController : Controller
             return View(inquilino);
         }
         int r = repo.AltaInquilino(inquilino);
+        TempData["ToastMessage"] = "Inquilino añadido con éxito.";
+        TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));
 
     }
@@ -92,6 +94,8 @@ public class InquilinoController : Controller
         }
 
         repo.EditarInquilino(inquilino);
+        TempData["ToastMessage"] = "Inquilino editado con éxito.";
+        TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));
     }
 
@@ -103,6 +107,8 @@ public class InquilinoController : Controller
         var result = repo.BorrarInquilino(Dni);
         if (result > 0)
         {
+            TempData["ToastMessage"] = "Inquilino eliminado con éxito.";
+            TempData["ToastType"] = "danger";
             return RedirectToAction(nameof(Index));
         }
         else

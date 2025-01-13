@@ -38,7 +38,57 @@ public class RepositorioPropietario
         }
         return propietarios;
 
+        }
     }
+
+    public int ObtenerTotalPropietarios()
+    {
+        int totalPropietarios = 0;
+
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+        {
+            var query = $@"SELECT COUNT(*) FROM propietarios";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                connection.Open();
+                totalPropietarios = Convert.ToInt32(command.ExecuteScalar());
+                connection.Close();
+            }
+        }
+        return totalPropietarios;
+    }
+
+    public List<Propietarios> ObtenerPaginado(int page, int pageSize)
+    {
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+        {
+            connection.Open();
+            var sqlquery = @"SELECT * FROM propietarios LIMIT @Offset, @PageSize;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+
+                var propietarios = new List<Propietarios>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        propietarios.Add(new Propietarios
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Nombre = reader.GetString("Nombre"),
+                            Apellido = reader.GetString("Apellido"),
+                            Dni = reader.GetInt32("Dni"),
+                            Telefono = reader.GetString("Telefono"),
+                            Email = reader.GetString("Email")
+                        });
+                    }
+                    return propietarios;
+                }
+            }
+        }
     }
 
     public Propietarios? ObtenerPorId(int id)

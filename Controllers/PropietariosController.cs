@@ -18,10 +18,32 @@ public class PropietariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
-        var lista = repo.ObtenerTodos();
-        return View(lista);
+        const int pageSize = 10;
+        int totalPropietarios = repo.ObtenerTotalPropietarios();
+        int totalPages = (int)Math.Ceiling((double)totalPropietarios / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var propietarios = repo.ObtenerPaginado(pagina, pageSize);
+
+        var model = new PropietarioViewModel
+        {
+            Propietarios = propietarios,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 
     [HttpGet]

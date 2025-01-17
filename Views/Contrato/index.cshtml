@@ -12,6 +12,52 @@
     <a href="/Contrato/AltaContrato" class="btn btn-custom">Crear Contrato</a>
 </p>
 
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarFechaModal">
+    Filtrar por Fecha
+</button>
+
+<!-- Modal de Bootstrap -->
+<div class="modal fade" id="filtrarFechaModal" tabindex="-1" aria-labelledby="filtrarFechaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtrarFechaModalLabel">Filtrar por Fecha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Cuerpo del modal -->
+            <div class="modal-body">
+                <form asp-action="FiltrarFecha" method="get" onsubmit="return validarFechas()">
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="fechaInicio">Fecha de Inicio</label>
+                            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="@ViewData["fechaInicio"]" />
+                        </div>
+                        <div class="col">
+                            <label for="fechaFin">Fecha de Finalización</label>
+                            <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="@ViewData["fechaFin"]" />
+                        </div>
+                        <div class="col align-self-end mt-3">
+                            <button type="submit" class="btn btn-custom">Filtrar</button>
+                        </div>
+                    </div>
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+                </form>
+            </div>
+            <!-- Pie del modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table class="table text-center">
     <thead>
         <tr>

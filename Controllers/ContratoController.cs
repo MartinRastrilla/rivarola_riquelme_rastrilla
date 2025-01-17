@@ -101,4 +101,21 @@ public class ContratoController : Controller
         repo.Guardar(contrato);
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult FiltrarFecha(DateTime? fechaInicio, DateTime? fechaFin)
+    {
+        if(!fechaInicio.HasValue && !fechaFin.HasValue) 
+        {
+            TempData["Error"] = "Debe seleccionar al menos una fecha de inicio o fecha de finalización.";
+            return RedirectToAction("index");
+
+        }
+        var contratos = repo.ObtenerContratosPorFecha(fechaInicio, fechaFin);
+        ViewData["fechaInicio"] = fechaInicio?.ToString("dd-MM-yyyy");
+        ViewData["fechaFin"] = fechaFin?.ToString("dd-MM-yyyy");
+        return View("index",contratos);
+
+    }
 }

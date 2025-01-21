@@ -23,7 +23,11 @@ public class InmuebleController : Controller
     public IActionResult Index()
     {
         var lista = repoInmueble.ObtenerInmueble();
-        return View(lista);
+        var tipos = repoTipo.ObtenerTipos();
+        ViewBag.Tipos = tipos;
+        ViewBag.Inmuebles = lista;
+        
+        return View();
     }
 
     [HttpGet]
@@ -114,6 +118,85 @@ public class InmuebleController : Controller
         return View(inmueble);
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult FiltrarTipo(int tipoInmueble)
+    {
+        if (tipoInmueble == 0) return RedirectToAction("Index");
 
+        var inmueble = repoInmueble.FiltrarTipo(tipoInmueble);
 
+        if (inmueble == null || !inmueble.Any())
+        {
+            TempData["Error"] = $"No se encontraron propiedades.";
+            return RedirectToAction("Index");
+        }
+        var tipos = repoTipo.ObtenerTipos();
+        ViewBag.Tipos = tipos;
+        ViewBag.Inmuebles = inmueble; // Usamos ViewBag para pasar los inmuebles
+        return View("Index"); // Volver a la vista principal
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult FiltrarPrecio(decimal? precioMin, decimal? precioMax)
+    {
+        if (!precioMin.HasValue) precioMin = 0;
+        if (!precioMax.HasValue) precioMax = decimal.MaxValue;
+
+        var inmueble = repoInmueble.FiltrarPrecio(precioMin.Value, precioMax.Value);
+
+        if (inmueble == null || !inmueble.Any())
+        {
+            TempData["Error"] = $"No se encontraron inmuebles en el rango de precios especificado.";
+            return RedirectToAction("Index");
+        }
+        var tipos = repoTipo.ObtenerTipos();
+        ViewBag.Tipos = tipos;
+        ViewBag.Inmuebles = inmueble; // Usamos ViewBag para pasar los inmuebles
+        return View("Index"); // Volver a la vista principal
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult FiltrarUso(string usoInmueble)
+    {
+        if (string.IsNullOrEmpty(usoInmueble)) return RedirectToAction("Index");
+
+        var inmueble = repoInmueble.FiltrarUso(usoInmueble);
+
+        if (inmueble == null || !inmueble.Any())
+        {
+            TempData["Error"] = $"No se encontraron inmuebles con el uso especificado.";
+            return RedirectToAction("Index");
+        }
+        
+        var tipos = repoTipo.ObtenerTipos();
+        ViewBag.Tipos = tipos;
+
+        ViewBag.Inmuebles = inmueble; // Usamos ViewBag para pasar los inmuebles
+        return View("Index"); // Volver a la vista principal
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult FiltrarAmbientes(int? ambientes)
+    {
+        if (!ambientes.HasValue)
+        {
+            ambientes = 0;
+        }
+
+        var inmuebles = repoInmueble.FiltrarAmbientes(ambientes.Value);
+
+        if (inmuebles == null || !inmuebles.Any())
+        {
+            TempData["Error"] = $"No se encontraron inmuebles con el número de ambientes especificado.";
+            return RedirectToAction("Index");
+        }
+        var tipos = repoTipo.ObtenerTipos();
+        ViewBag.Tipos = tipos;
+        ViewBag.Inmuebles = inmuebles; // Usamos ViewBag para pasar los inmuebles
+        return View("Index"); // Volver a la vista principal
+    }
 }

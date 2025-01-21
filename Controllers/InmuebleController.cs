@@ -37,11 +37,21 @@ public class InmuebleController : Controller
 
     [HttpPost]
     [Authorize(Policy = "Empleado")]
-    public IActionResult AltaInmueble(Inmueble Inmueble)
+    public IActionResult AltaInmueble(Inmueble Inmueble, int propietario_dni)
     {
+        Propietarios? propietario = repoPropietario.ObtenerPorDni(propietario_dni);
+        if (propietario == null)
+        {
+            ViewBag.Error = "No se encontró el propietario con el DNI ingresado.";
+            ViewBag.propietarios = repoPropietario.ObtenerTodos();
+            ViewBag.tipos = repoTipo.ObtenerTipos();
+            return View(Inmueble);
+        }
         bool estado = Request.Form["Estado"] == "true";
         Inmueble.Estado = estado;
         int r = repoInmueble.AltaInmueble(Inmueble);
+        TempData["ToastMessage"] = "Inmueble agregado con exito";
+        TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));
     }
 
@@ -63,6 +73,8 @@ public class InmuebleController : Controller
     public IActionResult DeleteConfirmed(int Id)
     {
         repoInmueble.BajaInmueble(Id);
+        TempData["ToastMessage"] = "Inmueble eliminado con exito";
+        TempData["ToastType"] = "danger";
         return RedirectToAction(nameof(Index));
     }
 
@@ -70,7 +82,7 @@ public class InmuebleController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult Baja(int Id)
     {
-        var result = repoInmueble.BajaInmueble(Id);
+        var result = repoInmueble.DesactivarInmueble(Id);
         return RedirectToAction(nameof(Index));
     }
 
@@ -89,16 +101,27 @@ public class InmuebleController : Controller
         var inmueble = repoInmueble.Obtener(Id);
         ViewBag.propietarios = repoPropietario.ObtenerTodos();
         ViewBag.tipos = repoTipo.ObtenerTipos();
+        ViewBag.inmueble = inmueble;
         return View(inmueble);
     }
 
 
     [HttpPost]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Guardar(Inmueble inmueble)
+    public IActionResult Guardar(Inmueble inmueble, int propietario_dni)
     {
-
+        Propietarios? propietario = repoPropietario.ObtenerPorDni(propietario_dni);
+        if (propietario == null)
+        {
+            ViewBag.Error = "No se encontró el propietario con el DNI ingresado.";
+            ViewBag.propietarios = repoPropietario.ObtenerTodos();
+            ViewBag.tipos = repoTipo.ObtenerTipos();
+            ViewBag.inmueble = inmueble;
+            return View("Editar",inmueble);
+        }
         repoInmueble.GuardarInmueble(inmueble);
+        TempData["ToastMessage"] = "Inmueble editado con exito";
+        TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));
     }
 

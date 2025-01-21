@@ -4,65 +4,68 @@
     ViewData["Title"] = "Agregar Inmueble";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="w-75 mx-auto">@ViewData["Title"]</h1>
 
-<form asp-action="AltaInmueble" method="post">
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+
+<form asp-action="AltaInmueble" class="w-75 mx-auto" method="post">
     <div class="form-group">
-        <label asp-for="Direccion"></label>
-        <input asp-for="Direccion" class="form-control" />
-        <span asp-validation-for="Direccion" class="text-danger"></span>
+        <label asp-for="Direccion" class="control-label"></label>
+        <input asp-for="Direccion" class="form-control" required placeholder="Ej: Av. San Martín 123"/>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mt-3">
         <label asp-for="Uso"></label>
-        <select asp-for="Uso" class="form-control">
+        <select asp-for="Uso" class="form-control" required>
             <option value="Comercial">Comercial</option>
             <option value="Residencial">Residencial</option>
         </select>
-        <span asp-validation-for="Uso" class="text-danger"></span>
     </div>
-
-    <label for="Tipo">Tipo</label>
-    <select id="Tipo" name="Tipo.Id" class="form-control">
-        <option value="">Seleccione un tipo</option>
-        @foreach (var tipo in ViewBag.tipos)
-        {
-            <option value="@tipo.Id">@tipo.Nombre</option>
-        }
-    </select>
-
-    <div class="form-group">
+    <div class="form-group mt-3">
+        <label for="Tipo">Tipo</label>
+        <select id="Tipo" name="Tipo.Id" class="form-control" required>
+            <option value="">Seleccione un tipo</option>
+            @foreach (var tipo in ViewBag.tipos)
+            {
+                <option value="@tipo.Id">@tipo.Nombre</option>
+            }
+        </select>
+    </div>
+    <div class="form-group mt-3">
         <label asp-for="Ambientes"></label>
-        <input asp-for="Ambientes" class="form-control" type="number" />
-        <span asp-validation-for="Ambientes" class="text-danger"></span>
+        <input asp-for="Ambientes" class="form-control" required placeholder="Sólo números (1-99). Ej: 3"
+        oninput="this.value = this.value.replace(/[^0-9]/g, ''); if (this.value.length > 2) this.value = this.value.slice(0, 2);"/>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Coordenadas"></label>
-        <input asp-for="Coordenadas" class="form-control" />
-        <span asp-validation-for="Coordenadas" class="text-danger"></span>
+    <div class="form-group mt-3">
+        <label asp-for="Coordenadas" class="control-label"></label>
+        <input asp-for="Coordenadas" class="form-control" required/>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Precio"></label>
-        <input asp-for="Precio" class="form-control" type="number" step="0.01" />
-        <span asp-validation-for="Precio" class="text-danger"></span>
+    <div class="form-group mt-3">
+        <label asp-for="Precio" class="control-label"></label>
+        <input asp-for="Precio" class="form-control" required placeholder="Sólo números enteros o decimales. Ej: 1500 | 25000,35"
+        oninput="this.value = this.value.replace(/[^0-9,]/g, '').replace(/(,.*),/g,'$1');"/>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Propietario_dni">Propietario</label>
-        <input list="propietarios" asp-for="Propietario_dni" class="form-control" type="number" />
+    <div class="form-group mt-3">
+        <label asp-for="Propietario_dni" class="control-label">Propietario (DNI)</label>
+        <input list="propietarios" asp-for="Propietario_dni" class="form-control" required placeholder="Sólo números(8 digitos). Ej: 12345678"
+        oninput="this.value = this.value.replace(/[^0-9]/g, ''); if (this.value.length > 8) this.value = this.value.slice(0, 8);" />
         <datalist id="propietarios">
             @foreach (var propietario in ViewBag.Propietarios)
             {
-                <option value="@propietario.Dni">@propietario.Nombre</option>
+                <option value="@propietario.Dni">@propietario.Nombre @propietario.Apellido</option>
             }
         </datalist>
-        <span asp-validation-for="Propietario_dni" class="text-danger"></span>
     </div>
 
-
-
-    <br>
-    <button type="submit" class="btn btn-custom">Crear Inmueble</button>
+    <button type="submit" class="btn btn-custom mt-3">Crear Inmueble</button>
 </form>
+
+<script src="~/js/InmuebleScript/inmuebleValidation.js"></script>

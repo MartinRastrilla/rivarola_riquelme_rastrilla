@@ -133,7 +133,7 @@ public class RepositorioInmueble
         int r = -1;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"UPDATE inmuebles SET estado=0 WHERE id=@Id;";
+            var sqlquery = @"DELETE FROM inmuebles WHERE id=@Id;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@Id", Id);
@@ -145,6 +145,22 @@ public class RepositorioInmueble
         return r;
     }
 
+    public int DesactivarInmueble(int Id)
+    {
+        int r = -1;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE inmuebles SET estado=0 WHERE id=@Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Id", Id);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
     public int ActivarInmueble(int Id)
     {
         int r = -1;

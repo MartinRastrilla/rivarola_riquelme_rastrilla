@@ -1,8 +1,10 @@
-@model IEnumerable<rivarola_riquelme_rastrilla.Models.Inmueble>
+@model InmuebleViewModel
 
 @{
     ViewData["Title"] = "Inmuebles";
 }
+
+<link href="~/css/pagination.css" rel="stylesheet" />
 
 <div>
     <h1 class="display-4">Lista de Inmuebles</h1>
@@ -15,19 +17,20 @@
 <table class="table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Direccion)</th>
+            <th>Direccion</th>
             <th>Propietario</th>
-            <th>@Html.DisplayNameFor(model => model.Uso)</th>
-            <th>@Html.DisplayNameFor(model => model.Tipo)</th>
-            <th>@Html.DisplayNameFor(model => model.Ambientes)</th>
-            <th>@Html.DisplayNameFor(model => model.Precio)</th>
-            <th>@Html.DisplayNameFor(model => model.Estado)</th>
+            <th>Uso</th>
+            <th>Tipo</th>
+            <th>Ambientes</th>
+            <th>Precio</th>
+            <th>Estado</th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
+        @if (Model.Inmuebles != null)
+            @foreach (var item in Model.Inmuebles)
+            {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Direccion)
@@ -69,6 +72,37 @@
         }
     </tbody>
 </table>
+
+<div class="pagination">
+    <!-- Botón "Primera página" -->
+    @if (Model.CurrentPage > 1)
+    {
+        <a href="/Inmueble/Index?pagina=1" class="btn btn-custom">Primera</a>
+    }
+
+    <!-- Páginas dinámicas -->
+    @{
+        int startPage = Math.Max(1, Model.CurrentPage - 1);
+        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 1);
+
+        for (int i = startPage; i <= endPage; i++)
+        {
+            if (i == Model.CurrentPage)
+            {
+                <span class="btn btn-custom active">@i</span>
+            }
+            else
+            {
+                <a href="/Inmueble/Index?pagina=@i" class="btn btn-custom">@i</a>
+            }
+        }
+    }
+    <!-- Botón "Última página" -->
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a href="/Inmueble/Index?pagina=@Model.TotalPages" class="btn btn-custom">Última</a>
+    }
+</div>
 
 <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
     <div id="toastContainer"></div>

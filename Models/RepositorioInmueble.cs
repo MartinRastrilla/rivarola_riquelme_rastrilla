@@ -54,6 +54,76 @@ public class RepositorioInmueble
         }
     }
 
+    public int ObtenerTotalInmuebles()
+    {
+        int totalInmuebles = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = "SELECT COUNT(*) FROM inmuebles";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                connection.Open();
+                totalInmuebles = Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+        return totalInmuebles;
+    }
+
+    public List<Inmueble> ObtenerPaginado(int page, int pageSize)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            //var sqlquery = @"SELECT * FROM inmuebles LIMIT @Offset, @PageSize;";
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                    t.nombre AS tipo_nombre,
+                    p.nombre, p.apellido
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                LIMIT @Offset, @PageSize;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+
+                var inmuebles = new List<Inmueble>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string usoString = reader.GetString(reader.GetOrdinal("uso"));
+                        Inmueble.UsoInmueble usoInmueble = Inmueble.UsoInmueble.Residencial;
+
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
+                        {
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
+                        }
+                        inmuebles.Add(new Inmueble
+                        {
+                            Id = reader.GetInt32("id"),
+                            Direccion = reader.GetString("direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                            Estado = reader.GetBoolean("estado"),
+                            Propietario = new Propietarios
+                            {
+                                Nombre = reader.GetString("nombre"),
+                                Apellido = reader.GetString("apellido")
+                            }
+                        });
+                    }
+                    return inmuebles;
+                }
+            }
+        }
+    }
     public Inmueble? Obtener(int Id)
     {
         Inmueble? inmueble = null;

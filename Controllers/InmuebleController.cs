@@ -20,10 +20,32 @@ public class InmuebleController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
-        var lista = repoInmueble.ObtenerInmueble();
-        return View(lista);
+        const int pageSize = 10;
+        int totalInmuebles = repoInmueble.ObtenerTotalInmuebles();
+        int totalPages = (int)Math.Ceiling((double)totalInmuebles / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var inmuebles = repoInmueble.ObtenerPaginado(pagina, pageSize);
+
+        var model = new InmuebleViewModel
+        {
+            Inmuebles = inmuebles,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 
     [HttpGet]

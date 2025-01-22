@@ -15,7 +15,8 @@ public class RepositorioInmueble
                     p.nombre, p.apellido
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
-                JOIN propietarios p ON i.propietario_dni = p.dni;
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                WHERE i.estado = 1;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -320,5 +321,228 @@ public class RepositorioInmueble
         return inmuebles;
     }
 
-    
+    public List<Inmueble> FiltrarTipo(int tipo)
+    {
+        var inmuebles = new List<Inmueble>();
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                    i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                    p.nombre AS propietario_nombre, p.apellido AS propietario_apellido
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                WHERE i.tipo_id = @tipo AND i.estado = 1;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@tipo", tipo);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string usoString = reader.GetString("uso");
+                        Inmueble.UsoInmueble usoInmueble;
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
+                        {
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
+                        }
+
+                        inmuebles.Add(new Inmueble
+                        {
+                            Id = reader.GetInt32("id"),
+                            Direccion = reader.GetString("direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                            Estado = reader.GetBoolean("estado"),
+
+                            Propietario = new Propietarios
+                            {
+                                Dni = (int)reader.GetInt32("propietario_dni"),
+                                Nombre = reader.GetString("propietario_nombre"),
+                                Apellido = reader.GetString("propietario_apellido")
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        return inmuebles;
+    }
+
+    public List<Inmueble> FiltrarPrecio(decimal precioMin, decimal precioMax)
+    {
+        var inmuebles = new List<Inmueble>();
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                    i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                    p.nombre AS propietario_nombre, p.apellido AS propietario_apellido
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                WHERE i.estado = 1 AND i.precio BETWEEN @precioMin AND @precioMax;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@precioMin", precioMin);
+                command.Parameters.AddWithValue("@precioMax", precioMax);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string usoString = reader.GetString("uso");
+                        Inmueble.UsoInmueble usoInmueble;
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
+                        {
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
+                        }
+
+                        inmuebles.Add(new Inmueble
+                        {
+                            Id = reader.GetInt32("id"),
+                            Direccion = reader.GetString("direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                            Estado = reader.GetBoolean("estado"),
+
+                            Propietario = new Propietarios
+                            {
+                                Dni = (int)reader.GetInt32("propietario_dni"),
+                                Nombre = reader.GetString("propietario_nombre"),
+                                Apellido = reader.GetString("propietario_apellido")
+                            }
+                        });
+                    }
+
+                }
+            }
+        }
+        return inmuebles;
+    }
+
+    public List<Inmueble> FiltrarUso(String uso)
+    {
+        var inmuebles = new List<Inmueble>();
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                    i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                    p.nombre AS propietario_nombre, p.apellido AS propietario_apellido
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                WHERE i.uso = @uso AND i.estado = 1;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@uso", uso);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string usoString = reader.GetString("uso");
+                        Inmueble.UsoInmueble usoInmueble;
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
+                        {
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
+                        }
+
+                        inmuebles.Add(new Inmueble
+                        {
+                            Id = reader.GetInt32("id"),
+                            Direccion = reader.GetString("direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                            Estado = reader.GetBoolean("estado"),
+
+                            Propietario = new Propietarios
+                            {
+                                Dni = (int)reader.GetInt32("propietario_dni"),
+                                Nombre = reader.GetString("propietario_nombre"),
+                                Apellido = reader.GetString("propietario_apellido")
+                            }
+                        });
+                    }
+
+                }
+            }
+        }
+        return inmuebles;
+    }
+
+    public List<Inmueble> FiltrarAmbientes(int ambientes)
+    {
+        //Console.WriteLine($"Filtrando por ambientes: {ambientes}");
+        var inmuebles = new List<Inmueble>();
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"
+                SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                    i.coordenadas, i.precio, i.propietario_dni, i.estado,
+                    p.nombre AS propietario_nombre, p.apellido AS propietario_apellido
+                FROM inmuebles i
+                JOIN tipos t ON i.tipo_id = t.id
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                WHERE i.ambientes = @ambientes AND i.estado = 1;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@ambientes", ambientes);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string usoString = reader.GetString("uso");
+                        Inmueble.UsoInmueble usoInmueble;
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
+                        {
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
+                        }
+
+                        inmuebles.Add(new Inmueble
+                        {
+                            Id = reader.GetInt32("id"),
+                            Direccion = reader.GetString("direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                            Estado = reader.GetBoolean("estado"),
+
+                            Propietario = new Propietarios
+                            {
+                                Dni = (int)reader.GetInt32("propietario_dni"),
+                                Nombre = reader.GetString("propietario_nombre"),
+                                Apellido = reader.GetString("propietario_apellido")
+                            }
+                        });
+                    }
+
+                }
+            }
+        }
+        return inmuebles;
+    }
 }

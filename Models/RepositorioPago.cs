@@ -1,18 +1,18 @@
 using MySql.Data.MySqlClient;
 
-namespace rivarola_riquelme_rastrilla.Models
-{
+namespace rivarola_riquelme_rastrilla.Models;
+
     public class RepositorioPago
     {
         string ConnectionString = "Server=localhost;Database=inmobiliaria;User=root;SslMode=none";
 
         public List<Pago> ObtenerTodos()
-{
-    List<Pago> pagos = new List<Pago>();
+        {
+            List<Pago> pagos = new List<Pago>();
 
-    using (MySqlConnection connection = new MySqlConnection(ConnectionString))
-    {
-        var query = $@"
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                var query = $@"
         SELECT 
             p.{nameof(Pago.Id)} AS id, 
             p.{nameof(Pago.Contrato_id)} AS contrato_id, 
@@ -31,53 +31,53 @@ namespace rivarola_riquelme_rastrilla.Models
         JOIN inmuebles i ON c.{nameof(Contratos.Inmueble_id)} = i.{nameof(Inmueble.Id)}
         JOIN inquilinos inq ON c.{nameof(Contratos.Inquilino_dni)} = inq.{nameof(Inquilino.Dni)}";
 
-        using (var command = new MySqlCommand(query, connection))
-        {
-            connection.Open();
-            var reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                var inquilino = new Inquilino
+                using (var command = new MySqlCommand(query, connection))
                 {
-                    Dni = reader.GetInt64("inquilino_dni"),  // Asegúrate de usar el alias de la columna en la consulta SQL
-                    Nombre = reader.GetString("inquilino_nombre"),
-                    Apellido = reader.GetString("inquilino_apellido"),
-                    Email = reader.GetString("inquilino_email"),
-                    Telefono = reader.GetInt64("inquilino_telefono")
-                };
+                    connection.Open();
+                    var reader = command.ExecuteReader();
 
-                var inmueble = new Inmueble
-                {
-                    Id = reader.GetInt32("inmueble_id"),
-                    Direccion = reader.GetString("inmueble_direccion")
-                };
+                    while (reader.Read())
+                    {
+                        var inquilino = new Inquilino
+                        {
+                            Dni = reader.GetInt64("inquilino_dni"),  // Asegúrate de usar el alias de la columna en la consulta SQL
+                            Nombre = reader.GetString("inquilino_nombre"),
+                            Apellido = reader.GetString("inquilino_apellido"),
+                            Email = reader.GetString("inquilino_email"),
+                            Telefono = reader.GetInt64("inquilino_telefono")
+                        };
 
-                var contrato = new Contratos
-                {
-                    Id = reader.GetInt32(nameof(Contratos.Id)),
-                    Inquilino_dni = reader.GetInt64(nameof(Contratos.Inquilino_dni)),
-                    Inmueble_id = reader.GetInt32(nameof(Contratos.Inmueble_id)),
-                    Inquilino = inquilino,
-                    Inmueble = inmueble
-                };
+                        var inmueble = new Inmueble
+                        {
+                            Id = reader.GetInt32("inmueble_id"),
+                            Direccion = reader.GetString("inmueble_direccion")
+                        };
 
-                pagos.Add(new Pago
-                {
-                    Id = reader.GetInt32(nameof(Pago.Id)),
-                    Contrato_id = reader.GetInt32(nameof(Pago.Contrato_id)),
-                    Fecha_pago = reader.GetDateTime(nameof(Pago.Fecha_pago)),
-                    Detalle = reader.GetString(nameof(Pago.Detalle)),
-                    Importe = reader.GetDecimal(nameof(Pago.Importe)),
-                    Contrato = contrato  // Asegúrate de asignar el contrato al pago
-                });
+                        var contrato = new Contratos
+                        {
+                            Id = reader.GetInt32(nameof(Contratos.Id)),
+                            Inquilino_dni = reader.GetInt64(nameof(Contratos.Inquilino_dni)),
+                            Inmueble_id = reader.GetInt32(nameof(Contratos.Inmueble_id)),
+                            Inquilino = inquilino,
+                            Inmueble = inmueble
+                        };
+
+                        pagos.Add(new Pago
+                        {
+                            Id = reader.GetInt32(nameof(Pago.Id)),
+                            Contrato_id = reader.GetInt32(nameof(Pago.Contrato_id)),
+                            Fecha_pago = reader.GetDateTime(nameof(Pago.Fecha_pago)),
+                            Detalle = reader.GetString(nameof(Pago.Detalle)),
+                            Importe = reader.GetDecimal(nameof(Pago.Importe)),
+                            Contrato = contrato  // Asegúrate de asignar el contrato al pago
+                        });
+                    }
+                }
+
+                connection.Close();
+                return pagos;
             }
         }
-
-        connection.Close();
-        return pagos;
-    }
-}
 
 
 
@@ -158,6 +158,27 @@ namespace rivarola_riquelme_rastrilla.Models
             }
         }
 
+        public void NuevoPago(Pago pago)
+        {
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                var query = $@"INSERT INTO pagos ({nameof(Pago.Contrato_id)}, fecha_pago, 
+                                  {nameof(Pago.Detalle)}, {nameof(Pago.Importe)}) 
+                                  VALUES (@{nameof(Pago.Contrato_id)}, @{nameof(Pago.Fecha_pago)}, 
+                                  @{nameof(Pago.Detalle)}, @{nameof(Pago.Importe)})";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue($"@{nameof(Pago.Contrato_id)}", pago.Contrato_id);
+                    command.Parameters.AddWithValue($"@{nameof(Pago.Fecha_pago)}", pago.Fecha_pago);
+                    command.Parameters.AddWithValue($"@{nameof(Pago.Detalle)}", pago.Detalle);
+                    command.Parameters.AddWithValue($"@{nameof(Pago.Importe)}", pago.Importe);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
+
         public void Eliminar(int id)
         {
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
@@ -172,5 +193,7 @@ namespace rivarola_riquelme_rastrilla.Models
                 }
             }
         }
+        
     }
-}
+    
+

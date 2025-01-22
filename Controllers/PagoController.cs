@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Iana;
 using rivarola_riquelme_rastrilla.Models;
 
 namespace rivarola_riquelme_rastrilla.Controllers;
@@ -47,7 +48,7 @@ public class PagoController : Controller
         return View(pago);
     }
 
-    
+
     [HttpPost, ActionName("Delete")]
     [Authorize(Policy = "Administrador")]
     public IActionResult DeleteConfirmed(int id)
@@ -84,7 +85,7 @@ public class PagoController : Controller
     }
 
     public IActionResult Crear()
-    {        
+    {
         ViewBag.Contratos = repositorioContrato.ObtenerContratos();
         return View();
     }
@@ -101,4 +102,31 @@ public class PagoController : Controller
         return View(pago);
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult NuevoPago(int id)
+    {
+        var pago = repo.ObtenerPorId(id);
+        if (pago == null)
+        {
+            return NotFound("pago No encontrado");
+        }
+
+        var NuevoPago = new Pago();
+        NuevoPago.Contrato_id = pago.Contrato_id;
+        return View("NuevoPago", NuevoPago);
+    }
+
+    [HttpPost]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult NuevoPago(Pago pago)
+    {
+        // Console.WriteLine($"Contrato_id: {pago.Contrato_id}, Fecha_pago: {pago.Fecha_pago}, Detalle: {pago.Detalle}, Importe: {pago.Importe}");
+        if (!ModelState.IsValid || pago == null)
+        {
+            return View(pago);
+        }
+        repo.NuevoPago(pago);
+        return RedirectToAction(nameof(Index));
+    }
 }

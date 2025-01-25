@@ -11,7 +11,9 @@
 </div>
 
 <p>
-    <a asp-action="AltaInmueble" class="btn btn-custom">Agregar Inmueble</a>
+    <a asp-action="AltaInmueble" class="btn btn-custom">Agregar
+        <i class="fa-solid fa-plus"></i>
+    </a>
 </p>
 @if (TempData["Error"] != null)
 {
@@ -20,57 +22,87 @@
     </div>
 }
 
-<form asp-action="FiltrarTipo" method="get">
-    <div class="form-group">
-        <label for="tipoInmueble">Seleccione el tipo de inmueble:</label>
-        <select id="tipoInmueble" name="tipoInmueble" class="form-control">
-            <option value="0"></option>
-           @foreach (var tipo in ViewBag.tipos as List<Tipo>)
-            {
-                <option value="@tipo.Id">@tipo.Nombre</option>
-           }
-        </select>
+@* MODAL FILTROS *@
+<button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarModal">
+    <i class="fa-solid fa-filter"></i> Filtrar
+</button>
+<a href="@Url.Action("Index")" class="btn btn-custom">
+    <i class="fa-solid fa-xmark"></i>
+</a>
+
+<div class="modal fade" id="filtrarModal" tabindex="-1" aria-labelledby="filtrarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header text-white" style="background-color: var(--rojo-oscuro);">
+                <h5 class=" modal-title" id="filtrarModalLabel">Filtrar Inmuebles</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form asp-action="Index" class="mb-4" method="get">
+                    <div class="form-group">
+                        <label for="tipo">Seleccione el tipo de inmueble:</label>
+                        <div class="d-flex gap-2">
+                            <select id="tipo" name="tipo" class="form-control">
+                                <option value="0"></option>
+                                @foreach (var tipo in ViewBag.tipos as List<Tipo>)
+                                {
+                                    <option value="@tipo.Id">@tipo.Nombre</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-custom">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+
+                <form asp-action="Index" class="mb-4" method="get">
+                    <div class="form-group mt-2">
+                        <label for="precioMin">Precio Mínimo:</label>
+                        <input type="number" id="precioMin" name="precioMin" class="form-control" min="0" />
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label for="precioMax">Precio Máximo:</label>
+                        <input type="number" id="precioMax" name="precioMax" class="form-control" min="0" />
+                    </div>
+
+                    <button type="submit" class="btn btn-custom mt-2">Filtrar por Precio</button>
+                </form>
+
+                <form asp-action="Index" class="mb-4" method="get">
+                    <div class="form-group">
+                        <label for="uso">Seleccione el uso del inmueble:</label>
+                        <div class="d-flex gap-2">
+                            <select id="uso" name="uso" class="form-control">
+                                <option value="0"></option>
+                                <option value="residencial">Residencial</option>
+                                <option value="comercial">Comercial</option>
+                            </select>
+                            <button type="submit" class="btn btn-custom">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+
+                <form asp-action="Index" class="mb-4" method="get">
+                    <div class="form-group">
+                        <label for="ambientes">Seleccione el número de ambientes:</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" id="ambientes" name="ambientes" class="form-control" min="0" />
+                            <button type="submit" class="btn btn-custom">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer" style="background-color: #383838;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
     </div>
-    <button type="submit" class="btn btn-custom">Filtrar</button>
-</form>
+</div>
 
-<br>
 
-<form asp-action="FiltrarPrecio" method="get">
-    <div class="form-group">
-        <label for="precioMin">Precio Mínimo:</label>
-        <input type="number" id="precioMin" name="precioMin" class="form-control" min="0" />
-    </div>
-
-    <div class="form-group">
-        <label for="precioMax">Precio Máximo:</label>
-        <input type="number" id="precioMax" name="precioMax" class="form-control" min="0" />
-    </div>
-
-    <button type="submit" class="btn btn-custom">Filtrar por Precio</button>
-</form>
-<br>
-
-<form asp-action="FiltrarUso" method="get">
-    <div class="form-group">
-        <label for="usoInmueble">Seleccione el uso del inmueble:</label>
-        <select id="usoInmueble" name="usoInmueble" class="form-control">
-            <option value="0"></option>
-            <option value="residencial">Residencial</option>
-            <option value="comercial">Comercial</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-custom">Filtrar</button>
-</form>
-
-<br>
-<form asp-action="FiltrarAmbientes" method="get">
-   <div class="form-group">
-        <label for="ambientes">Seleccione el número de ambientes:</label>
-        <input type="number" id="ambientes" name="ambientes" class="form-control" min="0" />
-    </div>
-    <button type="submit" class="btn btn-custom">Filtrar</button>
-</form>
 <br>
 
 <table class="table table-striped table-hover text-center">
@@ -90,45 +122,45 @@
         @if (Model.Inmuebles != null)
             @foreach (var item in Model.Inmuebles)
             {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Direccion)
-                </td>
-                <td>
-                    @item.Propietario.Nombre @item.Propietario.Apellido
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Uso)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Tipo.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ambientes)
-                </td>
-                <td>
-                    $@Html.DisplayFor(modelItem => item.Precio)
-                </td>
-                <td>
-                    @if (item.Estado)
-                    {
-                        <a href="/Inmueble/Baja/@item.Id" class="btn btn-desactivar"></a>
-                    }
-                    else
-                    {
-                        <a href="/Inmueble/Activar/@item.Id" class="btn btn-activar"></a>
-                    }
-                </td>
-                <td>
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <a href="/Inmueble/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
-                    }
-                    <a href="/Inmueble/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                    <a href="/Inmueble/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
-                </td>
-            </tr>
-        }
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Direccion)
+                    </td>
+                    <td>
+                        @item.Propietario.Nombre @item.Propietario.Apellido
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Uso)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tipo.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ambientes)
+                    </td>
+                    <td>
+                        $@Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        @if (item.Estado)
+                        {
+                            <a href="/Inmueble/Baja/@item.Id" class="btn btn-desactivar"></a>
+                        }
+                        else
+                        {
+                            <a href="/Inmueble/Activar/@item.Id" class="btn btn-activar"></a>
+                        }
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a href="/Inmueble/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                        }
+                        <a href="/Inmueble/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                        <a href="/Inmueble/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                    </td>
+                </tr>
+            }
     </tbody>
 </table>
 
@@ -136,7 +168,14 @@
     <!-- Botón "Primera página" -->
     @if (Model.CurrentPage > 1)
     {
-        <a href="/Inmueble/Index?pagina=1" class="btn btn-custom">Primera</a>
+        <a href="@Url.Action("Index", new { 
+            tipo = ViewContext.HttpContext.Request.Query["tipo"], 
+            uso = ViewContext.HttpContext.Request.Query["uso"], 
+            precioMin = ViewContext.HttpContext.Request.Query["precioMin"], 
+            precioMax = ViewContext.HttpContext.Request.Query["precioMax"], 
+            ambientes = ViewContext.HttpContext.Request.Query["ambientes"], 
+            page = 1 
+        })" class="btn btn-custom">Primera</a>
     }
 
     <!-- Páginas dinámicas -->
@@ -152,14 +191,28 @@
             }
             else
             {
-                <a href="/Inmueble/Index?pagina=@i" class="btn btn-custom">@i</a>
+                <a href="@Url.Action("Index", new { 
+                    tipo = ViewContext.HttpContext.Request.Query["tipo"], 
+                    uso = ViewContext.HttpContext.Request.Query["uso"], 
+                    precioMin = ViewContext.HttpContext.Request.Query["precioMin"], 
+                    precioMax = ViewContext.HttpContext.Request.Query["precioMax"], 
+                    ambientes = ViewContext.HttpContext.Request.Query["ambientes"], 
+                    page = i
+                })" class="btn btn-custom">@i</a>
             }
         }
     }
     <!-- Botón "Última página" -->
     @if (Model.CurrentPage < Model.TotalPages)
     {
-        <a href="/Inmueble/Index?pagina=@Model.TotalPages" class="btn btn-custom">Última</a>
+        <a href="@Url.Action("Index", new { 
+            tipo = ViewContext.HttpContext.Request.Query["tipo"], 
+            uso = ViewContext.HttpContext.Request.Query["uso"], 
+            precioMin = ViewContext.HttpContext.Request.Query["precioMin"], 
+            precioMax = ViewContext.HttpContext.Request.Query["precioMax"], 
+            ambientes = ViewContext.HttpContext.Request.Query["ambientes"], 
+            page = @Model.TotalPages
+        })" class="btn btn-custom">Última</a>
     }
 </div>
 
@@ -169,12 +222,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        @if (TempData["ToastMessage"] != null)
-        {
-            <text>
-            showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-            </text>
-        }
+    @if (TempData["ToastMessage"] != null)
+    {
+        <text>
+                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+        </text>
+    }
     });
 
     function showToast(message, type) {

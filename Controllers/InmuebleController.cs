@@ -165,4 +165,12 @@ public class InmuebleController : Controller
         }
         return View(inmueble);
     }
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult Contratos(int inmuebleId)
+    {
+        var repoContrato = new RepositorioContrato();
+        var contratos = repoContrato.ObtenerContratosPorInmueble(inmuebleId);
+        return View(contratos);
+    }
 }

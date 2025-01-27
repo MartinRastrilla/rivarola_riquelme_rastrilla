@@ -157,7 +157,11 @@
                             <a href="/Inmueble/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                         }
                         <a href="/Inmueble/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                        <a href="/Inmueble/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a href="/Inmueble/Details/@item.Id" class="me-2"><i
+                                class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a asp-controller="Inmueble" asp-action="Contratos" asp-route-inmuebleId="@item.Id">
+                            <i class="fa-solid fa-file-contract ic-sz ic-color"></i>
+                        </a>
                     </td>
                 </tr>
             }

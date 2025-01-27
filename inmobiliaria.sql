@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Sep 26, 2024 at 03:48 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 27-01-2025 a las 22:55:25
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `inmobiliaria`
+-- Base de datos: `inmobiliaria`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `contratos`
+-- Estructura de tabla para la tabla `contratos`
 --
 
 CREATE TABLE `contratos` (
@@ -38,16 +38,17 @@ CREATE TABLE `contratos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `contratos`
+-- Volcado de datos para la tabla `contratos`
 --
 
 INSERT INTO `contratos` (`id`, `inquilino_dni`, `inmueble_id`, `estado`, `monto`, `fecha_inicio`, `fecha_fin`) VALUES
-(2, 123456, 4, 'Activo', 230000.00, '2024-10-10', '2024-10-24');
+(2, 12345600, 4, 'Activo', 230000.00, '2024-10-10', '2024-10-24'),
+(5, 12345679, 2, 'Activo', 345000.00, '2025-01-26', '2025-02-26');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `inmuebles`
+-- Estructura de tabla para la tabla `inmuebles`
 --
 
 CREATE TABLE `inmuebles` (
@@ -63,21 +64,21 @@ CREATE TABLE `inmuebles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `inmuebles`
+-- Volcado de datos para la tabla `inmuebles`
 --
 
 INSERT INTO `inmuebles` (`id`, `direccion`, `uso`, `tipo_id`, `ambientes`, `coordenadas`, `precio`, `propietario_dni`, `estado`) VALUES
-(1, 'Av. Testing 123', 'comercial', 1, 4, 'none', 230000.00, 43490178, 1),
-(2, 'Av. Vertientes 1455', 'residencial', 2, 45, 'none', 1900000.00, 43490178, 1),
+(1, 'Av. Testing 122', 'residencial', 2, 4, 'none', 230000.00, 43490170, 1),
+(2, 'Av. Vertientes 1455', 'residencial', 2, 45, 'none', 1900000.00, 43490170, 1),
 (4, 'Av. Plazota 987', 'residencial', 2, 6, 'none', 420000.00, 12303111, 1),
-(5, 'Las Weas 123', 'comercial', 1, 3, 'none', 310500.00, 12303111, 1),
-(6, 'Av. Testing 212', 'residencial', 3, 4, 'none', 150000.00, 23404908, 1),
-(8, 'Los Nogales', 'residencial', 1, 4, 'none', 150000.00, 12303111, 1);
+(6, 'Av. Testing 211', 'residencial', 1, 4, 'none', 150000.00, 12202124, 1),
+(20, 'Asa', 'comercial', 2, 1, 'none', 69.69, 23404908, 1),
+(21, 'Las Weas 722', 'residencial', 3, 2, 'none', 25000.00, 12303111, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `inquilinos`
+-- Estructura de tabla para la tabla `inquilinos`
 --
 
 CREATE TABLE `inquilinos` (
@@ -90,18 +91,37 @@ CREATE TABLE `inquilinos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `inquilinos`
+-- Volcado de datos para la tabla `inquilinos`
 --
 
 INSERT INTO `inquilinos` (`id`, `dni`, `nombre`, `apellido`, `telefono`, `email`) VALUES
-(5, 123456, 'Marta', 'Ramírez', '2665789256', 'marsan@gmail.com'),
+(5, 12345600, 'Marta', 'Ramírez', '2665789256', 'a@a.com'),
 (16, 654321, 'Rodrigo', 'Pérez', '2664998899', 'rodri@gmail.com'),
-(17, 90909001, 'Paula', 'Perez', '266718705', 'pp@gmail.com');
+(17, 90909001, 'Paula', 'Perez', '266718705', 'pp@gmail.com'),
+(32, 12345678, 'Gabi', 'Gome', '2265125588', 'a@a.com'),
+(36, 12345679, 'Lukita', 'Leka', '2664198788', 'll@a.com'),
+(37, 11111111, 'A', 'A', '1111111111', 'a@a.com'),
+(39, 33333333, 'C', 'C', '3333333333', 'a@a.com'),
+(43, 43490178, 'Martin', 'Rastrilla', '2664172839', 'mr@gmail.com'),
+(44, 43490179, 'Laura', 'Lopez', '2664718293', 'll@a.com');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pagos`
+-- Estructura de tabla para la tabla `multa`
+--
+
+CREATE TABLE `multa` (
+  `id` int(11) NOT NULL,
+  `contrato_id` int(11) NOT NULL,
+  `monto` decimal(10,2) NOT NULL,
+  `fecha_multa` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pagos`
 --
 
 CREATE TABLE `pagos` (
@@ -112,10 +132,19 @@ CREATE TABLE `pagos` (
   `importe` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `pagos`
+--
+
+INSERT INTO `pagos` (`id`, `contrato_id`, `fecha_pago`, `detalle`, `importe`) VALUES
+(3, 2, '2025-01-22', 'Algo', 1500.00),
+(4, 2, '2025-01-23', 'Algo', 21.00),
+(5, 2, '4620-05-22', 'Algo', 1.00);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `propietarios`
+-- Estructura de tabla para la tabla `propietarios`
 --
 
 CREATE TABLE `propietarios` (
@@ -128,19 +157,21 @@ CREATE TABLE `propietarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `propietarios`
+-- Volcado de datos para la tabla `propietarios`
 --
 
 INSERT INTO `propietarios` (`id`, `dni`, `apellido`, `nombre`, `telefono`, `email`) VALUES
-(2, 43490178, 'Rastrilla', 'Martin', '2664778899', 'mr@gmail.com'),
+(2, 43490170, 'Rastrilla', 'Martin', '2664778899', 'mr@gmail.com'),
 (5, 12303111, 'Tobares', 'Fernando', '2667020202', 'ufa@gmail.com'),
 (7, 23404908, 'Vázquez', 'Pilar', '2654998877', 'pv@gmail.com'),
-(8, 12202124, 'Pagliani', 'Franco', '2667020201', 'fp@gmail.com');
+(8, 12202124, 'Pagliani', 'Franco', '2667020201', 'fp@gmail.com'),
+(11, 11111111, 'p1', 'p1', '1111111111', 'p1@p1.com'),
+(12, 22222222, 'p2', 'p2', '2222222222', 'p2@p2.com');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `roles`
+-- Estructura de tabla para la tabla `roles`
 --
 
 CREATE TABLE `roles` (
@@ -149,7 +180,7 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `roles`
+-- Volcado de datos para la tabla `roles`
 --
 
 INSERT INTO `roles` (`id`, `nombre`) VALUES
@@ -159,7 +190,7 @@ INSERT INTO `roles` (`id`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tipos`
+-- Estructura de tabla para la tabla `tipos`
 --
 
 CREATE TABLE `tipos` (
@@ -168,7 +199,7 @@ CREATE TABLE `tipos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tipos`
+-- Volcado de datos para la tabla `tipos`
 --
 
 INSERT INTO `tipos` (`id`, `nombre`) VALUES
@@ -179,7 +210,7 @@ INSERT INTO `tipos` (`id`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usuarios`
+-- Estructura de tabla para la tabla `usuarios`
 --
 
 CREATE TABLE `usuarios` (
@@ -193,17 +224,17 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `usuarios`
+-- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `contrasenia`, `Rol`, `avatar`) VALUES
-(13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', '/Uploads\\avatar_13.jpeg'),
+(13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', '/Uploads\\avatar_13.png'),
 (14, 'Admin', 'Fort', 'admin@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Administrador', '/Uploads\\avatar_14.jpg');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usuarios_roles`
+-- Estructura de tabla para la tabla `usuarios_roles`
 --
 
 CREATE TABLE `usuarios_roles` (
@@ -213,11 +244,11 @@ CREATE TABLE `usuarios_roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `contratos`
+-- Indices de la tabla `contratos`
 --
 ALTER TABLE `contratos`
   ADD PRIMARY KEY (`id`),
@@ -225,7 +256,7 @@ ALTER TABLE `contratos`
   ADD KEY `inmueble_id` (`inmueble_id`);
 
 --
--- Indexes for table `inmuebles`
+-- Indices de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
   ADD PRIMARY KEY (`id`),
@@ -233,47 +264,53 @@ ALTER TABLE `inmuebles`
   ADD KEY `tipo_id` (`tipo_id`);
 
 --
--- Indexes for table `inquilinos`
+-- Indices de la tabla `inquilinos`
 --
 ALTER TABLE `inquilinos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `dni` (`dni`) USING BTREE;
 
 --
--- Indexes for table `pagos`
+-- Indices de la tabla `multa`
+--
+ALTER TABLE `multa`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pagos`
 --
 ALTER TABLE `pagos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `contrato_id` (`contrato_id`);
 
 --
--- Indexes for table `propietarios`
+-- Indices de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `dni` (`dni`) USING BTREE;
 
 --
--- Indexes for table `roles`
+-- Indices de la tabla `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tipos`
+-- Indices de la tabla `tipos`
 --
 ALTER TABLE `tipos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `usuarios`
+-- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `usuarios_roles`
+-- Indices de la tabla `usuarios_roles`
 --
 ALTER TABLE `usuarios_roles`
   ADD PRIMARY KEY (`id`),
@@ -281,89 +318,95 @@ ALTER TABLE `usuarios_roles`
   ADD KEY `usuario_id` (`usuario_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `contratos`
+-- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `inmuebles`
+-- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- AUTO_INCREMENT for table `inquilinos`
+-- AUTO_INCREMENT de la tabla `inquilinos`
 --
 ALTER TABLE `inquilinos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
--- AUTO_INCREMENT for table `pagos`
+-- AUTO_INCREMENT de la tabla `multa`
+--
+ALTER TABLE `multa`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `propietarios`
+-- AUTO_INCREMENT de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `roles`
+-- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `tipos`
+-- AUTO_INCREMENT de la tabla `tipos`
 --
 ALTER TABLE `tipos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `usuarios`
+-- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT for table `usuarios_roles`
+-- AUTO_INCREMENT de la tabla `usuarios_roles`
 --
 ALTER TABLE `usuarios_roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- Restricciones para tablas volcadas
 --
 
 --
--- Constraints for table `contratos`
+-- Filtros para la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  ADD CONSTRAINT `contratos_ibfk_1` FOREIGN KEY (`inquilino_dni`) REFERENCES `inquilinos` (`dni`),
+  ADD CONSTRAINT `contratos_ibfk_1` FOREIGN KEY (`inquilino_dni`) REFERENCES `inquilinos` (`dni`) ON UPDATE CASCADE,
   ADD CONSTRAINT `contratos_ibfk_2` FOREIGN KEY (`inmueble_id`) REFERENCES `inmuebles` (`id`);
 
 --
--- Constraints for table `inmuebles`
+-- Filtros para la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  ADD CONSTRAINT `inmuebles_ibfk_1` FOREIGN KEY (`propietario_dni`) REFERENCES `propietarios` (`dni`),
+  ADD CONSTRAINT `inmuebles_ibfk_1` FOREIGN KEY (`propietario_dni`) REFERENCES `propietarios` (`dni`) ON UPDATE CASCADE,
   ADD CONSTRAINT `inmuebles_ibfk_2` FOREIGN KEY (`tipo_id`) REFERENCES `tipos` (`id`);
 
 --
--- Constraints for table `pagos`
+-- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
   ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`contrato_id`) REFERENCES `contratos` (`id`);
 
 --
--- Constraints for table `usuarios_roles`
+-- Filtros para la tabla `usuarios_roles`
 --
 ALTER TABLE `usuarios_roles`
   ADD CONSTRAINT `usuarios_roles_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),

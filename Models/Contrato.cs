@@ -9,12 +9,12 @@ public class Contratos
 
     [ForeignKey("Inquilinos")]
     public long Inquilino_dni { get; set; }
-    public Inquilino Inquilino { get; set; }
+    public Inquilino? Inquilino { get; set; }
 
 
     [ForeignKey("Inmuebles")]
     public int Inmueble_id { get; set; }
-    public Inmueble Inmueble { get; set; }
+    public Inmueble? Inmueble { get; set; }
 
 
     public enum EstadoContrato

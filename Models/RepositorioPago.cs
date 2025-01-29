@@ -193,6 +193,36 @@ namespace rivarola_riquelme_rastrilla.Models;
                 }
             }
         }
+
+         public List<Pago> ObtenerPagosPorContrato(int contratoId)
+        {
+            List<Pago> pagos = new List<Pago>();
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                var query = $@"SELECT {nameof(Pago.Id)} AS id, {nameof(Pago.Contrato_id)} AS contrato_id, 
+                              fecha_pago AS {nameof(Pago.Fecha_pago)}, {nameof(Pago.Detalle)} AS detalle, 
+                              {nameof(Pago.Importe)} AS importe FROM pagos WHERE {nameof(Pago.Contrato_id)} = @contrato_id";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@contrato_id", contratoId);
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        pagos.Add(new Pago
+                        {
+                            Id = reader.GetInt32("id"),
+                            Contrato_id = reader.GetInt32("contrato_id"),
+                            Fecha_pago = reader.GetDateTime("fecha_pago"),
+                            Detalle = reader.GetString("detalle"),
+                            Importe = reader.GetDecimal("importe")
+                        });
+                    }
+                    connection.Close();
+                }
+            }
+            return pagos;
+            }
         
     }
     

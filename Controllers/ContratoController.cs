@@ -11,6 +11,7 @@ public class ContratoController : Controller
     private RepositorioContrato repo = new RepositorioContrato();
     private RepositorioInquilino repoInquilino = new RepositorioInquilino();
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
+    private RepositorioPago repoPago = new RepositorioPago();
 
     public ContratoController(ILogger<ContratoController> logger)
     {
@@ -132,8 +133,6 @@ public class ContratoController : Controller
         return View("index",contratos);
 
     }
-<<<<<<< Updated upstream
-=======
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
@@ -154,5 +153,4 @@ public class ContratoController : Controller
     }
 
     
->>>>>>> Stashed changes
 }

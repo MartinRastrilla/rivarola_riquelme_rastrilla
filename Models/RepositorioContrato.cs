@@ -280,10 +280,6 @@ public class RepositorioContrato
     }
 
     return contratos;
-<<<<<<< Updated upstream
-}
-        
-=======
     }
 
     public List<Contratos> ObtenerContratosPorInmueble(int inmuebleId)
@@ -364,5 +360,4 @@ public class RepositorioContrato
         }
     }
 
->>>>>>> Stashed changes
 }

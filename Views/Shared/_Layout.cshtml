@@ -107,6 +107,22 @@
             background-color: var(--rojo-oscuro);
             color: var(--blanco) !important;
         }
+
+        .avatar-container {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -156,11 +172,12 @@
                             var nombre = User.Claims.FirstOrDefault(c => c.Type == "Nombre")?.Value;
                             var apellido = User.Claims.FirstOrDefault(c => c.Type == "Apellido")?.Value;
                             <li class="nav-item dropdown" style="margin-right: 40px;">
-                                <a style="padding: 1px;" class="nav-link dropdown-toggle text-center" href="#"
+                                <a style="padding: 1px;" class="nav-link dropdown-toggle d-flex align-items-center" href="#"
                                     id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="@Url.Content(avatar)" alt="Avatar" class="avatar"
-                                        style="width: 64px; height: 64px; border-radius: 50%;" />
-                                    <span class="text-dark"><strong>@nombre @apellido</strong></span>
+                                    <div class="avatar-container">
+                                        <img src="@Url.Content(avatar)" alt="Avatar" class="avatar" />
+                                    </div>
+                                    <span class="text-dark mx-2"><strong>@nombre @apellido</strong></span>
                                 </a>
 
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

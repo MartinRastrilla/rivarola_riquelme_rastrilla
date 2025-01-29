@@ -22,6 +22,20 @@ public class ContratoController : Controller
     public IActionResult Index()
     {
         var lista = repo.ObtenerContratos();
+
+        // Foreach para pasar por cada Contrato
+        foreach (var Contrato in lista)
+        {
+            // Acá se comprueba si la fecha de finalización del contrato es menor a la fecha actual
+            if (Contrato.Fecha_fin < DateTime.Now && Contrato.Estado != Contratos.EstadoContrato.Cancelado)
+            {
+                // Si la fecha de finalización es menor a la fecha actual, se cambia el estado a "Finalizado"
+                Contrato.Estado = Contratos.EstadoContrato.Finalizado;
+                repo.ActualizarContrato(Contrato); // Se actualiza el contrato
+            }
+        }
+
+        
         return View(lista);
     }
 
@@ -118,4 +132,27 @@ public class ContratoController : Controller
         return View("index",contratos);
 
     }
+<<<<<<< Updated upstream
+=======
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult Pagos(int Id)
+    {
+        var pagos = repoPago.ObtenerPagosPorContrato(Id);
+        return View(pagos);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult Renovar(int Id)
+    {
+        var contrato = repo.Obtener(Id);
+        ViewBag.inquilinos = repoInquilino.ObtenerInquilinos();
+        ViewBag.inmuebles = repoInmueble.ObtenerInmueble();
+        return View("Renovar",contrato);
+    }
+
+    
+>>>>>>> Stashed changes
 }

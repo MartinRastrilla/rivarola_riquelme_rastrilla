@@ -280,6 +280,89 @@ public class RepositorioContrato
     }
 
     return contratos;
+<<<<<<< Updated upstream
 }
         
+=======
+    }
+
+    public List<Contratos> ObtenerContratosPorInmueble(int inmuebleId)
+    {
+        List<Contratos> contratos = new List<Contratos>();
+
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"
+                    SELECT c.*, 
+                i.DNI AS DNI, i.Nombre AS InquilinoNombre, i.Apellido AS InquilinoApellido, i.Telefono AS InquilinoTelefono, i.Email AS InquilinoEmail,
+                inm.Direccion AS InmuebleDireccion, inm.Tipo_id AS InmuebleTipo, t.Id AS TipoId, t.Nombre AS TipoNombre
+                FROM Contratos c
+                JOIN Inquilinos i ON c.inquilino_dni = i.DNI
+                JOIN Inmuebles inm ON c.inmueble_id = inm.Id
+                JOIN Tipos t ON inm.Tipo_id = t.Id
+                WHERE c.inmueble_id = @inmuebleId;";
+
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+
+                command.Parameters.AddWithValue("@inmuebleId", inmuebleId);
+
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var contrato = new Contratos
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Inquilino_dni = reader.GetInt64("inquilino_dni"),
+                            Inmueble_id = reader.GetInt32("inmueble_id"),
+                            Estado = (Contratos.EstadoContrato)Enum.Parse(typeof(Contratos.EstadoContrato), reader.GetString("estado")),
+                            Monto = reader.GetDecimal("monto"),
+                            Fecha_inicio = reader.GetDateTime("Fecha_inicio"),
+                            Fecha_fin = reader.GetDateTime("Fecha_fin"),
+                            Inquilino = new Inquilino
+                            {
+                                Dni = reader.GetInt64("DNI"),
+                                Nombre = reader.GetString("InquilinoNombre"),
+                                Apellido = reader.GetString("InquilinoApellido"),
+                                Telefono = reader.GetInt64("InquilinoTelefono"),
+                                Email = reader.GetString("InquilinoEmail")
+                            },
+                            // Creamos el objeto Inmueble y lo mapeamos
+                            Inmueble = new Inmueble
+                            {
+                                Id = reader.GetInt32("id"),
+                                Direccion = reader.GetString("InmuebleDireccion"),
+                                Tipo = new Tipo
+                                {
+                                    Id = reader.GetInt32("TipoId"),
+                                    Nombre = reader.GetString("TipoNombre")
+                                }
+                            }
+                        };
+                        contratos.Add(contrato);
+                    }
+                }
+            }
+        }
+        return contratos;
+    }
+    public void ActualizarContrato(Contratos contrato)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            string query = "UPDATE contratos SET estado = @estado WHERE id = @id";
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@estado", Contratos.EstadoContrato.Activo.ToString()); // Convertir enum a string
+                command.Parameters.AddWithValue("@id", contrato.Id);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
+>>>>>>> Stashed changes
 }

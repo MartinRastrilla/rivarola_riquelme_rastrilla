@@ -34,12 +34,12 @@
                     <td>
                         @if (User.IsInRole("Administrador"))
                         {
-                            <a href="@Url.Action("Eliminar", "Contratos", new { id = contrato.Id })" class="me-2"><i
+                            <a href="@Url.Action("Delete", "Contrato", new { id = contrato.Id })" class="me-2"><i
                                     class="fa-solid fa-trash ic-sz ic-color"></i></a>
                         }
-                        <a href="@Url.Action("Editar", "Contratos", new { id = contrato.Id })" class="me-2"><i
+                        <a href="@Url.Action("Editar", "Contrato", new { id = contrato.Id })" class="me-2"><i
                                 class="fa-solid fa-pen-to-square ic-sz ic-color"></i></a>
-                        <a href="@Url.Action("Ver", "Contratos", new { id = contrato.Id })" class=""><i
+                        <a href="@Url.Action("Details", "Contrato", new { id = contrato.Id })" class=""><i
                                 class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                     </td>
                 </tr>

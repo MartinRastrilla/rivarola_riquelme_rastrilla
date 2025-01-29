@@ -12,7 +12,7 @@
     <a asp-action="Crear" class="btn btn-custom">Agregar Pago</a>
 </p>
 
-<table class="table text-center">
+<table class="table text-center table-striped table-hover mt-4">
     <thead>
         <tr>
             <th>Inquilino</th>
@@ -35,14 +35,57 @@
                 <td>
                     @if (User.IsInRole("Administrador"))
                     {
-                        <a href="/Pago/Delete/@item.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                        <a href="/Pago/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                     }
                     <a href="/Pago/Edit/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Pago/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
-                    <a href="/Pago/NuevoPago/@item.Id"><i class="fa-solid fa-plus ic-sz ic-color"></i></a>
-                    
+                    <a data-bs-toggle="modal" data-bs-target="#nuevoPagoModal-@item.Id"><i
+                            class="fa-solid fa-plus ic-sz ic-color"></i></a>
+
                 </td>
             </tr>
+            <div class="modal fade" id="nuevoPagoModal-@item.Id" tabindex="-1"
+                aria-labelledby="nuevoPagoModalLabel-@item.Id" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-dark">
+                            <h5 class="modal-title" id="nuevoPagoModalLabel-@item.Id">Nuevo Pago</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="InmuebleTxt" class="control-label fs-5"><b>Inmueble:</b>
+                                    @item.Contrato.Inmueble.Direccion</label>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="InquilinoTxt" class="control-label fs-5"><b>Inquilino:</b>
+                                    @item.Contrato.Inquilino.Nombre
+                                    @item.Contrato.Inquilino.Apellido</label>
+                            </div>
+                            <form asp-action="Crear" method="post" enctype="multipart/form-data">
+                                <div class="form-group mt-3">
+                                    <label name="Fecha_pago" class="control-label">Fecha de Pago</label>
+                                    <input name="Fecha_pago" class="form-control" type="date" required />
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label name="Importe" class="control-label">Importe</label>
+                                    <input type="number" name="Importe" class="form-control" required />
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label name="Detalle" class="control-label">Detalle</label>
+                                    <textarea name="Detalle" class="form-control" required rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" name="Contrato_id" value="@item.Contrato_id" />
+                                </div>
+                                <div class="form-group mt-3">
+                                    <input type="submit" value="Guardar" class="btn btn-custom">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
     </tbody>
 </table>

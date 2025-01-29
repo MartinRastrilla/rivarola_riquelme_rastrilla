@@ -8,33 +8,61 @@
 
 <form asp-action="Crear">
     <div class="form-group">
-        <label asp-for="Contrato_id" class="control-label"></label>
-        <select asp-for="Contrato_id" class="form-control">
-            <option value="">Seleccione un contrato</option>
+        <label asp-for="Contrato_id" class="control-label">Elija un Contrato:</label>
+        <input type="text" id="ContratoTxt" class="form-control" list="ContratosList" placeholder="Buscar contrato..."
+            required>
+        <datalist id="ContratosList">
             @foreach (var contrato in ViewBag.Contratos as IEnumerable<rivarola_riquelme_rastrilla.Models.Contratos>)
             {
-                <option value="@contrato.Id">@contrato.Id</option>
+                <option
+                    value="@contrato.Id - @contrato.Inquilino.Nombre @contrato.Inquilino.Apellido - @contrato.Inmueble.Direccion">
+                </option>
             }
-        </select>
-        <span asp-validation-for="Contrato_id" class="text-danger"></span>
+        </datalist>
+        <input type="hidden" id="Contrato_id" name="Contrato_id">
+        <small id="errorContrato" class="text-danger d-none">Debe seleccionar un elemento de la lista.</small>
     </div>
-    <div class="form-group">
-        <label asp-for="Fecha_pago" class="control-label"></label>
+    <div class="form-group mt-3">
+        <label asp-for="Fecha_pago" class="control-label">Fecha de Pago</label>
         <input asp-for="Fecha_pago" class="form-control" type="date" />
         <span asp-validation-for="Fecha_pago" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-3">
         <label asp-for="Detalle" class="control-label"></label>
         <input asp-for="Detalle" class="form-control" />
         <span asp-validation-for="Detalle" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-3">
         <label asp-for="Importe" class="control-label"></label>
         <input asp-for="Importe" class="form-control" />
         <span asp-validation-for="Importe" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-3">
         <input type="submit" value="Crear" class="btn btn-custom" />
         <a href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</a>
     </div>
 </form>
+
+<script>
+    document.getElementById("ContratoTxt").addEventListener("blur", function () {
+        let inputField = this;
+        let inputValue = inputField.value;
+        let options = document.querySelectorAll("#ContratosList option");
+        let match = false;
+        let errorMessage = document.getElementById("errorContrato");
+
+        options.forEach(option => {
+            if (option.value === inputValue) {
+                document.getElementById("Contrato_id").value = option.value.split(" - ")[0]; // Extrae solo el ID
+                match = true;
+                errorMessage.classList.add("d-none");
+            }
+        });
+
+        if (!match) {
+            inputField.value = "";  // Borra el campo si la opción no es válida
+            document.getElementById("Contrato_id").value = "";
+            errorMessage.classList.remove("d-none");
+        }
+    });
+</script>

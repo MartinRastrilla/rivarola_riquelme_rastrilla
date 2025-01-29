@@ -11,6 +11,7 @@ public class ContratoController : Controller
     private RepositorioContrato repo = new RepositorioContrato();
     private RepositorioInquilino repoInquilino = new RepositorioInquilino();
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
+    private RepositorioPago repoPago = new RepositorioPago();
 
     public ContratoController(ILogger<ContratoController> logger)
     {
@@ -117,5 +118,13 @@ public class ContratoController : Controller
         ViewData["fechaFin"] = fechaFin?.ToString("dd-MM-yyyy");
         return View("index",contratos);
 
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult Pagos(int Id)
+    {
+        var pagos = repoPago.ObtenerPagosPorContrato(Id);
+        return View(pagos);
     }
 }

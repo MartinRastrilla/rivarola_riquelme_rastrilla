@@ -18,7 +18,8 @@
 </button>
 
 <!-- Modal de Bootstrap -->
-<div class="modal fade" id="filtrarFechaModal" tabindex="-1" aria-labelledby="filtrarFechaModalLabel" aria-hidden="true">
+<div class="modal fade" id="filtrarFechaModal" tabindex="-1" aria-labelledby="filtrarFechaModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <!-- Encabezado del modal -->
@@ -32,11 +33,13 @@
                     <div class="form-row mb-3">
                         <div class="col">
                             <label for="fechaInicio">Fecha de Inicio</label>
-                            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="@ViewData["fechaInicio"]" />
+                            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control"
+                                value="@ViewData["fechaInicio"]" />
                         </div>
                         <div class="col">
                             <label for="fechaFin">Fecha de Finalización</label>
-                            <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="@ViewData["fechaFin"]" />
+                            <input type="date" id="fechaFin" name="fechaFin" class="form-control"
+                                value="@ViewData["fechaFin"]" />
                         </div>
                         <div class="col align-self-end mt-3">
                             <button type="submit" class="btn btn-custom">Filtrar</button>
@@ -58,7 +61,7 @@
     </div>
 </div>
 
-<table class="table text-center">
+<table class="table text-center table-striped table-hover">
     <thead>
         <tr>
             <th>Inquilino</th>
@@ -75,7 +78,8 @@
         {
             <tr>
                 <td>
-                    <a href="/Inquilino/Details?Dni=@item.Inquilino_dni" style="color:#C0392B;">@item.Inquilino.Nombre @item.Inquilino.Apellido</a>
+                    <a href="/Inquilino/Details?Dni=@item.Inquilino_dni" style="color:#C0392B;">@item.Inquilino.Nombre
+                        @item.Inquilino.Apellido</a>
                 </td>
                 <td>
                     <a href="/Inmueble/Details/@item.Inmueble_id" style="color:#C0392B;">@item.Inmueble.Direccion</a>
@@ -90,7 +94,10 @@
                         <a href="/Contrato/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                     }
                     <a href="/Contrato/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                    <a href="/Contrato/Details/@item.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                    <a href="/Contrato/Details/@item.Id" class="me-2"><i
+                            class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                    <a href="@Url.Action("Pagos", "Contrato", new { id = item.Id })" class="me-2"><i
+                            class="fa-solid fa-file-invoice-dollar ic-sz ic-color"></i></a>
                 </td>
             </tr>
         }

@@ -121,12 +121,12 @@ public class PagoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult NuevoPago(Pago pago)
     {
-        // Console.WriteLine($"Contrato_id: {pago.Contrato_id}, Fecha_pago: {pago.Fecha_pago}, Detalle: {pago.Detalle}, Importe: {pago.Importe}");
+        
         if (!ModelState.IsValid || pago == null)
         {
             return View(pago);
         }
-        repo.NuevoPago(pago);
+        repo.Agregar(pago);
         return RedirectToAction(nameof(Index));
     }
 }

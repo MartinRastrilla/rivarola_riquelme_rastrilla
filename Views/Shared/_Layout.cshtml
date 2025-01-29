@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,10 +25,25 @@
             --negro: #000000;
         }
 
+        html,
         body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
             background-color: var(--gris-claro);
             color: var(--gris-oscuro);
             font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            max-height: fit-content;
+        }
+
+        main {
+            flex: 1;
         }
 
         /* Navbar */
@@ -73,25 +89,27 @@
         .ic-color {
             color: var(--rojo-oscuro);
         }
+
         .ic-color:hover {
             color: var(--rojo-principal);
         }
 
         .navbar .dropdown-menu {
-        background-color: var(--rojo-principal);
-        border: none;
+            background-color: var(--rojo-principal);
+            border: none;
         }
-    
+
         .navbar .dropdown-menu a {
             color: var(--blanco) !important;
         }
-    
+
         .navbar .dropdown-menu a:hover {
             background-color: var(--rojo-oscuro);
             color: var(--blanco) !important;
         }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg">
@@ -99,28 +117,35 @@
                 <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                     <img src="/images/logo-inmobiliaria.png" alt="Logo">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Movidos hacia la izquierda -->
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Inquilino")">Inquilinos</a>
+                            <a class="nav-link btn btn-custom ms-2"
+                                href="@Url.Action("Index", "Inquilino")">Inquilinos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Propietarios")">Propietarios</a>
+                            <a class="nav-link btn btn-custom ms-2"
+                                href="@Url.Action("Index", "Propietarios")">Propietarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Inmueble")">Inmuebles</a>
+                            <a class="nav-link btn btn-custom ms-2"
+                                href="@Url.Action("Index", "Inmueble")">Inmuebles</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Contrato")">Contratos</a>
+                            <a class="nav-link btn btn-custom ms-2"
+                                href="@Url.Action("Index", "Contrato")">Contratos</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Pago")">Pagos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Tipo")">Tipos de Inmueble</a>
+                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Tipo")">Tipos de
+                                Inmueble</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -131,14 +156,17 @@
                             var nombre = User.Claims.FirstOrDefault(c => c.Type == "Nombre")?.Value;
                             var apellido = User.Claims.FirstOrDefault(c => c.Type == "Apellido")?.Value;
                             <li class="nav-item dropdown" style="margin-right: 40px;">
-                                <a style="padding: 1px;" class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="@Url.Content(avatar)" alt="Avatar" class="avatar" style="width: 64px; height: 64px; border-radius: 50%;" />
+                                <a style="padding: 1px;" class="nav-link dropdown-toggle text-center" href="#"
+                                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="@Url.Content(avatar)" alt="Avatar" class="avatar"
+                                        style="width: 64px; height: 64px; border-radius: 50%;" />
                                     <span class="text-dark"><strong>@nombre @apellido</strong></span>
                                 </a>
-                                
+
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <li>
-                                        <a class="dropdown-item" href="@Url.Action("Perfil", "Usuarios", new { id = userId })">
+                                        <a class="dropdown-item"
+                                            href="@Url.Action("Perfil", "Usuarios", new { id = userId })">
                                             <i class="fas fa-user"></i> Perfil
                                         </a>
                                     </li>
@@ -153,7 +181,8 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Login", "Usuarios")">Iniciar Sesión</a>
+                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Login", "Usuarios")">Iniciar
+                                    Sesión</a>
                             </li>
                         }
                     </ul>
@@ -164,7 +193,7 @@
     <main role="main" class="container my-4">
         @RenderBody()
     </main>
-    
+
     <footer class="footer mt-auto py-3 bg-light">
         <div class="container">
             <p class="text-center">&copy; @DateTime.Now.Year - 3R Inmobiliaria</p>
@@ -173,4 +202,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

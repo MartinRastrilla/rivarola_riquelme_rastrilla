@@ -9,9 +9,9 @@
 </div>
 
 <h3>
-    <a href="/Usuarios/Crear"  class="btn btn-custom">Agregar Usuarios</a>
+    <a href="/Usuarios/Crear" class="btn btn-custom">Agregar Usuarios</a>
 </h3>
-<table class="table text-center">
+<table class="table text-center table-striped table-hover mt-4">
     <thead>
         <tr>
             <th>Usuario</th>
@@ -42,8 +42,9 @@
                     @Usuario.Rol
                 </td>
                 <td>
-                    <a href="/Usuarios/Delete/@Usuario.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
-                    <a href="/Usuarios/Editar/@Usuario.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                    <a href="/Usuarios/Delete/@Usuario.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                    <a href="/Usuarios/Editar/@Usuario.Id" class="me-2"><i
+                            class="fa-solid fa-pencil ic-sz ic-color"></i></a>
                     <a href="/Usuarios/Details/@Usuario.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                 </td>
             </tr>

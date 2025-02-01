@@ -1,0 +1,21 @@
+#calendar {
+  background-color: #2e2e2e;
+  border: 2px solid #2e2e2e;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  width: 100%;
+}
+
+#calendar h2 {
+  color: #fff;
+}
+
+.fc-scroller a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.fc-toolbar-title {
+  text-transform: capitalize;
+}

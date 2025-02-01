@@ -38,6 +38,54 @@ public class RepositorioUsuarios
         }
     }
 
+    public int ObtenerTotalUsuarios()
+    {
+        int total = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = $@"SELECT COUNT(*) FROM Usuarios;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                connection.Open();
+                total = Convert.ToInt32(command.ExecuteScalar());
+                connection.Close();
+            }
+        }
+        return total;
+    }
+
+    public List<Usuarios> ObtenerPaginado(int page, int pageSize)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"SELECT * FROM usuarios LIMIT @Offset, @PageSize;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+                var usuarios = new List<Usuarios>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        usuarios.Add(new Usuarios
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Nombre = reader.GetString("Nombre"),
+                            Apellido = reader.GetString("Apellido"),
+                            Email = reader.GetString("Email"),
+                            Contrasenia = reader.GetString("Contrasenia"),
+                            Rol = reader.GetString("Rol"),
+                            Avatar = reader.GetString("Avatar"),
+                        });
+                    }
+                }
+                return usuarios;
+            }
+        }
+    }
+
     //Obtener solamente un inquilino por Dni
     public Usuarios? ObtenerByEmail(string Email)
     {

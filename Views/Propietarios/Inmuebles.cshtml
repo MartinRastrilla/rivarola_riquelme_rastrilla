@@ -1,12 +1,14 @@
-@model IEnumerable<rivarola_riquelme_rastrilla.Models.Inmueble>
+@model InmuebleViewModel
 
 @{
     ViewData["Title"] = "Inmuebles del Propietario";
 }
 
+<link href="~/css/pagination.css" rel="stylesheet" />
+
 <h2>Lista de Inmuebles</h2>
 
-@if (Model != null && Model.Any())
+@if (Model != null && Model.Inmuebles.Any())
 {
     <table class="table table-striped table-hover text-center mt-4">
         <thead>
@@ -16,10 +18,11 @@
                 <th>Tipo</th>
                 <th>Ambientes</th>
                 <th>Precio</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var inmueble in Model)
+            @foreach (var inmueble in Model.Inmuebles)
             {
                 <tr>
                     <td>@inmueble.Direccion</td>
@@ -27,6 +30,14 @@
                     <td>@inmueble.Tipo.Nombre</td>
                     <td>@inmueble.Ambientes</td>
                     <td>$@inmueble.Precio</td>
+                    <td>
+                        <a href="/Inmueble/Editar/@inmueble.Id" class="btn btn-editar"></a>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a href="/Inmueble/Borrar/@inmueble.Id" class="btn btn-eliminar"></a>
+                        }
+                        <a href="/Inmueble/Details/@inmueble.Id" class="btn btn-detalle"></a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -36,3 +47,81 @@ else
 {
     <p>No se encontraron inmuebles para este propietario.</p>
 }
+
+<div class="pagination">
+
+
+
+<!-- Botón "Primera página" -->
+@if (Model.CurrentPage > 1)
+{
+    <a href="/Propietarios/Inmuebles?dni=@Model.Propietario_dni&pagina=1"
+        class="btn btn-custom">Primera</a>
+}
+
+<!-- Páginas dinámicas -->
+@{
+    int startPage = Math.Max(1, Model.CurrentPage - 1);
+    int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 1);
+
+    for (int i = startPage; i <= endPage; i++)
+    {
+        if (i == Model.CurrentPage)
+        {
+            <span class="btn btn-custom active">@i</span>
+        }
+        else
+        {
+            <a href="/Propietarios/Inmuebles?dni=@Model.Propietario_dni&pagina=@i"
+                class="btn btn-custom">@i</a>
+        }
+    }
+}
+
+<!-- Botón "Última página" -->
+@if (Model.CurrentPage < Model.TotalPages)
+{
+    <a href="/Propietarios/Inmuebles?dni=@Model.Propietario_dni&pagina=@Model.TotalPages"
+        class="btn btn-custom">Última</a>
+}
+</div>
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+    <div id="toastContainer"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    @if (TempData["ToastMessage"] != null)
+    {
+        <text>
+                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+        </text>
+    }
+    });
+
+    function showToast(message, type) {
+        const toastId = `toast-${Date.now()}`; // ID único para el toast
+        const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+
+        const toastContainer = document.getElementById('toastContainer');
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+        const toastElement = document.getElementById(toastId);
+        const bootstrapToast = new bootstrap.Toast(toastElement);
+        bootstrapToast.show();
+
+        // Eliminar el toast del DOM cuando se oculta
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+</script>

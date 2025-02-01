@@ -1,8 +1,10 @@
-@model IEnumerable<rivarola_riquelme_rastrilla.Models.Contratos>
+@model ContratoViewModel
 
 @{
     ViewData["Title"] = "Contratos";
 }
+
+<link rel="stylesheet" href="~/css/pagination.css">
 
 <div>
     <h1 class="display-5">Lista de Contratos</h1>
@@ -66,40 +68,110 @@
         <tr>
             <th>Inquilino</th>
             <th>Inmueble</th>
-            <th>@Html.DisplayNameFor(model => model.Estado)</th>
-            <th>@Html.DisplayNameFor(model => model.Monto)</th>
+            <th>Estado</th>
+            <th>Monto</th>
             <th>Fecha de Inicio</th>
             <th>Fecha de Finalización</th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    <a href="/Inquilino/Details?Dni=@item.Inquilino_dni" style="color:#C0392B;">@item.Inquilino.Nombre
-                        @item.Inquilino.Apellido</a>
-                </td>
-                <td>
-                    <a href="/Inmueble/Details/@item.Inmueble_id" style="color:#C0392B;">@item.Inmueble.Direccion</a>
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Estado)</td>
-                <td>$@Html.DisplayFor(modelItem => item.Monto)</td>
-                <td>@Html.DisplayFor(modelItem => item.Fecha_inicio)</td>
-                <td>@Html.DisplayFor(modelItem => item.Fecha_fin)</td>
-                <td>
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <a href="/Contrato/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
-                    }
-                    <a href="/Contrato/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                    <a href="/Contrato/Details/@item.Id" class="me-2"><i
-                            class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
-                    <a href="@Url.Action("Pagos", "Contrato", new { id = item.Id })" class="me-2"><i
-                            class="fa-solid fa-file-invoice-dollar ic-sz ic-color"></i></a>
-                </td>
-            </tr>
-        }
+        @if (Model.Contratos != null)
+            @foreach (var item in Model.Contratos)
+            {
+                <tr>
+                    <td>
+                        <a href="/Inquilino/Details?Dni=@item.Inquilino_dni" style="color:#C0392B;">@item.Inquilino.Nombre
+                            @item.Inquilino.Apellido</a>
+                    </td>
+                    <td>
+                        <a href="/Inmueble/Details/@item.Inmueble_id" style="color:#C0392B;">@item.Inmueble.Direccion</a>
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                    <td>$@Html.DisplayFor(modelItem => item.Monto)</td>
+                    <td>@String.Format("{0:dd/MM/yyyy}", item.Fecha_inicio)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Fecha_fin)</td>
+                    <td>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a href="/Contrato/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                        }
+                        <a href="/Contrato/Editar/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                        <a href="/Contrato/Details/@item.Id" class="me-2"><i
+                                class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a asp-controller="contrato" asp-action="Pagos" asp-route-contratoId="@item.Id" class="me-2"><i
+                                class="fa-solid fa-file-invoice-dollar ic-sz ic-color"></i></a>
+                    </td>
+                </tr>
+            }
     </tbody>
 </table>
+<div class="pagination">
+    @if (Model.CurrentPage > 1)
+    {
+        <a href="/Contrato/Index?pagina=1" class="btn btn-custom">Primera</a>
+    }
+
+    @{
+        int startPage = Math.Max(1, Model.CurrentPage - 1);
+        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 1);
+
+        for (int i = startPage; i <= endPage; i++)
+        {
+            if (i == Model.CurrentPage)
+            {
+                <span class="btn btn-custom active">@i</span>
+            }
+            else
+            {
+                <a href="/Contrato/Index?pagina=@i" class="btn btn-custom">@i</a>
+            }
+        }
+    }
+
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a href="/Contrato/Index?pagina=@Model.TotalPages" class="btn btn-custom">Última</a>
+    }
+</div>
+
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+    <div id="toastContainer"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    @if (TempData["ToastMessage"] != null)
+    {
+        <text>
+                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+        </text>
+    }
+    });
+
+    function showToast(message, type) {
+        const toastId = `toast-${Date.now()}`; // ID único para el toast
+        const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+
+        const toastContainer = document.getElementById('toastContainer');
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+        const toastElement = document.getElementById(toastId);
+        const bootstrapToast = new bootstrap.Toast(toastElement);
+        bootstrapToast.show();
+
+        // Eliminar el toast del DOM cuando se oculta
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+</script>

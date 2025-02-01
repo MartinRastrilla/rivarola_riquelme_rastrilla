@@ -20,10 +20,33 @@ public class PagoController : Controller
     }
 
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
-        var lista = repo.ObtenerTodos();
-        return View(lista);
+        const int pageSize = 10;
+        int totalPagos = repo.ObtenerTotalPagos();
+        int totalPages = (int)Math.Ceiling((double)totalPagos / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var pagos = repo.ObtenerPaginado(pagina, pageSize);
+
+        var viewModel = new PagoViewModel
+        {
+            Pagos = pagos,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(viewModel);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
+
     }
 
     [Authorize(Policy = "Empleado")]
@@ -53,6 +76,8 @@ public class PagoController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult DeleteConfirmed(int id)
     {
+        TempData["ToastMessage"] = "Pago eliminado con éxito";
+        TempData["ToastType"] = "danger";
         repo.Eliminar(id);
         return RedirectToAction(nameof(Index));
     }
@@ -77,6 +102,8 @@ public class PagoController : Controller
     {
         if (ModelState.IsValid)
         {
+            TempData["ToastMessage"] = "Pago editado con éxito";
+            TempData["ToastType"] = "success";
             repo.Editar(pago);
             return RedirectToAction(nameof(Index));
         }
@@ -96,6 +123,8 @@ public class PagoController : Controller
     {
         if (ModelState.IsValid)
         {
+            TempData["ToastMessage"] = "Pago creado con éxito";
+            TempData["ToastType"] = "success";
             repo.Agregar(pago);
             return RedirectToAction(nameof(Index));
         }
@@ -121,11 +150,13 @@ public class PagoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult NuevoPago(Pago pago)
     {
-        
+
         if (!ModelState.IsValid || pago == null)
         {
             return View(pago);
         }
+        TempData["ToastMessage"] = "Pago creado con éxito";
+        TempData["ToastType"] = "success";
         repo.Agregar(pago);
         return RedirectToAction(nameof(Index));
     }

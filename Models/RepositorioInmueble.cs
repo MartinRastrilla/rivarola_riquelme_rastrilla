@@ -93,7 +93,7 @@ public class RepositorioInmueble
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-                command.Parameters.AddWithValue("@tipo", tipo );
+                command.Parameters.AddWithValue("@tipo", tipo);
                 command.Parameters.AddWithValue("@uso", uso);
                 command.Parameters.AddWithValue("@precioMin", precioMin);
                 command.Parameters.AddWithValue("@precioMax", precioMax);
@@ -341,7 +341,7 @@ public class RepositorioInmueble
         return r;
     }
 
-    public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni)
+    public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni, int page, int pageSize)
     {
         var inmuebles = new List<Inmueble>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -352,10 +352,13 @@ public class RepositorioInmueble
                     i.coordenadas, i.precio, i.propietario_dni, i.estado
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
-                WHERE i.propietario_dni = @PropietarioDni;
+                WHERE i.propietario_dni = @PropietarioDni
+                LIMIT @Offset, @PageSize;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
                 command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
                 using (var reader = command.ExecuteReader())
                 {
@@ -367,7 +370,6 @@ public class RepositorioInmueble
                         {
                             usoInmueble = Inmueble.UsoInmueble.Residencial;
                         }
-
                         inmuebles.Add(new Inmueble
                         {
                             Id = reader.GetInt32("id"),
@@ -385,5 +387,24 @@ public class RepositorioInmueble
             }
         }
         return inmuebles;
+    }
+
+    public int ObtenerCantInmueblesPorPropietario(int propietarioDni)
+    {
+        int r = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"
+                SELECT COUNT(*) FROM inmuebles
+                WHERE propietario_dni = @PropietarioDni;
+            ";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
+                r = Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+        return r;
     }
 }

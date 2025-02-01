@@ -25,7 +25,7 @@ public class InquilinoController : Controller
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
-        
+
         var inquilinos = repo.ObtenerPaginado(pagina, pageSize);
 
         var model = new InquilinosViewModel
@@ -34,8 +34,6 @@ public class InquilinoController : Controller
             CurrentPage = pagina,
             TotalPages = totalPages
         };
-
-
 
         if (User?.Identity?.IsAuthenticated == true)
         {
@@ -46,8 +44,8 @@ public class InquilinoController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        
-        
+
+
     }
     [HttpGet]
     [Authorize(Policy = "Empleado")]

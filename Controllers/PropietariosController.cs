@@ -9,6 +9,7 @@ public class PropietariosController : Controller
 {
     private readonly ILogger<PropietariosController> _logger;
     private RepositorioPropietario repo;
+    private RepositorioInmueble repoInmueble = new RepositorioInmueble();
 
     public PropietariosController(ILogger<PropietariosController> logger)
     {
@@ -48,11 +49,33 @@ public class PropietariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Inmuebles(int dni)
+    public IActionResult Inmuebles(int dni, int pagina = 1)
     {
-        var repoInmueble = new RepositorioInmueble();
-        var inmuebles = repoInmueble.ObtenerInmueblesPorPropietario(dni);
-        return View(inmuebles);
+        const int pageSize = 10;
+        int totalInmuebles = repoInmueble.ObtenerCantInmueblesPorPropietario(dni);
+        int totalPages = (int)Math.Ceiling((double)totalInmuebles / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var inmuebles = repoInmueble.ObtenerInmueblesPorPropietario(dni, pagina, pageSize);
+
+        var model = new InmuebleViewModel
+        {
+            Inmuebles = inmuebles,
+            CurrentPage = pagina,
+            TotalPages = totalPages,
+            Propietario_dni = dni
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 
     [HttpGet]

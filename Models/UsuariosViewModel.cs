@@ -1,9 +1,8 @@
 using rivarola_riquelme_rastrilla.Models;
 
-public class InmuebleViewModel
+public class UsuariosViewModel
 {
-    public List<Inmueble>? Inmuebles { get; set; }
+    public IEnumerable<Usuarios>? Usuarios { get; set; }
     public int CurrentPage { get; set; }
     public int TotalPages { get; set; }
-    public int Propietario_dni { get; set; }
 }

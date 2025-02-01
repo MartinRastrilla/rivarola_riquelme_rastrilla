@@ -24,10 +24,31 @@ public class UsuariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Administrador")]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
-        var lista = repo.ObtenerUsuarios();
-        return View(lista);
+        const int pageSize = 10;
+        int totalUsuarios = repo.ObtenerTotalUsuarios();
+        int totalPages = (int)Math.Ceiling((double)totalUsuarios / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var usuarios = repo.ObtenerPaginado(pagina, pageSize);
+        var model = new UsuariosViewModel
+        {
+            Usuarios = usuarios,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 
     [HttpGet]
@@ -41,8 +62,10 @@ public class UsuariosController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult Crear(Usuarios usuario)
     {
+        TempData["ToastMessage"] = "Usuario creado con exito";
+        TempData["ToastType"] = "success";
         repo.Crear(usuario);
-        return View();
+        return RedirectToAction("Index", "Usuarios");
     }
 
     [HttpGet]
@@ -62,6 +85,8 @@ public class UsuariosController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult Editar(Usuarios usuario)
     {
+        TempData["ToastMessage"] = "Usuario editado con éxito";
+        TempData["ToastType"] = "success";
         repo.Editar(usuario);
         return RedirectToAction("Index", "Usuarios");
     }
@@ -78,6 +103,8 @@ public class UsuariosController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult Baja(int Id)
     {
+        TempData["ToastMessage"] = "Usuario eliminado con éxito";
+        TempData["ToastType"] = "danger";
         repo.Borrar(Id);
         return RedirectToAction("Index", "Usuarios");
     }
@@ -150,10 +177,14 @@ public class UsuariosController : Controller
             {
                 await avatar.CopyToAsync(stream);
             }
+            TempData["ToastMessage"] = "Perfil actualizado con éxito";
+            TempData["ToastType"] = "success";
             repo.EditarAvatar(user);
         }
         else
         {
+            TempData["ToastMessage"] = "Perfil actualizados con éxito";
+            TempData["ToastType"] = "success";
             //Si no hay archivo, cambiar datos básicos
             repo.Editar(user);
         }
@@ -190,13 +221,16 @@ public class UsuariosController : Controller
     public async Task<IActionResult> DeleteAvatar()
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
-        if (userId == null){
+        if (userId == null)
+        {
             return Unauthorized();
         }
 
         var user = repo.ObtenerById(int.Parse(userId));
         user.Avatar = "/Uploads/user_pic.jpg";
 
+        TempData["ToastMessage"] = "Avatar eliminado con éxito";
+        TempData["ToastType"] = "success";
         repo.EditarAvatar(user);
 
         var claims = new List<Claim>
@@ -222,7 +256,7 @@ public class UsuariosController : Controller
 
         return RedirectToAction("Index", "Home");
     }
-    
+
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
@@ -236,7 +270,8 @@ public class UsuariosController : Controller
     public async Task<IActionResult> CambiarPass(string ContraseniaActual, string ContraseniaNueva)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
-        if (userId == null){
+        if (userId == null)
+        {
             return Unauthorized();
         }
 
@@ -263,6 +298,8 @@ public class UsuariosController : Controller
             numBytesRequested: 256 / 8
         ));
 
+        TempData["ToastMessage"] = "Contraseña modificada con éxito";
+        TempData["ToastType"] = "success";
         repo.EditarContrasenia(user);
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login", "Usuarios");
@@ -312,6 +349,8 @@ public class UsuariosController : Controller
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
 
+            TempData["ToastMessage"] = "Bienvenido/a " + usuario.Nombre + " " + usuario.Apellido;
+            TempData["ToastType"] = "success";
             return RedirectToAction("Index", "Home");
         }
         else
@@ -327,4 +366,3 @@ public class UsuariosController : Controller
         return RedirectToAction("Login", "Usuarios");
     }
 }
-

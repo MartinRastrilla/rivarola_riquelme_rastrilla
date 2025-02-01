@@ -1,12 +1,14 @@
-@model IEnumerable<rivarola_riquelme_rastrilla.Models.Contratos>
+@model ContratoViewModel
 
 @{
     ViewData["Title"] = "Contratos de Inmueble";
 }
 
-@if (Model != null && Model.Any())
+<link rel="stylesheet" href="~/css/pagination.css">
+
+@if (Model != null && Model.Contratos.Any())
 {
-    <h1>Lista de Contratos para @Model.First().Inmueble.Direccion</h1>
+    <h1>Lista de Contratos para @Model.Contratos.First().Inmueble.Direccion</h1>
     <table class="table table-striped table-hover text-center mt-5">
         <thead>
             <tr>
@@ -19,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var contrato in Model)
+            @foreach (var contrato in Model.Contratos)
             {
                 <tr>
                     <td>
@@ -71,3 +73,76 @@ else
 {
     <h2>No se encontraron contratos para este inmueble</h2>
 }
+
+<div class="pagination">
+    <!-- Botón "Primera página" -->
+    @if (Model.CurrentPage > 1)
+    {
+        <a href="/Inmueble/Contratos?inmuebleId=@Model.InmuebleId&pagina=1" class="btn btn-custom">Primera</a>
+    }
+
+    <!-- Páginas dinámicas -->
+    @{
+        int startPage = Math.Max(1, Model.CurrentPage - 1);
+        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 1);
+
+        for (int i = startPage; i <= endPage; i++)
+        {
+            if (i == Model.CurrentPage)
+            {
+                <span class="btn btn-custom active">@i</span>
+            }
+            else
+            {
+                <a href="/Inmueble/Contratos?inmuebleId=@Model.InmuebleId&pagina=@i" class="btn btn-custom">@i</a>
+            }
+        }
+    }
+
+    <!-- Botón "Última página" -->
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a href="/Inmueble/Contratos?inmuebleId=@Model.InmuebleId&pagina=@Model.TotalPages"
+            class="btn btn-custom">Última</a>
+    }
+</div>
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+    <div id="toastContainer"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    @if (TempData["ToastMessage"] != null)
+    {
+        <text>
+                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+        </text>
+    }
+    });
+
+    function showToast(message, type) {
+        const toastId = `toast-${Date.now()}`; // ID único para el toast
+        const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+
+        const toastContainer = document.getElementById('toastContainer');
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+        const toastElement = document.getElementById(toastId);
+        const bootstrapToast = new bootstrap.Toast(toastElement);
+        bootstrapToast.show();
+
+        // Eliminar el toast del DOM cuando se oculta
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+</script>

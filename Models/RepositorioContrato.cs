@@ -89,6 +89,108 @@ public class RepositorioContrato
         }
     }
 
+    public int ObtenerTotalContratos()
+    {
+        int totalContratos = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = "SELECT COUNT(*) FROM contratos";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                connection.Open();
+                totalContratos = Convert.ToInt32(command.ExecuteScalar());
+                connection.Close();
+            }
+        }
+        return totalContratos;
+    }
+
+    public List<Contratos> ObtenerPaginado(int page, int pageSize)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            connection.Open();
+            var sqlquery = @"
+                SELECT 
+                    c.id AS ContratoId,
+                    c.inquilino_dni AS InquilinoDni,
+                    c.inmueble_id AS InmuebleId,
+                    c.estado AS ContratoEstado,
+                    c.monto AS ContratoMonto,
+                    c.fecha_inicio AS ContratoFechaInicio,
+                    c.fecha_fin AS ContratoFechaFin,
+                    i.nombre AS InquilinoNombre,
+                    i.apellido AS InquilinoApellido,
+                    i.telefono AS InquilinoTelefono,
+                    i.email AS InquilinoEmail,
+                    inm.direccion AS InmuebleDireccion,
+                    t.id AS TipoId,
+                    t.nombre AS TipoNombre
+                FROM contratos c
+                JOIN inquilinos i ON c.inquilino_dni = i.dni
+                JOIN inmuebles inm ON c.inmueble_id = inm.id
+                JOIN tipos t ON inm.tipo_id = t.id
+                LIMIT @Offset, @PageSize;";
+
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+
+                var contratos = new List<Contratos>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Contratos.EstadoContrato estadoContrato;
+                        Enum.TryParse(reader.GetString("ContratoEstado"), out estadoContrato);
+
+                        // Creamos el objeto Inquilino y lo mapeamos
+                        var inquilino = new Inquilino
+                        {
+                            Dni = reader.GetInt64("InquilinoDni"),
+                            Nombre = reader.GetString("InquilinoNombre"),
+                            Apellido = reader.GetString("InquilinoApellido"),
+                            Telefono = reader.GetInt64("InquilinoTelefono"),
+                            Email = reader.GetString("InquilinoEmail")
+                        };
+
+                        // Creamos el objeto Tipo y lo mapeamos
+                        var tipo = new Tipo
+                        {
+                            Id = reader.GetInt32("TipoId"),
+                            Nombre = reader.GetString("TipoNombre")
+                        };
+
+                        // Creamos el objeto Inmueble y lo mapeamos
+                        var inmueble = new Inmueble
+                        {
+                            Id = reader.GetInt32("InmuebleId"),
+                            Direccion = reader.GetString("InmuebleDireccion"),
+                            Tipo = tipo // Asignamos el objeto Tipo
+                        };
+
+                        contratos.Add(new Contratos
+                        {
+                            Id = reader.GetInt32("ContratoId"),
+                            Inquilino_dni = reader.GetInt64("InquilinoDni"),
+                            Inquilino = inquilino,
+                            Inmueble_id = reader.GetInt32("InmuebleId"),
+                            Inmueble = inmueble,
+                            Estado = estadoContrato,
+                            Monto = reader.GetDecimal("ContratoMonto"),
+                            Fecha_inicio = reader.GetDateTime("ContratoFechaInicio"),
+                            Fecha_fin = reader.GetDateTime("ContratoFechaFin")
+                        });
+                    }
+                    return contratos;
+                }
+            }
+
+        }
+    }
+
+
     public Contratos? Obtener(long Id)
     {
         Contratos? contrato = null;
@@ -216,12 +318,12 @@ public class RepositorioContrato
     }
 
     public List<Contratos> ObtenerContratosPorFecha(DateTime? fechaInicio, DateTime? fechaFin)
-{
-    List<Contratos> contratos = new List<Contratos>();
-
-    using (MySqlConnection connection = new MySqlConnection(Conexion))
     {
-        var sqlquery = @"
+        List<Contratos> contratos = new List<Contratos>();
+
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"
                     SELECT c.*, 
                 i.DNI AS DNI, i.Nombre AS InquilinoNombre, i.Apellido AS InquilinoApellido, i.Telefono AS InquilinoTelefono, i.Email AS InquilinoEmail,
                 inm.Direccion AS InmuebleDireccion, inm.Tipo_id AS InmuebleTipo, t.Id AS TipoId, t.Nombre AS TipoNombre
@@ -233,56 +335,56 @@ public class RepositorioContrato
                 (@fechaInicio IS NULL OR c.Fecha_inicio >= @fechaInicio)
                 AND (@fechaFin IS NULL OR c.Fecha_fin <= @fechaFin);";
 
-        using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
-        {
-
-            command.Parameters.AddWithValue("@fechaInicio", fechaInicio.HasValue ? fechaInicio.Value : DBNull.Value);
-            command.Parameters.AddWithValue("@fechaFin", fechaFin.HasValue ? fechaFin.Value : DBNull.Value);
-
-            connection.Open();
-            using (var reader = command.ExecuteReader())
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-                while (reader.Read())
+
+                command.Parameters.AddWithValue("@fechaInicio", fechaInicio.HasValue ? fechaInicio.Value : DBNull.Value);
+                command.Parameters.AddWithValue("@fechaFin", fechaFin.HasValue ? fechaFin.Value : DBNull.Value);
+
+                connection.Open();
+                using (var reader = command.ExecuteReader())
                 {
-                    var contrato = new Contratos
+                    while (reader.Read())
                     {
-                        Id = reader.GetInt32("Id"),
-                        Inquilino_dni = reader.GetInt64("inquilino_dni"),
-                        Inmueble_id = reader.GetInt32("inmueble_id"),
-                        Estado = (Contratos.EstadoContrato)Enum.Parse(typeof(Contratos.EstadoContrato), reader.GetString("estado")),
-                        Monto = reader.GetDecimal("monto"),
-                        Fecha_inicio = reader.GetDateTime("Fecha_inicio"),
-                        Fecha_fin = reader.GetDateTime("Fecha_fin"),
-                        Inquilino = new Inquilino
+                        var contrato = new Contratos
                         {
-                            Dni = reader.GetInt64("DNI"),
-                            Nombre = reader.GetString("InquilinoNombre"),
-                            Apellido = reader.GetString("InquilinoApellido"),
-                            Telefono = reader.GetInt64("InquilinoTelefono"),
-                            Email = reader.GetString("InquilinoEmail")
-                        },
-                        // Creamos el objeto Inmueble y lo mapeamos
-                        Inmueble = new Inmueble
-                        {
-                            Id = reader.GetInt32("id"),
-                            Direccion = reader.GetString("InmuebleDireccion"),
-                            Tipo =new Tipo
+                            Id = reader.GetInt32("Id"),
+                            Inquilino_dni = reader.GetInt64("inquilino_dni"),
+                            Inmueble_id = reader.GetInt32("inmueble_id"),
+                            Estado = (Contratos.EstadoContrato)Enum.Parse(typeof(Contratos.EstadoContrato), reader.GetString("estado")),
+                            Monto = reader.GetDecimal("monto"),
+                            Fecha_inicio = reader.GetDateTime("Fecha_inicio"),
+                            Fecha_fin = reader.GetDateTime("Fecha_fin"),
+                            Inquilino = new Inquilino
                             {
-                                Id = reader.GetInt32("TipoId"),
-                                Nombre = reader.GetString("TipoNombre")
-                            }
-                        },                   
-                    };
-                    contratos.Add(contrato);
+                                Dni = reader.GetInt64("DNI"),
+                                Nombre = reader.GetString("InquilinoNombre"),
+                                Apellido = reader.GetString("InquilinoApellido"),
+                                Telefono = reader.GetInt64("InquilinoTelefono"),
+                                Email = reader.GetString("InquilinoEmail")
+                            },
+                            // Creamos el objeto Inmueble y lo mapeamos
+                            Inmueble = new Inmueble
+                            {
+                                Id = reader.GetInt32("id"),
+                                Direccion = reader.GetString("InmuebleDireccion"),
+                                Tipo = new Tipo
+                                {
+                                    Id = reader.GetInt32("TipoId"),
+                                    Nombre = reader.GetString("TipoNombre")
+                                }
+                            },
+                        };
+                        contratos.Add(contrato);
+                    }
                 }
             }
         }
+
+        return contratos;
     }
 
-    return contratos;
-    }
-
-    public List<Contratos> ObtenerContratosPorInmueble(int inmuebleId)
+    public List<Contratos> ObtenerContratosPorInmueble(int inmuebleId, int page, int pageSize)
     {
         List<Contratos> contratos = new List<Contratos>();
 
@@ -296,11 +398,13 @@ public class RepositorioContrato
                 JOIN Inquilinos i ON c.inquilino_dni = i.DNI
                 JOIN Inmuebles inm ON c.inmueble_id = inm.Id
                 JOIN Tipos t ON inm.Tipo_id = t.Id
-                WHERE c.inmueble_id = @inmuebleId;";
+                WHERE c.inmueble_id = @inmuebleId
+                LIMIT @Offset, @PageSize;";
 
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-
+                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
                 command.Parameters.AddWithValue("@inmuebleId", inmuebleId);
 
                 connection.Open();
@@ -344,6 +448,23 @@ public class RepositorioContrato
         }
         return contratos;
     }
-    
+
+    public int ObtenerTotalContratosPorInmueble(int inmuebleId)
+    {
+        int totalContratos = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = "SELECT COUNT(*) FROM contratos WHERE inmueble_id = @inmuebleId;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@inmuebleId", inmuebleId);
+                connection.Open();
+                totalContratos = Convert.ToInt32(command.ExecuteScalar());
+                connection.Close();
+            }
+        }
+        return totalContratos;
+    }
+
 
 }

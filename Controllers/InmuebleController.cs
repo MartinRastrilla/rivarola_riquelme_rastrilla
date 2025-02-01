@@ -146,7 +146,7 @@ public class InmuebleController : Controller
             ViewBag.propietarios = repoPropietario.ObtenerTodos();
             ViewBag.tipos = repoTipo.ObtenerTipos();
             ViewBag.inmueble = inmueble;
-            return View("Editar",inmueble);
+            return View("Editar", inmueble);
         }
         repoInmueble.GuardarInmueble(inmueble);
         TempData["ToastMessage"] = "Inmueble editado con exito";
@@ -167,10 +167,33 @@ public class InmuebleController : Controller
     }
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Contratos(int inmuebleId)
+    public IActionResult Contratos(int inmuebleId, int pagina = 1)
     {
         var repoContrato = new RepositorioContrato();
-        var contratos = repoContrato.ObtenerContratosPorInmueble(inmuebleId);
-        return View(contratos);
+        const int pageSize = 10;
+        int totalContratos = repoContrato.ObtenerTotalContratosPorInmueble(inmuebleId);
+        int totalPages = (int)Math.Ceiling((double)totalContratos / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var contratos = repoContrato.ObtenerContratosPorInmueble(inmuebleId, pagina, pageSize);
+
+        var model = new ContratoViewModel
+        {
+            Contratos = contratos,
+            CurrentPage = pagina,
+            TotalPages = totalPages,
+            InmuebleId = inmuebleId
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 }

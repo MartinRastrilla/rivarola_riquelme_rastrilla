@@ -20,10 +20,32 @@ public class ContratoController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
-        var lista = repo.ObtenerContratos();
-        return View(lista);
+        const int pageSize = 10;
+        int totalContratos = repo.ObtenerTotalContratos();
+        int totalPages = (int)Math.Ceiling((double)totalContratos / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var contratos = repo.ObtenerPaginado(pagina, pageSize);
+
+        var model = new ContratoViewModel
+        {
+            Contratos = contratos,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 
     [HttpGet]
@@ -63,6 +85,8 @@ public class ContratoController : Controller
     public IActionResult AltaContrato(Contratos contrato)
     {
         int r = repo.AltaContrato(contrato);
+        TempData["ToastMessage"] = "Contrato creado con exito";
+        TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));
     }
 
@@ -85,6 +109,8 @@ public class ContratoController : Controller
         var result = repo.BorrarContrato(Id);
         if (result > 0)
         {
+            TempData["ToastMessage"] = "Contrato eliminado con exito";
+            TempData["ToastType"] = "danger";
             return RedirectToAction(nameof(Index));
         }
         else
@@ -100,6 +126,8 @@ public class ContratoController : Controller
     {
 
         repo.Guardar(contrato);
+        TempData["ToastMessage"] = "Contrato editado con exito";
+        TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));
     }
 
@@ -107,7 +135,7 @@ public class ContratoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult FiltrarFecha(DateTime? fechaInicio, DateTime? fechaFin)
     {
-        if(!fechaInicio.HasValue && !fechaFin.HasValue) 
+        if (!fechaInicio.HasValue && !fechaFin.HasValue)
         {
             TempData["Error"] = "Debe seleccionar al menos una fecha de inicio o fecha de finalización.";
             return RedirectToAction("index");
@@ -116,15 +144,37 @@ public class ContratoController : Controller
         var contratos = repo.ObtenerContratosPorFecha(fechaInicio, fechaFin);
         ViewData["fechaInicio"] = fechaInicio?.ToString("dd-MM-yyyy");
         ViewData["fechaFin"] = fechaFin?.ToString("dd-MM-yyyy");
-        return View("index",contratos);
+        return View("index", contratos);
 
     }
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Pagos(int Id)
+    public IActionResult Pagos(int contratoId, int pagina = 1)
     {
-        var pagos = repoPago.ObtenerPagosPorContrato(Id);
-        return View(pagos);
+        const int pageSize = 10;
+        var totalPagos = repoPago.ObtenerTotalPagosPorContrato(contratoId);
+        var totalPages = (int)Math.Ceiling((double)totalPagos / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var pagos = repoPago.ObtenerPagosPorContrato(contratoId, pagina, pageSize);
+        var model = new PagoViewModel
+        {
+            Pagos = pagos,
+            CurrentPage = pagina,
+            TotalPages = totalPages,
+            ContratoId = contratoId
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
     }
 }

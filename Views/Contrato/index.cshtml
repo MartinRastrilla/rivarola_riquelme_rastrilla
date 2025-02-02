@@ -90,7 +90,7 @@
                     <td>@Html.DisplayFor(modelItem => item.Estado)</td>
                     <td>$@Html.DisplayFor(modelItem => item.Monto)</td>
                     <td>@String.Format("{0:dd/MM/yyyy}", item.Fecha_inicio)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Fecha_fin)</td>
+                    <td>@String.Format("{0:dd/MM/yyyy}", item.Fecha_fin)</td>
                     <td>
                         @if (User.IsInRole("Administrador"))
                         {

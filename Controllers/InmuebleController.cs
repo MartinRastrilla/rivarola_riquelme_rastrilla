@@ -22,7 +22,7 @@ public class InmuebleController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Index(int? tipo, string uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page = 1, int pageSize = 10)
     {
-        int totalInmuebles = repoInmueble.ObtenerTotalInmuebles();
+        int totalInmuebles = repoInmueble.ObtenerTotalInmuebles(tipo, uso, precioMin, precioMax, ambientes);
         int totalPages = (int)Math.Ceiling((double)totalInmuebles / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas

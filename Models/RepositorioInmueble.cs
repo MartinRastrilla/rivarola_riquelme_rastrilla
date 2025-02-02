@@ -55,22 +55,33 @@ public class RepositorioInmueble
         }
     }
 
-    public int ObtenerTotalInmuebles()
+    public int ObtenerTotalInmuebles(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes)
     {
         int totalInmuebles = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = "SELECT COUNT(*) FROM inmuebles";
+            connection.Open();
+            var sqlquery = @"SELECT COUNT(*)FROM inmuebles i
+                WHERE i.estado = 1
+                AND (@tipo IS NULL OR i.tipo_id = @tipo)
+                AND (@uso IS NULL OR i.uso = @uso)
+                AND (@precioMin IS NULL OR i.precio >= @precioMin)
+                AND (@precioMax IS NULL OR i.precio <= @precioMax)
+                AND (@ambientes IS NULL OR i.ambientes = @ambientes);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-                connection.Open();
+                command.Parameters.AddWithValue("@tipo", tipo);
+                command.Parameters.AddWithValue("@uso", uso);
+                command.Parameters.AddWithValue("@precioMin", precioMin);
+                command.Parameters.AddWithValue("@precioMax", precioMax);
+                command.Parameters.AddWithValue("@ambientes", ambientes);
                 totalInmuebles = Convert.ToInt32(command.ExecuteScalar());
             }
         }
         return totalInmuebles;
     }
 
-    public List<Inmueble> ObtenerInmueblesFiltrados(int? tipo, string uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page, int pageSize)
+    public List<Inmueble> ObtenerInmueblesFiltrados(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page, int pageSize)
     {
         var inmuebles = new List<Inmueble>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -135,61 +146,6 @@ public class RepositorioInmueble
             }
         }
         return inmuebles;
-    }
-    public List<Inmueble> ObtenerPaginado(int page, int pageSize)
-    {
-        using (MySqlConnection connection = new MySqlConnection(Conexion))
-        {
-            connection.Open();
-            //var sqlquery = @"SELECT * FROM inmuebles LIMIT @Offset, @PageSize;";
-            var sqlquery = @"
-                SELECT i.id, i.direccion, i.uso, i.tipo_id, i.ambientes, i.coordenadas, i.precio, i.propietario_dni, i.estado,
-                    t.nombre AS tipo_nombre,
-                    p.nombre, p.apellido
-                FROM inmuebles i
-                JOIN tipos t ON i.tipo_id = t.id
-                JOIN propietarios p ON i.propietario_dni = p.dni
-                LIMIT @Offset, @PageSize;
-            ";
-            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
-            {
-                command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
-                command.Parameters.AddWithValue("@PageSize", pageSize);
-
-                var inmuebles = new List<Inmueble>();
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        string usoString = reader.GetString(reader.GetOrdinal("uso"));
-                        Inmueble.UsoInmueble usoInmueble = Inmueble.UsoInmueble.Residencial;
-
-                        if (!Enum.TryParse(usoString, true, out usoInmueble))
-                        {
-                            usoInmueble = Inmueble.UsoInmueble.Residencial;
-                        }
-                        inmuebles.Add(new Inmueble
-                        {
-                            Id = reader.GetInt32("id"),
-                            Direccion = reader.GetString("direccion"),
-                            Uso = usoInmueble,
-                            Tipo = new Tipo { Id = reader.GetInt32("tipo_id"), Nombre = reader.GetString("tipo_nombre") },
-                            Ambientes = reader.GetInt32("ambientes"),
-                            Coordenadas = reader.GetString("coordenadas"),
-                            Precio = reader.GetDecimal("precio"),
-                            Propietario_dni = reader.GetInt64("propietario_dni"),
-                            Estado = reader.GetBoolean("estado"),
-                            Propietario = new Propietarios
-                            {
-                                Nombre = reader.GetString("nombre"),
-                                Apellido = reader.GetString("apellido")
-                            }
-                        });
-                    }
-                    return inmuebles;
-                }
-            }
-        }
     }
     public Inmueble? Obtener(int Id)
     {

@@ -259,12 +259,11 @@ public class RepositorioContrato
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             var sqlquery = @"INSERT INTO contratos (inquilino_dni, inmueble_id, estado, monto, fecha_inicio, fecha_fin) 
-                            VALUES (@inquilino_dni, @inmueble_id, @estado, @monto, @fecha_inicio, @fecha_fin);";
+                            VALUES (@inquilino_dni, @inmueble_id, 'Activo', @monto, @fecha_inicio, @fecha_fin);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@inquilino_dni", contrato.Inquilino_dni);
                 command.Parameters.AddWithValue("@inmueble_id", contrato.Inmueble_id);
-                command.Parameters.AddWithValue("@estado", contrato.Estado.ToString());
                 command.Parameters.AddWithValue("@monto", contrato.Monto);
                 command.Parameters.AddWithValue("@fecha_inicio", contrato.Fecha_inicio);
                 command.Parameters.AddWithValue("@fecha_fin", contrato.Fecha_fin);

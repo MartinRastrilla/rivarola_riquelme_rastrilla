@@ -16,8 +16,11 @@
 
 <!-- Botón para abrir el modal -->
 <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarFechaModal">
-    Filtrar por Fecha
+    <i class="fa-regular fa-calendar"></i> Filtrar por Fecha
 </button>
+<a href="@Url.Action("Index")" class="btn btn-custom">
+    <i class="fa-solid fa-xmark"></i>
+</a>
 
 <!-- Modal de Bootstrap -->
 <div class="modal fade" id="filtrarFechaModal" tabindex="-1" aria-labelledby="filtrarFechaModalLabel"

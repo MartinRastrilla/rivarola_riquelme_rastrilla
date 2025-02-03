@@ -133,18 +133,42 @@ public class ContratoController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult FiltrarFecha(DateTime? fechaInicio, DateTime? fechaFin)
+    public IActionResult FiltrarFecha(DateTime? fechaInicio, DateTime? fechaFin, int pagina = 1)
     {
+
         if (!fechaInicio.HasValue && !fechaFin.HasValue)
         {
             TempData["Error"] = "Debe seleccionar al menos una fecha de inicio o fecha de finalización.";
             return RedirectToAction("index");
 
         }
+
+        const int pageSize = 10;
         var contratos = repo.ObtenerContratosPorFecha(fechaInicio, fechaFin);
+        int totalContratos = contratos.Count();
+        int totalPages = (int)Math.Ceiling((double)totalContratos / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
         ViewData["fechaInicio"] = fechaInicio?.ToString("dd-MM-yyyy");
         ViewData["fechaFin"] = fechaFin?.ToString("dd-MM-yyyy");
-        return View("index", contratos);
+
+        var model = new ContratoViewModel
+        {
+            Contratos = contratos,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View("Index", model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
 
     }
 

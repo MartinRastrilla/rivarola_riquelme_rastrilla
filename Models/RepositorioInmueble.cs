@@ -363,4 +363,63 @@ public class RepositorioInmueble
         }
         return r;
     }
+
+
+    public List<Inmueble> ObtenerInmueblesPorFecha(DateTime? fechaInicio, DateTime? fechaFin)
+    {
+        List<Inmueble> inmuebles = new List<Inmueble>();
+
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"
+                            SELECT i.id, i.direccion, i.uso, i.tipo_id, t.nombre AS tipo_nombre, i.ambientes, 
+                                i.coordenadas, i.precio, i.propietario_dni, i.estado
+                            FROM inmuebles i
+                            JOIN tipos t ON i.tipo_id = t.id
+                            LEFT JOIN Contratos c ON c.inmueble_id = i.Id 
+                                AND c.Estado = 'Activo'
+                                AND (
+                                    (@fechaInicio <= c.Fecha_fin AND @fechaFin >= c.Fecha_inicio)
+                                )
+                            WHERE c.Id IS NULL;";
+
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@fechaInicio", fechaInicio);
+                command.Parameters.AddWithValue("@fechaFin", fechaFin);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string usoString = reader.GetString("uso");
+                        Inmueble.UsoInmueble usoInmueble;
+                        if (!Enum.TryParse(usoString, true, out usoInmueble))
+                        {
+                            usoInmueble = Inmueble.UsoInmueble.Residencial;
+                        }
+                        var inmueble = new Inmueble
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Direccion = reader.GetString("Direccion"),
+                            Uso = usoInmueble,
+                            Tipo = new Tipo
+                            {
+                                Id = reader.GetInt32("Tipo_id"),
+                                Nombre = reader.GetString("tipo_nombre")
+                            },
+                            Ambientes = reader.GetInt32("ambientes"),
+                            Coordenadas = reader.GetString("coordenadas"),
+                            Precio = reader.GetDecimal("precio"),
+                            Propietario_dni = reader.GetInt64("propietario_dni"),
+                        };
+                        inmuebles.Add(inmueble);
+                    }
+                }
+            }
+        }
+
+        return inmuebles;
+    }
+
 }

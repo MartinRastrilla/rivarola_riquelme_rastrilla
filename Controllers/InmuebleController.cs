@@ -196,4 +196,13 @@ public class InmuebleController : Controller
             return RedirectToAction("Login", "Home");
         }
     }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult ObtenerInmueblesDisponiblesFechas(DateTime fechaInicio, DateTime fechaFin)
+    {
+        var inmueblesDisponibles = repoInmueble.ObtenerInmueblesPorFecha(fechaInicio, fechaFin);
+
+        return Json(inmueblesDisponibles);
+    }
 }

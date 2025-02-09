@@ -5,14 +5,27 @@
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
 <link rel="stylesheet" href="~/css/Calendar/AltaContratoCalendar.css">
 
-<h1>@ViewData["Title"]</h1>
-
+<h1 class="mb-5">@ViewData["Title"]</h1>
+<h2 class="border-bottom border-1 border-secondary w-75 text-center mb-4" style="margin: auto">Seleccione las fechas en
+    las que se va a alquilar el inmueble
+</h2>
 <form asp-action="AltaContrato" method="post">
     <div class="row mt-3">
         <div class="col-md-6">
             <div class="form-group mt-3">
+                <label asp-for="Fecha_inicio">Fecha de Inicio</label>
+                <input asp-for="Fecha_inicio" id="Fecha_inicio" class="form-control" type="date" required />
+                <span asp-validation-for="Fecha_inicio" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Fecha_fin">Fecha de Finalización</label>
+                <input asp-for="Fecha_fin" id="Fecha_fin" class="form-control" type="date" required />
+                <span asp-validation-for="Fecha_fin" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
                 <label asp-for="Inquilino_dni">Inquilino</label>
-                <select asp-for="Inquilino_dni" class="form-control">
+                <select asp-for="Inquilino_dni" class="form-control" required>
                     <option value="">Seleccione un inquilino</option>
                     @foreach (var inquilino in ViewBag.Inquilinos)
                     {
@@ -22,33 +35,18 @@
                 <span asp-validation-for="Inquilino_dni" class="text-danger"></span>
             </div>
 
-            <div class="form-group  mt-3">
+            <div class="form-group mt-3 d-none" id="InmuebleDiv">
                 <label asp-for="Inmueble_id">Inmueble</label>
-                <select asp-for="Inmueble_id" class="form-control">
+                <select asp-for="Inmueble_id" id="Inmueble_id" class="form-control" required>
                     <option value="">Seleccione un inmueble</option>
-                    @foreach (var inmueble in ViewBag.Inmuebles)
-                    {
-                        <option value="@inmueble.Id">@inmueble.Direccion</option>
-                    }
                 </select>
                 <span asp-validation-for="Inmueble_id" class="text-danger"></span>
             </div>
 
-            <div class="form-group mt-3">
+            <div class="form-group mt-3 d-none" id="MontoDiv">
                 <label asp-for="Monto"></label>
-                <input asp-for="Monto" class="form-control" />
+                <input type="number" asp-for="Monto" class="form-control" required />
                 <span asp-validation-for="Monto" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-3">
-                <label asp-for="Fecha_inicio">Fecha de Inicio</label>
-                <input asp-for="Fecha_inicio" id="Fecha_inicio" class="form-control" type="date" />
-                <span asp-validation-for="Fecha_inicio" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-3">
-                <label asp-for="Fecha_fin">Fecha de Finalización</label>
-                <input asp-for="Fecha_fin" id="Fecha_fin" class="form-control" type="date" />
-                <span asp-validation-for="Fecha_fin" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-6">

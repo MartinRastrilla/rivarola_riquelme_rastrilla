@@ -6,4 +6,5 @@ public class ContratoViewModel
     public int CurrentPage { get; set; }
     public int TotalPages { get; set; }
     public int InmuebleId { get; set; }
+    public List<Multa>? Multas { get; set; }
 }

@@ -119,8 +119,13 @@
                                 </div>
                                 <!-- Cuerpo del modal -->
                                 <div class="modal-body">
-                                    <form asp-action="AplicarMulta" method="post">
+                                    <form action="Multa/AplicarMulta" method="post">
                                         @{
+                                            if (Model.Multas != null && Model.Multas.Any(m => m.Contrato_id == item.Id)) {
+                                                <div class="form-group text-center my-4">
+                                                    <h3 class="fs-5 pb-1" style="color: var(--rojo-principal);">*ya se ha aplicado una multa a este Contrato*</h3>
+                                                </div>
+                                            }else{
                                             var totalDiasContrato = (item.Fecha_fin - item.Fecha_inicio).TotalDays;
                                             var diasTranscurridos = (DateTime.Now - item.Fecha_inicio).TotalDays;
                                             var mitadDelContrato = totalDiasContrato / 2;
@@ -133,21 +138,25 @@
                                                 multa = item.Monto * 2;
                                                 msj = "Los días transcurridos NO superan la mitad del contrato, por lo que se aplicarán cargos mayores (Monto del Contrato * 2).";
                                             }
+                                        
+                                            <input type="hidden" name="Contrato_id" value="@item.Id" />
+                                            <div class="form-group text-center">
+                                                <h3 class="fs-5 border-bottom border-secondary pb-1">¿Está seguro que desea cancelar
+                                                    el Contrato?</h3>
+                                            </div>
+                                            <div class="form-group text-center mt-3">
+                                                <label for="" class="fs-5">Importe de la Multa: $@multa</label>
+                                            </div>
+                                            <input value="@multa" name="Monto" type="hidden">
+                                            <input type="date" class="d-none" name="Fecha_multa" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                            <div class="form-group text-center mt-1">
+                                                <label for="" class="text-danger" style="font-size: 13px">*@msj*</label>
+                                            </div>
+                                            <div class="form-group text-center mt-4">
+                                                <input type="submit" value="Aplicar Multa" class="btn btn-custom" />
+                                            </div>
+                                            }
                                         }
-                                        <input type="hidden" name="Contrato_id" value="@item.Id" />
-                                        <div class="form-group text-center">
-                                            <h3 class="fs-5 border-bottom border-secondary pb-1">¿Está seguro que desea cancelar
-                                                el Contrato?</h3>
-                                        </div>
-                                        <div class="form-group text-center mt-3">
-                                            <label for="" class="fs-5">Importe de la Multa: $@multa</label>
-                                        </div>
-                                        <div class="form-group text-center mt-1">
-                                            <label for="" class="text-danger" style="font-size: 13px">*@msj*</label>
-                                        </div>
-                                        <div class="form-group text-center mt-4">
-                                            <input type="submit" value="Aplicar Multa" class="btn btn-custom" />
-                                        </div>
                                     </form>
                                 </div>
                                 <!-- Pie del modal -->

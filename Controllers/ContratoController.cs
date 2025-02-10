@@ -12,6 +12,7 @@ public class ContratoController : Controller
     private RepositorioInquilino repoInquilino = new RepositorioInquilino();
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
     private RepositorioPago repoPago = new RepositorioPago();
+    private RepositorioMulta repoMulta = new RepositorioMulta();
 
     public ContratoController(ILogger<ContratoController> logger)
     {
@@ -30,12 +31,14 @@ public class ContratoController : Controller
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
         var contratos = repo.ObtenerPaginado(pagina, pageSize);
+        var multas = repoMulta.ObtenerMultas();
 
         var model = new ContratoViewModel
         {
             Contratos = contratos,
             CurrentPage = pagina,
-            TotalPages = totalPages
+            TotalPages = totalPages,
+            Multas = multas
         };
 
         if (User?.Identity?.IsAuthenticated == true)

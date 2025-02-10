@@ -104,7 +104,59 @@
                                 class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                         <a asp-controller="contrato" asp-action="Pagos" asp-route-contratoId="@item.Id" class="me-2"><i
                                 class="fa-solid fa-file-invoice-dollar ic-sz ic-color"></i></a>
+                        <a data-bs-toggle="modal" data-bs-target="#aplicarMultaModal-@item.Id" style="cursor: pointer"><i
+                                class="fa-solid fa-ban ic-sz ic-color"></i></a>
                     </td>
+                    <div class="modal fade" id="aplicarMultaModal-@item.Id" tabindex="-1"
+                        aria-labelledby="aplicarMultaModalLabel-@item.Id" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <!-- Encabezado del modal -->
+                                <div class="modal-header bg-dark">
+                                    <h5 class="modal-title" id="aplicarMultaModal-@item.Id">Aplicar Multa</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        style="filter: invert(1);"></button>
+                                </div>
+                                <!-- Cuerpo del modal -->
+                                <div class="modal-body">
+                                    <form asp-action="AplicarMulta" method="post">
+                                        @{
+                                            var totalDiasContrato = (item.Fecha_fin - item.Fecha_inicio).TotalDays;
+                                            var diasTranscurridos = (DateTime.Now - item.Fecha_inicio).TotalDays;
+                                            var mitadDelContrato = totalDiasContrato / 2;
+                                            var multa = item.Monto;
+                                            var msj = "";
+                                            if (diasTranscurridos > mitadDelContrato) {
+                                                multa = item.Monto;
+                                                msj = "Los días transcurridos superan la mitad del contrato, por lo que no se aplicarán cargos mayores.";
+                                            } else  if (diasTranscurridos < mitadDelContrato) {
+                                                multa = item.Monto * 2;
+                                                msj = "Los días transcurridos NO superan la mitad del contrato, por lo que se aplicarán cargos mayores (Monto del Contrato * 2).";
+                                            }
+                                        }
+                                        <input type="hidden" name="Contrato_id" value="@item.Id" />
+                                        <div class="form-group text-center">
+                                            <h3 class="fs-5 border-bottom border-secondary pb-1">¿Está seguro que desea cancelar
+                                                el Contrato?</h3>
+                                        </div>
+                                        <div class="form-group text-center mt-3">
+                                            <label for="" class="fs-5">Importe de la Multa: $@multa</label>
+                                        </div>
+                                        <div class="form-group text-center mt-1">
+                                            <label for="" class="text-danger" style="font-size: 13px">*@msj*</label>
+                                        </div>
+                                        <div class="form-group text-center mt-4">
+                                            <input type="submit" value="Aplicar Multa" class="btn btn-custom" />
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Pie del modal -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </tr>
             }
     </tbody>
@@ -144,12 +196,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    @if (TempData["ToastMessage"] != null)
-    {
-        <text>
+        @if (TempData["ToastMessage"] != null)
+            {
+                <text>
                     showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-        </text>
-    }
+                </text>
+        }
     });
 
     function showToast(message, type) {

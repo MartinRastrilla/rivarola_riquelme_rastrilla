@@ -466,4 +466,21 @@ public class RepositorioContrato
         return totalContratos;
     }
 
+    public int CancelarContrato(int contratoId)
+    {
+        int r = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE contratos SET estado='Cancelado' WHERE Id=@Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Id", contratoId);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
+
 }

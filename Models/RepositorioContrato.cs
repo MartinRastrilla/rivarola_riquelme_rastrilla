@@ -259,7 +259,8 @@ public class RepositorioContrato
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             var sqlquery = @"INSERT INTO contratos (inquilino_dni, inmueble_id, estado, monto, fecha_inicio, fecha_fin) 
-                            VALUES (@inquilino_dni, @inmueble_id, 'Activo', @monto, @fecha_inicio, @fecha_fin);";
+                            VALUES (@inquilino_dni, @inmueble_id, 'Activo', @monto, @fecha_inicio, @fecha_fin);
+                            SELECT LAST_INSERT_ID();";//Obtenemos el último ID insertado
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@inquilino_dni", contrato.Inquilino_dni);
@@ -268,7 +269,7 @@ public class RepositorioContrato
                 command.Parameters.AddWithValue("@fecha_inicio", contrato.Fecha_inicio);
                 command.Parameters.AddWithValue("@fecha_fin", contrato.Fecha_fin);
                 connection.Open();
-                r = command.ExecuteNonQuery();
+                r = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();
             }
         }

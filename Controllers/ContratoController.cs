@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
@@ -13,6 +14,7 @@ public class ContratoController : Controller
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
     private RepositorioPago repoPago = new RepositorioPago();
     private RepositorioMulta repoMulta = new RepositorioMulta();
+    private RepositorioRegistroContratos repoRegistroContratos = new RepositorioRegistroContratos();
 
     public ContratoController(ILogger<ContratoController> logger)
     {
@@ -87,7 +89,15 @@ public class ContratoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult AltaContrato(Contratos contrato)
     {
-        int r = repo.AltaContrato(contrato);
+        int contratoId = repo.AltaContrato(contrato);
+
+        //Agregamos el registro del nuevo contrato
+        RegistroContratos registroContratos = new RegistroContratos();
+        registroContratos.Contrato_id = contratoId;
+        registroContratos.Fecha_creacion = DateTime.Now;
+        registroContratos.Creado_por = Convert.ToInt32(User.FindFirstValue("Id"));
+        repoRegistroContratos.CrearRegistroContratos(registroContratos);
+
         TempData["ToastMessage"] = "Contrato creado con exito";
         TempData["ToastType"] = "success";
         return RedirectToAction(nameof(Index));

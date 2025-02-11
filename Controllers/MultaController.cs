@@ -1,5 +1,6 @@
 
 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
@@ -38,6 +39,9 @@ public class MultaController : Controller
                 TempData["ToastType"] = "danger";
                 return RedirectToAction("Index", "Contrato");
             }
+            registroContrato.Cancelado_por = Convert.ToInt32(User.FindFirstValue("Id"));
+            registroContrato.Fecha_cancelacion = DateTime.Now;
+
             repositorioMulta.AltaMulta(multa);
             repositorioContrato.CancelarContrato(multa.Contrato_id);
             repositorioRegistroContratos.CrearCancelacionRegistro(registroContrato);

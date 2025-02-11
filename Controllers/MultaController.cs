@@ -21,11 +21,17 @@ public class MultaController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult AplicarMulta(Multa multa)
     {
+        int contrato_id = multa.Contrato_id;
         if (ModelState.IsValid)
         {
-            TempData["ToastMessage"] = "Multa aplicada con exito";
-            TempData["ToastType"] = "success";
-            RegistroContratos registroContrato = repositorioRegistroContratos.ObtenerRegistroContratosPorContrato(multa.Contrato_id);
+            if (contrato_id == 0)
+            {
+                TempData["ToastMessage"] = "Error al aplicar la multa";
+                TempData["ToastType"] = "danger";
+                return RedirectToAction("Index", "Contrato");
+            }
+
+            RegistroContratos registroContrato = repositorioRegistroContratos.ObtenerRegistroContratosPorContrato(contrato_id);
             if (registroContrato == null)
             {
                 TempData["ToastMessage"] = "Error al aplicar la multa";
@@ -35,6 +41,9 @@ public class MultaController : Controller
             repositorioMulta.AltaMulta(multa);
             repositorioContrato.CancelarContrato(multa.Contrato_id);
             repositorioRegistroContratos.CrearCancelacionRegistro(registroContrato);
+
+            TempData["ToastMessage"] = "Multa aplicada con exito";
+            TempData["ToastType"] = "success";
 
             return RedirectToAction("Index", "Contrato");
         }

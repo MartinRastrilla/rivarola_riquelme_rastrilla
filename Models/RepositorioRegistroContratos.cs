@@ -109,8 +109,9 @@ public class RepositorioRegistroContratos
                             Contrato_id = reader.GetInt32("contrato_id"),
                             Fecha_creacion = reader.GetDateTime("fecha_creacion"),
                             Creado_por = reader.GetInt32("creado_por"),
-                            Fecha_cancelacion = reader.GetDateTime("fecha_cancelacion"),
-                            Cancelado_por = reader.GetInt32("cancelado_por")
+                            Fecha_cancelacion = reader.IsDBNull(reader.GetOrdinal("fecha_cancelacion")) ? (DateTime?)null : reader.GetDateTime("fecha_cancelacion"),
+                            Cancelado_por = reader.IsDBNull(reader.GetOrdinal("cancelado_por")) ? (int?)null : reader.GetInt32("cancelado_por")
+
                         };
                     }
                 }

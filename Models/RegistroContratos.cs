@@ -14,7 +14,9 @@ public class RegistroContratos : Controller
 
     [ForeignKey("Usuarios")]
     public int Creado_por { get; set; }
+    public Usuarios? Usuario { get; set; }
     public DateTime? Fecha_cancelacion { get; set; }
     [ForeignKey("Usuarios")]
     public int? Cancelado_por { get; set; }
+    public Usuarios? Usuario2 { get; set; }
 }

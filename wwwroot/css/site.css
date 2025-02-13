@@ -24,3 +24,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.card {
+  padding: 25px;
+  transition: all 0.25s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}

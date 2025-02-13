@@ -25,10 +25,12 @@ public class RepositorioRegistroContratos
             u.nombre as creado_por_nombre,
             u.apellido as creado_por_apellido,
             u.email as creado_por_email,
+            u.avatar as creado_por_avatar,
             u2.id as cancelado_por_id,
             u2.nombre as cancelado_por_nombre,
             u2.apellido as cancelado_por_apellido,
             u2.email as cancelado_por_email,
+            u2.avatar as cancelado_por_avatar,
             c.id as contrato_id,
             c.estado,
             c.monto,
@@ -39,13 +41,16 @@ public class RepositorioRegistroContratos
             inm.coordenadas as inmueble_coordenadas,
             inq.dni as inquilino_dni,
             inq.nombre as inquilino_nombre,
-            inq.apellido as inquilino_apellido
+            inq.apellido as inquilino_apellido,
+            m.id as multa_id,
+            m.monto as monto_multa
         FROM registro_contratos as rc
         JOIN contratos as c ON rc.contrato_id = c.id
         JOIN usuarios as u ON rc.creado_por = u.id
         JOIN inmuebles as inm ON c.inmueble_id = inm.id
         JOIN inquilinos as inq ON c.inquilino_dni = inq.dni
         LEFT JOIN usuarios as u2 ON rc.cancelado_por = u2.id
+        LEFT JOIN multa as m ON rc.contrato_id = m.contrato_id
         ORDER BY rc.fecha_creacion DESC
         LIMIT @Offset, @PageSize;";
 
@@ -74,14 +79,16 @@ public class RepositorioRegistroContratos
                                 Id = reader.GetInt32("creado_por_id"),
                                 Nombre = reader.GetString("creado_por_nombre"),
                                 Apellido = reader.GetString("creado_por_apellido"),
-                                Email = reader.GetString("creado_por_email")
+                                Email = reader.GetString("creado_por_email"),
+                                Avatar = reader.GetString("creado_por_avatar")
                             },
                             Usuario2 = reader.IsDBNull(reader.GetOrdinal("cancelado_por_id")) ? null : new Usuarios
                             {
                                 Id = reader.GetInt32("cancelado_por_id"),
                                 Nombre = reader.IsDBNull(reader.GetOrdinal("cancelado_por_nombre")) ? null : reader.GetString("cancelado_por_nombre"),
                                 Apellido = reader.IsDBNull(reader.GetOrdinal("cancelado_por_apellido")) ? null : reader.GetString("cancelado_por_apellido"),
-                                Email = reader.IsDBNull(reader.GetOrdinal("cancelado_por_email")) ? null : reader.GetString("cancelado_por_email")
+                                Email = reader.IsDBNull(reader.GetOrdinal("cancelado_por_email")) ? null : reader.GetString("cancelado_por_email"),
+                                Avatar = reader.IsDBNull(reader.GetOrdinal("cancelado_por_avatar")) ? null : reader.GetString("cancelado_por_avatar")
                             },
                             Contrato = new Contratos
                             {
@@ -101,7 +108,12 @@ public class RepositorioRegistroContratos
                                     Dni = reader.GetInt64("inquilino_dni"),
                                     Nombre = reader.GetString("inquilino_nombre"),
                                     Apellido = reader.GetString("inquilino_apellido")
-                                }
+                                },
+
+                            },
+                            Multa = new Multa
+                            {
+                                Monto = reader.IsDBNull(reader.GetOrdinal("monto_multa")) ? 0 : reader.GetDecimal("monto_multa")
                             }
                         });
                     }

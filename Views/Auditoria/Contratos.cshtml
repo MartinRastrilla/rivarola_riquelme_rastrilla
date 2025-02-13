@@ -5,14 +5,16 @@
 
 <link rel="stylesheet" href="~/css/pagination.css">
 
-<h1>Registro de Contratos</h1>
+<h1 class="my-2">Registro de Contratos</h1>
 
-<table class="table table-striped table-hover">
+<table class="mt-5 table table-striped table-hover text-center">
     <thead>
         <tr>
             <th>Contrato</th>
+            <th>Creado Por</th>
             <th>Fecha de Creación</th>
-            <th>Creado por</th>
+            <th>Cancelado Por</th>
+            <th>Fecha de Cancelación</th>
         </tr>
     </thead>
     <tbody>
@@ -20,9 +22,135 @@
             @foreach (var registros in Model.RegistrosContratos)
             {
                 <tr>
-                    <td>Algo @registros.Contrato_id</td>
+                    <td>
+                        <a data-bs-toggle="modal" data-bs-target="#contratoModal-@registros.Contrato?.Id"
+                            style="cursor: pointer">
+                            <i class="fa-solid fa-house ic-sz ic-color"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a data-bs-toggle="modal" data-bs-target="#usuarioModal-@registros.Usuario?.Id" style="cursor: pointer">
+                            <i class="fa-solid fa-user ic-sz ic-color"></i>
+                        </a>
+                    </td>
                     <td>@registros.Fecha_creacion</td>
-                    <td>@registros.Usuario?.Id</td>
+                    <div class="modal fade" id="usuarioModal-@registros.Usuario?.Id" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark">
+                                    <h5 class="modal-title text-white">Vista del Usuario</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        style="filter: invert(1);"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row text-center fs-5 mb-3">
+                                        <div class="col-4 text-center align-self-center">
+                                            <img src="@registros.Usuario?.Avatar" class="avatar"
+                                                style="width: 110px; height: 110px; border-radius: 50%;" />
+                                        </div>
+                                        <div class="col-8 text-start align-self-center">
+                                            <p class="mb-0" style="color: var(--rojo-principal);"><strong>Usuario</strong></p>
+                                            <p>@registros.Usuario?.Nombre @registros.Usuario?.Apellido</p>
+                                            <p class="mb-0" style="color: var(--rojo-principal);"><strong>Email </strong></p>
+                                            <p>@registros.Usuario?.Email</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="contratoModal-@registros.Contrato?.Id" tabindex="-1">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark">
+                                    <h5 class="modal-title text-white">Vista del Contrato</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        style="filter: invert(1);"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h3 class="fs-4 text-center"><strong>Contrato</strong></h3>
+                                    <div class="row text-center fs-5">
+                                        <p class="col-4"><strong>Monto: </strong>$@registros.Contrato?.Monto</p>
+                                        <p class="col-4"><strong>Estado: </strong>@registros.Contrato?.Estado</p>
+                                        @if (registros.Multa != null)
+                                        {
+                                            <p class="col-4"><strong>Multa: </strong>$@registros.Multa.Monto</p>
+                                        }
+                                    </div>
+                                    <hr class="my-4">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <h4 class="fs-4 fw-bold d-inline-block"
+                                                style="border-bottom: 2px solid var(--rojo-principal);">
+                                                Información del Inmueble</h4>
+                                            <p><strong>Dirección del Inmueble: </strong>
+                                                @registros.Contrato?.Inmueble?.Direccion</p>
+                                            <p>@registros.Contrato?.Inmueble?.Coordenadas</p>
+
+                                        </div>
+                                        <div class="col-6">
+                                            <h4 class="fs-4 fw-bold d-inline-block"
+                                                style="border-bottom: 2px solid var(--rojo-principal);">Información del
+                                                Inquilino</h4>
+                                            <p><strong>Inquilino: </strong>
+                                                @registros.Contrato?.Inquilino?.Nombre @registros.Contrato?.Inquilino?.Apellido
+                                            </p>
+                                            <p><strong>DNI: </strong>@registros.Contrato?.Inquilino?.Dni</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (registros.Contrato?.Estado.ToString() == "Activo")
+                    {
+                        <td class="fw-bold" style="color: var(--rojo-oscuro);">Contrato aún activo</td>
+                        <td class="fw-bold" style="color: var(--rojo-oscuro);">Contrato aún activo</td>
+                    }
+                    else
+                    {
+                        <td>
+                            <a data-bs-toggle="modal" data-bs-target="#usuarioCancelModal-@registros.Usuario2?.Id"
+                                style="cursor: pointer">
+                                <i class="fa-solid fa-user-slash ic-sz ic-color"></i>
+                            </a>
+                        </td>
+                        <td>@registros.Fecha_cancelacion</td>
+                    }
+                    <div class="modal fade" id="usuarioCancelModal-@registros.Usuario2?.Id" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark">
+                                    <h5 class="modal-title text-white">Vista del Usuario</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        style="filter: invert(1);"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row text-center fs-5 mb-3">
+                                        <div class="col-4 text-center align-self-center">
+                                            <img src="@registros.Usuario2?.Avatar" class="avatar"
+                                                style="width: 110px; height: 110px; border-radius: 50%;" />
+                                        </div>
+                                        <div class="col-8 text-start align-self-center">
+                                            <p class="mb-0" style="color: var(--rojo-principal);"><strong>Usuario</strong></p>
+                                            <p>@registros.Usuario2?.Nombre @registros.Usuario2?.Apellido</p>
+                                            <p class="mb-0" style="color: var(--rojo-principal);"><strong>Email </strong></p>
+                                            <p>@registros.Usuario2?.Email</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </tr>
             }
     </tbody>

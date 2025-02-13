@@ -84,11 +84,11 @@
             {
                 <tr>
                     <td>
-                        <a href="/Inquilino/Details?Dni=@item.Inquilino_dni" style="color:#C0392B;">@item.Inquilino.Nombre
-                            @item.Inquilino.Apellido</a>
+                        <a href="/Inquilino/Details?Dni=@item.Inquilino_dni" style="color:#C0392B;">@item.Inquilino?.Nombre
+                            @item.Inquilino?.Apellido</a>
                     </td>
                     <td>
-                        <a href="/Inmueble/Details/@item.Inmueble_id" style="color:#C0392B;">@item.Inmueble.Direccion</a>
+                        <a href="/Inmueble/Details/@item.Inmueble_id" style="color:#C0392B;">@item.Inmueble?.Direccion</a>
                     </td>
                     <td>@Html.DisplayFor(modelItem => item.Estado)</td>
                     <td>$@Html.DisplayFor(modelItem => item.Monto)</td>

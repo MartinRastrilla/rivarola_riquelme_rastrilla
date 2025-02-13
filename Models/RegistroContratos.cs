@@ -19,4 +19,6 @@ public class RegistroContratos : Controller
     [ForeignKey("Usuarios")]
     public int? Cancelado_por { get; set; }
     public Usuarios? Usuario2 { get; set; }
+    public int? Multa_id { get; set; }
+    public Multa? Multa { get; set; }
 }

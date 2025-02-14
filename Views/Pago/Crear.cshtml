@@ -15,7 +15,7 @@
             @foreach (var contrato in ViewBag.Contratos as IEnumerable<rivarola_riquelme_rastrilla.Models.Contratos>)
             {
                 <option
-                    value="@contrato.Id - @contrato.Inquilino.Nombre @contrato.Inquilino.Apellido - @contrato.Inmueble.Direccion">
+                    value="@contrato.Id - @contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido - @contrato.Inmueble?.Direccion">
                 </option>
             }
         </datalist>

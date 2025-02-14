@@ -203,14 +203,16 @@ public class RepositorioPago
         }
     }
 
-    public void Agregar(Pago pago)
+    public int Agregar(Pago pago)
     {
+        int r = 0;
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
             var query = $@"INSERT INTO pagos ({nameof(Pago.Contrato_id)}, fecha_pago, 
                                   {nameof(Pago.Detalle)}, {nameof(Pago.Importe)}) 
                                   VALUES (@{nameof(Pago.Contrato_id)}, @{nameof(Pago.Fecha_pago)}, 
-                                  @{nameof(Pago.Detalle)}, @{nameof(Pago.Importe)})";
+                                  @{nameof(Pago.Detalle)}, @{nameof(Pago.Importe)});
+                                  SELECT LAST_INSERT_ID();"; // Devuelve el ID del último registro insertado
             using (var command = new MySqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue($"@{nameof(Pago.Contrato_id)}", pago.Contrato_id);
@@ -218,10 +220,11 @@ public class RepositorioPago
                 command.Parameters.AddWithValue($"@{nameof(Pago.Detalle)}", pago.Detalle);
                 command.Parameters.AddWithValue($"@{nameof(Pago.Importe)}", pago.Importe);
                 connection.Open();
-                command.ExecuteNonQuery();
+                r = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();
             }
         }
+        return r;
     }
 
     public void Editar(Pago pago)

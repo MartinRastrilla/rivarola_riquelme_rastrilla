@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Iana;
@@ -12,6 +13,7 @@ public class PagoController : Controller
     private RepositorioPago repo;
 
     private RepositorioContrato repositorioContrato = new RepositorioContrato();
+    private RepositorioRegistroPagos repositorioRegistroPagos = new RepositorioRegistroPagos();
 
     public PagoController(ILogger<PagoController> logger)
     {
@@ -125,9 +127,17 @@ public class PagoController : Controller
         {
             TempData["ToastMessage"] = "Pago creado con éxito";
             TempData["ToastType"] = "success";
-            repo.Agregar(pago);
+            var pagoId = repo.Agregar(pago);
+            RegistroPagos registroPago = new RegistroPagos();
+            registroPago.Pago_id = pagoId;
+            registroPago.Creado_por = Convert.ToInt32(User.FindFirstValue("Id"));
+            registroPago.Fecha_creacion = DateTime.Now;
+            repositorioRegistroPagos.CrearRegistroPago(registroPago);
+
             return RedirectToAction(nameof(Index));
         }
+        TempData["ToastMessage"] = "Error al crear el Pago";
+        TempData["ToastType"] = "danger";
         return View(pago);
     }
 

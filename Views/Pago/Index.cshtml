@@ -29,7 +29,7 @@
         @foreach (var item in Model.Pagos)
         {
             <tr>
-                <td>@item.Contrato.Inquilino.Nombre @item.Contrato.Inquilino.Apellido</td>
+                <td>@item.Contrato?.Inquilino?.Nombre @item.Contrato?.Inquilino?.Apellido</td>
                 <td>@Html.DisplayFor(modelItem => item.Contrato.Inmueble.Direccion)</td>
                 <td>@Html.DisplayFor(modelItem => item.Fecha_pago)</td>
                 <td>@Html.DisplayFor(modelItem => item.Detalle)</td>
@@ -57,12 +57,12 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="InmuebleTxt" class="control-label fs-5"><b>Inmueble:</b>
-                                    @item.Contrato.Inmueble.Direccion</label>
+                                    @item.Contrato?.Inmueble?.Direccion</label>
                             </div>
                             <div class="form-group mt-2">
                                 <label for="InquilinoTxt" class="control-label fs-5"><b>Inquilino:</b>
-                                    @item.Contrato.Inquilino.Nombre
-                                    @item.Contrato.Inquilino.Apellido</label>
+                                    @item.Contrato?.Inquilino?.Nombre
+                                    @item.Contrato?.Inquilino?.Apellido</label>
                             </div>
                             <form asp-action="Crear" method="post" enctype="multipart/form-data">
                                 <div class="form-group mt-3">
@@ -128,12 +128,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    @if (TempData["ToastMessage"] != null)
-    {
-        <text>
+        @if (TempData["ToastMessage"] != null)
+            {
+                <text>
                     showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-        </text>
-    }
+                </text>
+        }
     });
 
     function showToast(message, type) {

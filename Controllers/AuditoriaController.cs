@@ -22,6 +22,8 @@ public class AuditoriaController : Controller
         return View();
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Contratos(int pagina = 1)
     {
         const int pageSize = 10;
@@ -51,6 +53,8 @@ public class AuditoriaController : Controller
         }
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Administrador")]
     public IActionResult Pagos(int pagina = 1)
     {
         const int pageSize = 10;

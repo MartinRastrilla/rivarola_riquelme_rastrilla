@@ -107,7 +107,8 @@ public class RepositorioPago
             p.{nameof(Pago.Contrato_id)} AS contrato_id, 
             p.fecha_pago AS {nameof(Pago.Fecha_pago)}, 
             p.{nameof(Pago.Detalle)} AS detalle, 
-            p.{nameof(Pago.Importe)} AS importe, 
+            p.{nameof(Pago.Importe)} AS importe,
+            p.activo AS activo, 
             i.{nameof(Inmueble.Id)} AS inmueble_id, 
             i.{nameof(Inmueble.Direccion)} AS inmueble_direccion, 
             inq.{nameof(Inquilino.Dni)} AS inquilino_dni, 
@@ -161,6 +162,7 @@ public class RepositorioPago
                             Fecha_pago = reader.GetDateTime(nameof(Pago.Fecha_pago)),
                             Detalle = reader.GetString(nameof(Pago.Detalle)),
                             Importe = reader.GetDecimal(nameof(Pago.Importe)),
+                            Activo = reader.GetBoolean(nameof(Pago.Activo)),
                             Contrato = contrato
                         });
                     }
@@ -200,6 +202,23 @@ public class RepositorioPago
                 connection.Close();
             }
             return pago;
+        }
+    }
+
+    public int DesactivarPago(int id)
+    {
+        int r = 0;
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+        {
+            var query = $@"UPDATE pagos SET activo = 0 WHERE id = @id";
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", id);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+            return r;
         }
     }
 

@@ -1,31 +1,32 @@
-@model RegistroContratosViewModel
+@model RegistroPagosViewModel
+
 @{
-    ViewData["Title"] = "Auditoría de Contratos";
+    ViewData["Title"] = "Auditoría de Pagos";
 }
 
 <link rel="stylesheet" href="~/css/pagination.css">
 
-<h1 class="my-2">Registro de Contratos</h1>
+<h1 class="my-2">Auditoría de Pagos</h1>
 
 <table class="mt-5 table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>Contrato</th>
+            <th>Pago</th>
             <th>Creado Por</th>
             <th>Fecha de Creación</th>
-            <th>Cancelado Por</th>
-            <th>Fecha de Cancelación</th>
+            <th>Anulado Por</th>
+            <th>Fecha de Anulación</th>
         </tr>
     </thead>
     <tbody>
-        @if (Model.RegistrosContratos != null)
-            @foreach (var registros in Model.RegistrosContratos)
+        @if (Model.RegistrosPagos != null)
+        {
+            @foreach (var registros in Model.RegistrosPagos)
             {
                 <tr>
                     <td>
-                        <a data-bs-toggle="modal" data-bs-target="#contratoModal-@registros.Contrato?.Id"
-                            style="cursor: pointer">
-                            <i class="fa-solid fa-house ic-sz ic-color"></i>
+                        <a data-bs-toggle="modal" data-bs-target="#pagoModal-@registros.Pago?.Id" style="cursor: pointer">
+                            <i class="fa-solid fa-receipt ic-sz ic-color"></i>
                         </a>
                     </td>
                     <td>
@@ -62,43 +63,45 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="contratoModal-@registros.Contrato?.Id" tabindex="-1">
+                    <div class="modal fade" id="pagoModal-@registros.Pago?.Id" tabindex="-1">
                         <div class="modal-dialog modal-lg modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header bg-dark">
-                                    <h5 class="modal-title text-white">Vista del Contrato</h5>
+                                    <h5 class="modal-title text-white">Vista del Pago</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                         style="filter: invert(1);"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <h3 class="fs-4 text-center"><strong>Contrato</strong></h3>
-                                    <div class="row text-center fs-5">
-                                        <p class="col-4"><strong>Monto: </strong>$@registros.Contrato?.Monto</p>
-                                        <p class="col-4"><strong>Estado: </strong>@registros.Contrato?.Estado</p>
-                                        @if (registros.Multa != null)
-                                        {
-                                            <p class="col-4"><strong>Multa: </strong>$@registros.Multa.Monto</p>
-                                        }
-                                    </div>
-                                    <hr class="my-4">
-                                    <div class="row text-center">
-                                        <div class="col-6">
-                                            <h4 class="fs-4 fw-bold d-inline-block"
-                                                style="border-bottom: 2px solid var(--rojo-principal);">
-                                                Información del Inmueble</h4>
-                                            <p><strong>Dirección del Inmueble: </strong>
-                                                @registros.Contrato?.Inmueble?.Direccion</p>
-                                            <p>@registros.Contrato?.Inmueble?.Coordenadas</p>
-
+                                    <div class="row text-center fs-5 mb-3">
+                                        <div class="col-4 text-start align-self-start">
+                                            <p class="mb-2" style="color: var(--rojo-principal);"><strong>Pago</strong></p>
+                                            <p><strong>Importe:</strong> $@registros.Pago?.Importe</p>
+                                            @if (registros.Pago?.Fecha_pago != null)
+                                            {
+                                                <p><strong>Fecha de Pago:</strong>
+                                                    @registros.Pago?.Fecha_pago.Value.ToString("dd/MM/yyyy")</p>
+                                            }
+                                            <div class="bg-light p-2"
+                                                style="border-style: solid; border-radius: 8px; border-color: var(--rojo-principal); border-width: 2px;">
+                                                <p style="font-size: 17px;"><strong>Detalle:</strong> @registros.Pago?.Detalle
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div class="col-6">
-                                            <h4 class="fs-4 fw-bold d-inline-block"
-                                                style="border-bottom: 2px solid var(--rojo-principal);">Información del
-                                                Inquilino</h4>
-                                            <p><strong>Inquilino: </strong>
-                                                @registros.Contrato?.Inquilino?.Nombre @registros.Contrato?.Inquilino?.Apellido
+                                        <div class="col-4 text-start align-self-start">
+                                            <p class="mb-2" style="color: var(--rojo-principal);"><strong>Inmueble</strong></p>
+                                            <p><strong>Dirección:</strong> @registros.Pago?.Contrato?.Inmueble?.Direccion</p>
+                                            <p><strong>Coordenadas:</strong> @registros.Pago?.Contrato?.Inmueble?.Coordenadas
                                             </p>
-                                            <p><strong>DNI: </strong>@registros.Contrato?.Inquilino?.Dni</p>
+                                        </div>
+                                        <div class="col-4 text-start align-self-start">
+                                            <p class="mb-2" style="color: var(--rojo-principal);"><strong>Inquilino</strong></p>
+                                            <p><strong>Nombre:</strong> @registros.Pago?.Contrato?.Inquilino?.Nombre</p>
+                                            <p><strong>Apellido:</strong> @registros.Pago?.Contrato?.Inquilino?.Apellido</p>
+                                            <p><strong>DNI:</strong> @registros.Pago?.Contrato?.Inquilino?.Dni</p>
+                                            <p><strong>Email:</strong> @registros.Pago?.Contrato?.Inquilino?.Email</p>
+                                            <a href="@($"https://wa.me/549{registros.Pago?.Contrato?.Inquilino?.Telefono}")"
+                                                target="_blank" style="cursor: pointer; color: var(--rojo-principal);">Telefono:
+                                                @registros.Pago?.Contrato?.Inquilino?.Telefono</a>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -108,7 +111,7 @@
                             </div>
                         </div>
                     </div>
-                    @if (registros.Contrato?.Estado.ToString() == "Activo")
+                    @if (registros.Pago?.Activo == true)
                     {
                         <td><span class="badge bg-success">Aún Activo</span></td>
                         <td><span class="badge bg-success">Aún Activo</span></td>
@@ -121,7 +124,7 @@
                                 <i class="fa-solid fa-user-slash ic-sz ic-color"></i>
                             </a>
                         </td>
-                        <td>@registros.Fecha_cancelacion</td>
+                        <td>@registros.Fecha_anulacion</td>
                     }
                     <div class="modal fade" id="usuarioCancelModal-@registros.Usuario2?.Id" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
@@ -153,6 +156,7 @@
                     </div>
                 </tr>
             }
+        }
     </tbody>
 </table>
 

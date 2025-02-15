@@ -90,7 +90,19 @@
                     <td>
                         <a href="/Inmueble/Details/@item.Inmueble_id" style="color:#C0392B;">@item.Inmueble?.Direccion</a>
                     </td>
-                    <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                    <td>
+                        @if (item.Estado == Contratos.EstadoContrato.Activo)
+                        {
+                            <span class="badge" style="background-color: #dab900;">Activo</span>
+                        }
+                        else if (item.Estado == Contratos.EstadoContrato.Cancelado)
+                        {
+                            <span class="badge bg-danger">Cancelado</span>
+                        }else
+                        {
+                            <span class="badge bg-success">Finalizado</span>
+                        }
+                    </td>
                     <td>$@Html.DisplayFor(modelItem => item.Monto)</td>
                     <td>@String.Format("{0:dd/MM/yyyy}", item.Fecha_inicio)</td>
                     <td>@String.Format("{0:dd/MM/yyyy}", item.Fecha_fin)</td>

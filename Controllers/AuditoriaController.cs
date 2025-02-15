@@ -8,8 +8,7 @@ namespace rivarola_riquelme_rastrilla.Controllers;
 public class AuditoriaController : Controller
 {
     private RepositorioRegistroContratos repositorioRegistroContratos = new RepositorioRegistroContratos();
-    private RepositorioInmueble repositorioInmueble = new RepositorioInmueble();
-    private RepositorioContrato repositorioContrato = new RepositorioContrato();
+    private RepositorioRegistroPagos repositorioRegistroPagos = new RepositorioRegistroPagos();
     private readonly ILogger<AuditoriaController> _logger;
     public AuditoriaController(ILogger<AuditoriaController> logger)
     {
@@ -38,6 +37,34 @@ public class AuditoriaController : Controller
         var model = new RegistroContratosViewModel
         {
             RegistrosContratos = registros,
+            CurrentPage = pagina,
+            TotalPages = totalPages
+        };
+
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return View(model);
+        }
+        else
+        {
+            return RedirectToAction("Login", "Home");
+        }
+    }
+
+    public IActionResult Pagos(int pagina = 1)
+    {
+        const int pageSize = 10;
+        int totalRegistros = repositorioRegistroPagos.ObtenerTotalRegistrosPago();
+        int totalPages = (int)Math.Ceiling((double)totalRegistros / pageSize);
+
+        // Asegurarse de que la página no sea mayor que el número total de páginas        
+        pagina = Math.Max(1, Math.Min(pagina, totalPages));
+
+        var registros = repositorioRegistroPagos.ObtenerRegistroPagosPaginado(pagina, pageSize);
+
+        var model = new RegistroPagosViewModel
+        {
+            RegistrosPagos = registros,
             CurrentPage = pagina,
             TotalPages = totalPages
         };

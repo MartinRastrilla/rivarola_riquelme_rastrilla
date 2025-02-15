@@ -34,14 +34,24 @@ public class RepositorioRegistroPagos
             p.id as pagos_id,
             p.detalle,
             p.importe,
+            p.activo,
             p.fecha_pago,
             c.id as contrato_id,
             c.monto,
             c.fecha_inicio,
-            c.fecha_fin
+            c.fecha_fin,
+            inm.direccion as inmueble_direccion,
+            inm.coordenadas as inmueble_coordenadas,
+            inq.dni as inquilino_dni,
+            inq.nombre as inquilino_nombre,
+            inq.apellido as inquilino_apellido,
+            inq.telefono as inquilino_telefono,
+            inq.email as inquilino_email
             FROM registro_pagos rp
             JOIN pagos p ON rp.pagos_id = p.id
             JOIN contratos c ON p.contrato_id = c.id
+            JOIN inmuebles inm ON c.inmueble_id = inm.id
+            JOIN inquilinos inq ON c.inquilino_dni = inq.dni
             JOIN usuarios u ON rp.creado_por = u.id
             LEFT JOIN usuarios u2 ON rp.anulado_por = u2.id
             LIMIT @Offset, @PageSize;";
@@ -80,12 +90,26 @@ public class RepositorioRegistroPagos
                                 Detalle = reader.GetString("detalle"),
                                 Importe = reader.GetDecimal("importe"),
                                 Fecha_pago = reader.GetDateTime("fecha_pago"),
+                                Activo = reader.GetBoolean("activo"),
                                 Contrato = new Contratos
                                 {
                                     Id = reader.GetInt32("contrato_id"),
                                     Monto = reader.GetDecimal("monto"),
                                     Fecha_inicio = reader.GetDateTime("fecha_inicio"),
                                     Fecha_fin = reader.GetDateTime("fecha_fin"),
+                                    Inmueble = new Inmueble
+                                    {
+                                        Direccion = reader.GetString("inmueble_direccion"),
+                                        Coordenadas = reader.GetString("inmueble_coordenadas")
+                                    },
+                                    Inquilino = new Inquilino
+                                    {
+                                        Dni = reader.GetInt64("inquilino_dni"),
+                                        Nombre = reader.GetString("inquilino_nombre"),
+                                        Apellido = reader.GetString("inquilino_apellido"),
+                                        Telefono = reader.GetInt64("inquilino_telefono"),
+                                        Email = reader.GetString("inquilino_email")
+                                    }
                                 }
                             },
                         });
@@ -147,13 +171,13 @@ public class RepositorioRegistroPagos
             connection.Open();
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
-                command.Parameters.AddWithValue("@pagos_id", registroPago.Pago?.Id);
+                command.Parameters.AddWithValue("@pagos_id", registroPago.Pago_id);
                 command.Parameters.AddWithValue("@fecha_creacion", registroPago.Fecha_creacion);
-                command.Parameters.AddWithValue("@creado_por", registroPago.Usuario?.Id);
+                command.Parameters.AddWithValue("@creado_por", registroPago.Creado_por);
 
                 // Si los datos son NULL, asignar DBNull.Value 
                 command.Parameters.AddWithValue("@fecha_anulacion", registroPago.Fecha_anulacion ?? (object)DBNull.Value);
-                command.Parameters.AddWithValue("@anulado_por", registroPago.Usuario2?.Id ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@anulado_por", registroPago.Anulado_por ?? (object)DBNull.Value);
                 r = command.ExecuteNonQuery();
             }
             connection.Close();
@@ -166,7 +190,7 @@ public class RepositorioRegistroPagos
         RegistroPagos registroPago = new RegistroPagos();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"SELECT id, fecha_creacion, fecha_anulacion, anulado_por, pagos_id FROM registro_pagos WHERE pagos_id = @pagoId;";
+            var sqlquery = @"SELECT id, fecha_creacion, fecha_anulacion, anulado_por, pagos_id, creado_por FROM registro_pagos WHERE pagos_id = @pagoId;";
             connection.Open();
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {

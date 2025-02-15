@@ -8,7 +8,7 @@
 
 @if (Model != null && Model.Contratos.Any())
 {
-    <h1>Lista de Contratos para @Model.Contratos.First().Inmueble.Direccion</h1>
+    <h1>Lista de Contratos para @Model.Contratos.First().Inmueble?.Direccion</h1>
     <table class="table table-striped table-hover text-center mt-5">
         <thead>
             <tr>
@@ -26,8 +26,8 @@
                 <tr>
                     <td>
                         <a data-bs-toggle="modal" data-bs-target="#inqContactoModal-@contrato.Id"
-                            style="cursor: pointer; color: #C0392B;">@contrato.Inquilino.Nombre
-                            @contrato.Inquilino.Apellido</a>
+                            style="cursor: pointer; color: #C0392B;">@contrato.Inquilino?.Nombre
+                            @contrato.Inquilino?.Apellido</a>
                     </td>
                     <td>$@contrato.Monto</td>
                     <td>@contrato.Fecha_inicio.ToString("dd/MM/yyyy")</td>
@@ -112,12 +112,12 @@ else
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    @if (TempData["ToastMessage"] != null)
-    {
-        <text>
+        @if (TempData["ToastMessage"] != null)
+            {
+                <text>
                     showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-        </text>
-    }
+                </text>
+        }
     });
 
     function showToast(message, type) {

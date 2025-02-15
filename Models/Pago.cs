@@ -20,9 +20,9 @@ namespace rivarola_riquelme_rastrilla.Models
         [StringLength(255, ErrorMessage = "El detalle no puede tener más de 255 caracteres.")]
         public string? Detalle { get; set; }
 
-        
-        [Required(ErrorMessage = "El importe es obligatorio.")]
+        public bool Activo { get; set; } = true;
 
+        [Required(ErrorMessage = "El importe es obligatorio.")]
         public decimal? Importe { get; set; }
     }
 }

@@ -141,6 +141,25 @@ public class PagoController : Controller
         return View(pago);
     }
 
+    [HttpPost]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult AnularPago(int id)
+    {
+        if (id == 0)
+        {
+            TempData["ToastMessage"] = "Error al anular el Pago";
+            TempData["ToastType"] = "danger";
+            return RedirectToAction(nameof(Index));
+        }
+        RegistroPagos registroPago = repositorioRegistroPagos.ObtenerRegistroPorPago(id);
+        registroPago.Anulado_por = Convert.ToInt32(User.FindFirstValue("Id"));
+        registroPago.Fecha_anulacion = DateTime.Now;
+        repositorioRegistroPagos.CrearAnulacionRegistroPago(registroPago);
+        repo.DesactivarPago(id);
+        TempData["ToastMessage"] = "Pago anulado con éxito";
+        TempData["ToastType"] = "success";
+        return RedirectToAction(nameof(Index));
+    }
     [HttpGet]
     [Authorize(Policy = "Empleado")]
     public IActionResult NuevoPago(int id)

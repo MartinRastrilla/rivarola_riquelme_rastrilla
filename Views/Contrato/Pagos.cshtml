@@ -175,7 +175,7 @@
                                                 @pago.Contrato?.Inquilino?.Apellido</p>
                                         </div>
                                         </div>
-                                        <form asp-action="Crear" method="post" enctype="multipart/form-data">
+                                        <form asp-controller="Pago" asp-action="Crear" method="post" enctype="multipart/form-data">
                                             <div class="form-group mt-3">
                                                 <label name="Importe" class="control-label">Importe</label>
                                                 <input name="Importe" class="form-control" value="@pago.Contrato?.Inmueble?.Precio"

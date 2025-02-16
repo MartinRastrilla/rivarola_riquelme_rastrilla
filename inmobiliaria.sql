@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-02-2025 a las 23:41:59
+-- Tiempo de generación: 16-02-2025 a las 05:42:36
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -42,14 +42,8 @@ CREATE TABLE `contratos` (
 --
 
 INSERT INTO `contratos` (`id`, `inquilino_dni`, `inmueble_id`, `estado`, `monto`, `fecha_inicio`, `fecha_fin`) VALUES
-(2, 12345601, 4, 'Activo', 230000.00, '2024-10-10', '2024-10-25'),
-(5, 12345679, 2, 'Cancelado', 345000.00, '2025-01-26', '2025-02-26'),
-(6, 12345678, 2, 'Cancelado', 600000.00, '2025-02-01', '2025-02-01'),
-(10, 90909001, 4, 'Cancelado', 15000.00, '2025-02-03', '2025-02-21'),
-(11, 33333333, 20, 'Cancelado', 0.00, '2025-02-04', '2024-02-04'),
-(12, 43490178, 4, 'Activo', 15000.00, '2025-02-19', '2025-02-28'),
-(16, 43490179, 21, 'Activo', 600000.00, '2025-02-12', '2025-02-28'),
-(29, 12345601, 6, 'Cancelado', 10.00, '2025-02-12', '2025-02-14');
+(32, 12345601, 4, 'Activo', 5040000.00, '2025-03-09', '2026-03-09'),
+(35, 43490178, 21, 'Cancelado', 200000.00, '2025-05-01', '2025-12-31');
 
 -- --------------------------------------------------------
 
@@ -79,7 +73,7 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `uso`, `tipo_id`, `ambientes`, `coor
 (4, 'Av. Plazota 987', 'residencial', 2, 6, 'none', 420000.00, 12303111, 1),
 (6, 'Av. Testing 211', 'residencial', 1, 4, 'none', 150000.00, 12202124, 1),
 (20, 'Asa', 'comercial', 2, 1, 'none', 69.69, 23404908, 1),
-(21, 'Las Weas 722', 'residencial', 3, 2, 'none', 25000.00, 12303111, 1);
+(21, 'Las Weas 722', 'residencial', 3, 2, 'none', 25000.00, 12303111, 0);
 
 -- --------------------------------------------------------
 
@@ -129,9 +123,7 @@ CREATE TABLE `multa` (
 --
 
 INSERT INTO `multa` (`id`, `contrato_id`, `monto`, `fecha_multa`) VALUES
-(7, 12, 30000.00, '2025-02-10'),
-(9, 29, 20.00, '2025-02-11'),
-(10, 6, 600000.00, '2025-02-11');
+(13, 35, 50000.00, '2025-02-15');
 
 -- --------------------------------------------------------
 
@@ -142,29 +134,26 @@ INSERT INTO `multa` (`id`, `contrato_id`, `monto`, `fecha_multa`) VALUES
 CREATE TABLE `pagos` (
   `id` int(11) NOT NULL,
   `contrato_id` int(11) NOT NULL,
+  `num_pago` int(11) NOT NULL,
   `fecha_pago` date NOT NULL,
   `detalle` varchar(255) NOT NULL,
-  `importe` decimal(10,2) NOT NULL
+  `importe` decimal(10,2) NOT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pagos`
 --
 
-INSERT INTO `pagos` (`id`, `contrato_id`, `fecha_pago`, `detalle`, `importe`) VALUES
-(3, 2, '2025-01-22', 'Algo', 1500.00),
-(4, 2, '2025-01-23', 'Algo', 21.00),
-(5, 2, '4620-05-22', 'Algo', 1.00),
-(8, 5, '2025-02-05', 'C', 2000.00),
-(9, 2, '2025-01-28', 'D', 1750.00),
-(17, 2, '2025-01-29', 'Algo más corto', 920000.00),
-(25, 5, '2025-10-05', 'Algo', 5000.00),
-(26, 5, '2025-02-08', 'asd', 95000.00),
-(27, 5, '2025-02-01', '1', 1500.00),
-(28, 2, '2025-02-08', 'a', 1.00),
-(29, 2, '2025-02-09', '2', 50.00),
-(30, 5, '2025-03-01', 'pol', 555.00),
-(31, 6, '2025-02-02', 'asd sad', 666.00);
+INSERT INTO `pagos` (`id`, `contrato_id`, `num_pago`, `fecha_pago`, `detalle`, `importe`, `activo`) VALUES
+(43, 32, 1, '2025-02-15', 'Algo', 1500.00, 1),
+(44, 35, 1, '2025-02-15', 'Pago por el mes de hoy ndeah', 25000.00, 1),
+(45, 35, 2, '2025-02-15', 'Pago en concepto del mes Marzo', 25000.00, 0),
+(46, 35, 3, '2025-02-15', 'Pago en concepto de Abril', 25000.00, 0),
+(48, 35, 4, '2025-02-15', 'Pago por marzo', 25000.00, 1),
+(49, 35, 5, '2025-02-16', 'Vale x2', 50000.00, 1),
+(50, 32, 2, '2025-02-16', 'Febrero y Marzo (Se puso las pilas ahora)', 150000.00, 1),
+(51, 35, 6, '2025-02-16', 'prueba', 200000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -213,7 +202,8 @@ CREATE TABLE `registro_contratos` (
 --
 
 INSERT INTO `registro_contratos` (`id`, `contrato_id`, `fecha_creacion`, `creado_por`, `fecha_cancelacion`, `cancelado_por`) VALUES
-(12, 29, '2025-02-11 04:04:04', 17, '2025-02-11 21:04:06', 17);
+(15, 32, '2025-02-15 19:14:39', 17, NULL, NULL),
+(18, 35, '2025-02-15 21:28:25', 17, '2025-02-15 21:30:05', 17);
 
 -- --------------------------------------------------------
 
@@ -229,6 +219,20 @@ CREATE TABLE `registro_pagos` (
   `fecha_anulacion` timestamp NULL DEFAULT NULL,
   `anulado_por` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `registro_pagos`
+--
+
+INSERT INTO `registro_pagos` (`id`, `pagos_id`, `fecha_creacion`, `creado_por`, `fecha_anulacion`, `anulado_por`) VALUES
+(7, 43, '2025-02-15 23:37:46', 14, NULL, NULL),
+(8, 44, '2025-02-15 23:38:40', 14, NULL, NULL),
+(9, 45, '2025-02-16 00:21:04', 14, '2025-02-16 00:22:33', 14),
+(10, 46, '2025-02-16 00:22:07', 14, '2025-02-16 03:15:18', 14),
+(12, 48, '2025-02-16 01:33:10', 14, NULL, NULL),
+(13, 49, '2025-02-16 03:15:56', 14, NULL, NULL),
+(14, 50, '2025-02-16 03:16:55', 14, NULL, NULL),
+(15, 51, '2025-02-16 03:40:11', 14, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -292,7 +296,7 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `contrasenia`, `Rol`, `avatar`) VALUES
 (13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', '/Uploads\\avatar_13.png'),
 (14, 'Admin', 'Fort', 'admin@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Administrador', '/Uploads\\avatar_14.jpg'),
-(17, 'Martin', 'Rastrilla', 'rastrillamartin@gmail.com', 'qnVF4b4CeidwYvu24jXjLuUuMibwQCZRcYyMTKiTBQs=', 'Administrador', '/Uploads\\avatar_17.jpg');
+(17, 'Martin', 'Rastrilla', 'rastrillamartin@gmail.com', 'O5znCj/g0RwkDe0y57pTA46z3DgcnKSm4srzokm+ks4=', 'Administrador', '/Uploads\\avatar_17.jpg');
 
 -- --------------------------------------------------------
 
@@ -337,7 +341,8 @@ ALTER TABLE `inquilinos`
 -- Indices de la tabla `multa`
 --
 ALTER TABLE `multa`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contrato_id` (`contrato_id`);
 
 --
 -- Indices de la tabla `pagos`
@@ -366,7 +371,10 @@ ALTER TABLE `registro_contratos`
 -- Indices de la tabla `registro_pagos`
 --
 ALTER TABLE `registro_pagos`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pagos_id` (`pagos_id`),
+  ADD KEY `creado_por` (`creado_por`),
+  ADD KEY `anulado_por` (`anulado_por`);
 
 --
 -- Indices de la tabla `roles`
@@ -403,7 +411,7 @@ ALTER TABLE `usuarios_roles`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
@@ -421,13 +429,13 @@ ALTER TABLE `inquilinos`
 -- AUTO_INCREMENT de la tabla `multa`
 --
 ALTER TABLE `multa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`
@@ -439,13 +447,13 @@ ALTER TABLE `propietarios`
 -- AUTO_INCREMENT de la tabla `registro_contratos`
 --
 ALTER TABLE `registro_contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `registro_pagos`
 --
 ALTER TABLE `registro_pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
@@ -490,18 +498,32 @@ ALTER TABLE `inmuebles`
   ADD CONSTRAINT `inmuebles_ibfk_2` FOREIGN KEY (`tipo_id`) REFERENCES `tipos` (`id`);
 
 --
+-- Filtros para la tabla `multa`
+--
+ALTER TABLE `multa`
+  ADD CONSTRAINT `multa_ibfk_1` FOREIGN KEY (`contrato_id`) REFERENCES `contratos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`contrato_id`) REFERENCES `contratos` (`id`);
+  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`contrato_id`) REFERENCES `contratos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `registro_contratos`
 --
 ALTER TABLE `registro_contratos`
-  ADD CONSTRAINT `registro_contratos_ibfk_1` FOREIGN KEY (`contrato_id`) REFERENCES `contratos` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `registro_contratos_ibfk_1` FOREIGN KEY (`contrato_id`) REFERENCES `contratos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `registro_contratos_ibfk_2` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `registro_contratos_ibfk_3` FOREIGN KEY (`cancelado_por`) REFERENCES `usuarios` (`id`);
+
+--
+-- Filtros para la tabla `registro_pagos`
+--
+ALTER TABLE `registro_pagos`
+  ADD CONSTRAINT `registro_pagos_ibfk_1` FOREIGN KEY (`pagos_id`) REFERENCES `pagos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `registro_pagos_ibfk_2` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `registro_pagos_ibfk_3` FOREIGN KEY (`anulado_por`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `usuarios_roles`

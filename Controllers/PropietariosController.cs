@@ -106,8 +106,7 @@ public class PropietariosController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Edit(Propietarios propietario)
     {
-        if (ModelState.IsValid)
-        {
+
             Propietarios? propietarioExistente = repo.ObtenerPorDni(propietario.Dni);
             if (propietarioExistente != null && propietarioExistente.Id != propietario.Id)
             {
@@ -118,8 +117,7 @@ public class PropietariosController : Controller
             TempData["ToastMessage"] = "Propietario editado con éxito.";
             TempData["ToastType"] = "success";
             return RedirectToAction(nameof(Index));
-        }
-        return View(propietario);
+
     }
 
     [HttpGet]
@@ -154,20 +152,17 @@ public class PropietariosController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Crear(Propietarios propietario)
     {
-        if (ModelState.IsValid)
-        {
-            Propietarios? propietarioExistente = repo.ObtenerPorDni(propietario.Dni);
-            if (propietarioExistente != null)
-            {
-                ViewBag.Error = "Ya existe un propietario con el DNI ingresado.";
-                return View(propietario);
-            }
 
-            repo.Crear(propietario);
-            TempData["ToastMessage"] = "Propietario creado con éxito.";
-            TempData["ToastType"] = "success";
-            return RedirectToAction(nameof(Index));
+        Propietarios? propietarioExistente = repo.ObtenerPorDni(propietario.Dni);
+        if (propietarioExistente != null)
+        {
+            ViewBag.Error = "Ya existe un propietario con el DNI ingresado.";
+            return View(propietario);
         }
-        return View(propietario);
+
+        repo.Crear(propietario);
+        TempData["ToastMessage"] = "Propietario creado con éxito.";
+        TempData["ToastType"] = "success";
+        return RedirectToAction(nameof(Index));
     }
 }

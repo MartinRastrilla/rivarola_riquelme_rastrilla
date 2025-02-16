@@ -46,6 +46,13 @@ button.accept-policy {
 
 .footer {
   width: 100%;
-  line-height: 60px;
+  line-height: 50px;
+  color: rgb(190, 190, 190);
+  background: linear-gradient(
+    90deg,
+    rgba(70, 19, 19, 1) 36%,
+    rgba(59, 59, 59, 1) 79%
+  );
+
   box-shadow: 0 0.1rem 1.5rem rgba(0, 0, 0, 0.2);
 }

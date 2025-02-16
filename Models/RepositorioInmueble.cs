@@ -15,8 +15,7 @@ public class RepositorioInmueble
                     p.nombre, p.apellido
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
-                JOIN propietarios p ON i.propietario_dni = p.dni
-                WHERE i.estado = 1;
+                JOIN propietarios p ON i.propietario_dni = p.dni;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -62,8 +61,7 @@ public class RepositorioInmueble
         {
             connection.Open();
             var sqlquery = @"SELECT COUNT(*)FROM inmuebles i
-                WHERE i.estado = 1
-                AND (@tipo IS NULL OR i.tipo_id = @tipo)
+                WHERE (@tipo IS NULL OR i.tipo_id = @tipo)
                 AND (@uso IS NULL OR i.uso = @uso)
                 AND (@precioMin IS NULL OR i.precio >= @precioMin)
                 AND (@precioMax IS NULL OR i.precio <= @precioMax)
@@ -94,8 +92,7 @@ public class RepositorioInmueble
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
                 JOIN propietarios p ON i.propietario_dni = p.dni
-                WHERE i.estado = 1
-                AND (@tipo IS NULL OR i.tipo_id = @tipo)
+                WHERE (@tipo IS NULL OR i.tipo_id = @tipo)
                 AND (@uso IS NULL OR i.uso = @uso)
                 AND (@precioMin IS NULL OR i.precio >= @precioMin)
                 AND (@precioMax IS NULL OR i.precio <= @precioMax)

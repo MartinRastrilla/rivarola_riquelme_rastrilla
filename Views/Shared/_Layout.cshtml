@@ -44,11 +44,14 @@
 
         main {
             flex: 1;
+            padding-top: 80px;
         }
 
         /* Navbar */
         .navbar {
-            background-color: var(--blanco);
+            background: linear-gradient(90deg,
+                    rgba(70, 19, 19, 0.92) 36%,
+                    rgba(59, 59, 59, 0.92) 79%);
             border-bottom: 1px solid var(--gris-claro);
         }
 
@@ -69,6 +72,24 @@
 
         .navbar-nav .nav-link {
             color: var(--blanco) !important;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: "";
+            position: absolute;
+            right: 100%;
+            bottom: 2px;
+            width: 0;
+            height: 2px;
+            background-color: var(--rojo-principal);
+            transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+            right: 0;
         }
 
         .btn-custom {
@@ -128,10 +149,10 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                    <img src="/images/logo-inmobiliaria.png" alt="Logo">
+                    <img src="/images/logo-inmobiliaria-blanco.png" alt="Logo" style="filter: brightness(1.1)">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -139,28 +160,24 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Movidos hacia la izquierda -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-4"> <!-- Movidos hacia la izquierda -->
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2"
-                                href="@Url.Action("Index", "Inquilino")">Inquilinos</a>
+                            <a class="nav-link ms-2" href="@Url.Action("Index", "Inquilino")">Inquilinos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2"
-                                href="@Url.Action("Index", "Propietarios")">Propietarios</a>
+                            <a class="nav-link ms-2" href="@Url.Action("Index", "Propietarios")">Propietarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2"
-                                href="@Url.Action("Index", "Inmueble")">Inmuebles</a>
+                            <a class="nav-link ms-2" href="@Url.Action("Index", "Inmueble")">Inmuebles</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2"
-                                href="@Url.Action("Index", "Contrato")">Contratos</a>
+                            <a class="nav-link ms-2" href="@Url.Action("Index", "Contrato")">Contratos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Pago")">Pagos</a>
+                            <a class="nav-link ms-2" href="@Url.Action("Index", "Pago")">Pagos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Index", "Tipo")">Tipos de
+                            <a class="nav-link ms-2" href="@Url.Action("Index", "Tipo")">Tipos de
                                 Inmueble</a>
                         </li>
                     </ul>
@@ -172,12 +189,14 @@
                             var nombre = User.Claims.FirstOrDefault(c => c.Type == "Nombre")?.Value;
                             var apellido = User.Claims.FirstOrDefault(c => c.Type == "Apellido")?.Value;
                             <li class="nav-item dropdown" style="margin-right: 40px;">
-                                <a style="padding: 1px;" class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a style="padding: 1px;"
+                                    class="navdropdown-toggle d-flex align-items-center text-white text-decoration-none"
+                                    href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                     <div class="avatar-container">
                                         <img src="@Url.Content(avatar)" alt="Avatar" class="avatar" />
                                     </div>
-                                    <span class="text-dark mx-2"><strong>@nombre @apellido</strong></span>
+                                    <span class="mx-2 fw-light"><strong>@nombre @apellido</strong></span>
                                 </a>
 
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -198,7 +217,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link btn btn-custom ms-2" href="@Url.Action("Login", "Usuarios")">Iniciar
+                                <a class="nav-link ms-2" href="@Url.Action("Login", "Usuarios")">Iniciar
                                     Sesión</a>
                             </li>
                         }

@@ -4,6 +4,7 @@
     ViewData["Title"] = "Inmuebles";
 }
 
+<link rel="stylesheet" href="~/css/InmuebleStyle/Index.css">
 <link href="~/css/pagination.css" rel="stylesheet" />
 
 <div>
@@ -138,16 +139,19 @@
                     <td>
                         $@Html.DisplayFor(modelItem => item.Precio)
                     </td>
-                    <td>
+                    <td class="position-relative">
                         @if (item.Estado)
                         {
-                            <a href="/Inmueble/Baja/@item.Id" class="btn btn-desactivar"></a>
+                            <span class="badge bg-success badge-toggle">Disponible</span>
+                            <a href="/Inmueble/Baja/@item.Id" class="btn btn-sm btn-outline-danger toggle-btn">Desactivar</a>
                         }
                         else
                         {
-                            <a href="/Inmueble/Activar/@item.Id" class="btn btn-activar"></a>
+                            <span class="badge bg-danger badge-toggle">No Disponible</span>
+                            <a href="/Inmueble/Activar/@item.Id" class="btn btn-sm btn-outline-success toggle-btn">Activar</a>
                         }
                     </td>
+
                     <td>
                         @if (User.IsInRole("Administrador"))
                         {
@@ -257,98 +261,3 @@
         });
     }
 </script>
-
-<style>
-    .btn-desactivar {
-        padding: 1.2rem 3.2rem;
-        background-color: #C0392B;
-        color: white;
-        border-radius: 7px;
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
-    }
-
-    .btn-desactivar::before {
-        content: 'Disponible';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        transition: transform 0.2s ease, opacity 0.2s ease;
-        color: white;
-    }
-
-    .btn-desactivar::after {
-        content: 'Desactivar';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        transition: transform 0.2s ease, opacity 0.2s ease;
-        color: white;
-        opacity: 0;
-    }
-
-    .btn-desactivar:hover {
-        background-color: #ff2c15;
-    }
-
-    .btn-desactivar:hover::before {
-        transform: translate(-50%, -50%) scale(3);
-        opacity: 0;
-    }
-
-    .btn-desactivar:hover::after {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-
-
-    .btn-activar {
-        padding: 1.2rem 3.2rem;
-        font-size: 1rem;
-        background-color: #C0392B;
-        color: white;
-        border-radius: 7px;
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
-    }
-
-    .btn-activar::before {
-        content: 'No Disponible';
-        font-size: 0.9rem;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        transition: transform 0.2s ease, opacity 0.2s ease;
-        color: white;
-    }
-
-    .btn-activar::after {
-        content: 'Activar';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        transition: transform 0.2s ease, opacity 0.2s ease;
-        color: white;
-        opacity: 0;
-    }
-
-    .btn-activar:hover {
-        background-color: #09ab03;
-    }
-
-    .btn-activar:hover::before {
-        transform: translate(-50%, -50%) scale(3);
-        opacity: 0;
-    }
-
-    .btn-activar:hover::after {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-</style>

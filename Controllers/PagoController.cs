@@ -113,6 +113,8 @@ public class PagoController : Controller
         return View(pago);
     }
 
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
     public IActionResult Crear()
     {
         ViewBag.Contratos = repositorioContrato.ObtenerContratos();
@@ -123,23 +125,53 @@ public class PagoController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Crear(Pago pago)
     {
-        if (ModelState.IsValid)
+        try
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["ToastMessage"] = "Error al crear el Pago: datos inválidos.";
+                TempData["ToastType"] = "danger";
+                ViewBag.Contratos = repositorioContrato.ObtenerContratos();
+                return View(pago);
+            }
+
             TempData["ToastMessage"] = "Pago creado con éxito";
             TempData["ToastType"] = "success";
-            var pagoId = repo.Agregar(pago);
+
+            var newPago = pago;
+            newPago.Fecha_pago = DateTime.Now;
+
+            // Contar cantidad de pagos para contrato
+            int numPago = repo.ObtenerTotalPagosPorContrato(newPago.Contrato_id);
+            newPago.Num_pago = numPago + 1;
+
+            var pagoId = repo.Agregar(newPago);
+
             RegistroPagos registroPago = new RegistroPagos();
             registroPago.Pago_id = pagoId;
-            registroPago.Creado_por = Convert.ToInt32(User.FindFirstValue("Id"));
+
+            var userId = User.FindFirstValue("Id");
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new Exception("El usuario no está autenticado o falta el ID.");
+            }
+
+            registroPago.Creado_por = Convert.ToInt32(userId);
             registroPago.Fecha_creacion = DateTime.Now;
             repositorioRegistroPagos.CrearRegistroPago(registroPago);
 
             return RedirectToAction(nameof(Index));
         }
-        TempData["ToastMessage"] = "Error al crear el Pago";
-        TempData["ToastType"] = "danger";
-        return View(pago);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en la función Crear: {ex.Message}");
+            TempData["ToastMessage"] = $"Error al crear el pago: {ex.Message}";
+            TempData["ToastType"] = "danger";
+            ViewBag.Contratos = repositorioContrato.ObtenerContratos();
+            return View(pago);
+        }
     }
+
 
     [HttpPost]
     [Authorize(Policy = "Empleado")]

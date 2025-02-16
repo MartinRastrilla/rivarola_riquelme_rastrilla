@@ -135,20 +135,20 @@
                                         @{
                                             if (Model.Multas != null && Model.Multas.Any(m => m.Contrato_id == item.Id)) {
                                                 <div class="form-group text-center my-4">
-                                                    <h3 class="fs-5 pb-1" style="color: var(--rojo-principal);">*ya se ha aplicado una multa a este Contrato*</h3>
+                                                    <h3 class="pb-1" style="color: var(--rojo-principal); font-size: 17px">*ya se ha aplicado una multa a este Contrato*</h3>
                                                 </div>
                                             }else{
                                             var totalDiasContrato = (item.Fecha_fin - item.Fecha_inicio).TotalDays;
                                             var diasTranscurridos = (DateTime.Now - item.Fecha_inicio).TotalDays;
                                             var mitadDelContrato = totalDiasContrato / 2;
-                                            var multa = item.Monto;
+                                            var multa = item.Inmueble?.Precio;
                                             var msj = "";
                                             if (diasTranscurridos > mitadDelContrato) {
-                                                multa = item.Monto;
-                                                msj = "Los días transcurridos superan la mitad del contrato, por lo que no se aplicarán cargos mayores.";
+                                                multa = item.Inmueble?.Precio;
+                                                msj = "Los días transcurridos superan la mitad del contrato, por lo que no se aplicarán cargos mayores.(Sólo 1 mes Extra).";
                                             } else  if (diasTranscurridos < mitadDelContrato) {
-                                                multa = item.Monto * 2;
-                                                msj = "Los días transcurridos NO superan la mitad del contrato, por lo que se aplicarán cargos mayores (Monto del Contrato * 2).";
+                                                multa = item.Inmueble?.Precio * 2;
+                                                msj = "Los días transcurridos NO superan la mitad del contrato, por lo que se aplicarán cargos mayores (2 meses Extras).";
                                             }
                                         
                                             <input type="hidden" name="Contrato_id" value="@item.Id" />

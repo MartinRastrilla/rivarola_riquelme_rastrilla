@@ -35,6 +35,35 @@ public class RepositorioMulta
         return multas;
     }
 
+    public Multa ObtenerMultaPorContrato(int idContrato)
+    {
+        var multa = new Multa();
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            string sqlquery = "SELECT id, contrato_id, monto, fecha_multa FROM multa WHERE contrato_id = @idContrato;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@idContrato", idContrato);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        multa = new Multa
+                        {
+                            Id = reader.GetInt32("id"),
+                            Contrato_id = reader.GetInt32("contrato_id"),
+                            Monto = reader.GetDecimal("monto"),
+                            Fecha_multa = reader.GetDateTime("fecha_multa")
+                        };
+                    }
+                }
+                connection.Close();
+            }
+        }
+        return multa;
+    }
+
     public int AltaMulta(Multa multa)
     {
         int r = -1;

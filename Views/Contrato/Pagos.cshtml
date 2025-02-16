@@ -1,39 +1,234 @@
 @model PagoViewModel
 
 @{
+    var totalPagado = Model.Pagos?.Where(p => p.Activo).Sum(p => p.Importe) ?? 0;
+    var montoTotal = Model.Contrato?.Monto ?? 1;
+    if (Model.Contrato?.Estado == Contratos.EstadoContrato.Cancelado)
+    {
+        montoTotal += Model.Multa?.Monto ?? 0;
+    }
+    var porcentajePagado = (totalPagado / montoTotal) * 100;
+    porcentajePagado = (int)porcentajePagado;
     ViewData["Title"] = "Pagos de Contrato";
 }
 
 <link rel="stylesheet" href="~/css/pagination.css">
 @if (Model.Pagos != null && Model.Pagos.Any())
 {
-    <h1>Pagos</h1>
-
+    <h1>Pagos del Contrato @Model.ContratoId</h1>
     <a class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevoPagoModal"><i class="fa-solid fa-plus"></i></a>
 
-    <table class="table table-striped table-hover text-center">
+    @if (totalPagado > montoTotal)
+    {
+        <div class="d-flex justify-content-center mt-4 text-danger fw-bold">
+            <small>$@totalPagado / $@montoTotal *MONTO EXCEDIDO POR @(totalPagado - montoTotal)*</small>
+        </div>
+        <div class="progress mt-1 bg-light" role="progressbar" aria-label="Animated striped example" style="height: 25px;">
+            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: @porcentajePagado%;" aria-valuenow="@porcentajePagado" aria-valuemin="0" aria-valuemax="100">
+                @porcentajePagado%
+            </div>
+        </div>
+    }else{
+        <div class="d-flex justify-content-center mt-4 text-success fw-bold">
+            <small>$@totalPagado / $@montoTotal</small>
+        </div>
+        <div class="progress mt-1 bg-light" role="progressbar" aria-label="Animated striped example" style="height: 25px;">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: @porcentajePagado%;" aria-valuenow="@porcentajePagado" aria-valuemin="0" aria-valuemax="100">
+                @porcentajePagado%
+            </div>
+        </div>
+    }
+
+    <table class="table table-striped table-hover text-center mt-4">
         <thead>
             <tr>
-                <th scope="col">Detalles</th>
-                <th scope="col">Importe</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Acciones</th>
+                <th><a data-bs-toggle="modal" data-bs-target="#contratoModal" style="font-size: 35px;cursor: pointer">
+                        <i class="fa-solid fa-file-contract fa-beat ic-color"></i>
+                    </a></th>
+                <div class="modal fade" id="contratoModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-dark">
+                                <h5 class="modal-title text-light" id="anularPagoModalLabel">Detalles Contrato</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    style="filter: invert(1);"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                <div class="row">
+                                    <div class="col-12 text-center align-self-start fs-5">
+                                        <p class="mb-2" style="color: var(--rojo-principal);"><strong>Contrato</strong></p>
+                                    </div>
+                                    <div class="col-1"></div>
+                                    <div class="col-6 text-start align-self-start fs-5">
+                                        <p><strong>Monto Total:</strong> $@Model.Contrato?.Monto</p>
+                                        <p><strong>Estado:</strong> @Model.Contrato?.Estado</p>
+                                        @if (Model.Contrato?.Estado == Contratos.EstadoContrato.Cancelado)
+                                        {
+                                            <p><strong>Multa:</strong> $@Model.Multa?.Monto</p>
+                                        }
+                                    </div>
+                                    <div class="col-5 text-start align-self-start fs-5">
+                                        <p><strong>Inicio Contrato:</strong> @String.Format("{0:dd/MM/yyyy}", Model.Contrato?.Fecha_inicio)</p>
+                                        <p><strong>Fin Contrato:</strong> @String.Format("{0:dd/MM/yyyy}", Model.Contrato?.Fecha_fin)</p>
+                                    </div>
+                                    <hr>
+                                    <div class="col-6 text-start align-self-start fs-5">
+                                        <p class="mb-2" style="color: var(--rojo-principal);"><strong>Inquilino</strong></p>
+                                        <p><strong>Nombre:</strong>
+                                            @Model.Pagos.FirstOrDefault()?.Contrato?.Inquilino?.Nombre
+                                            @Model.Pagos.FirstOrDefault()?.Contrato?.Inquilino?.Apellido</p>
+                                        <p><strong>DNI:</strong> @Model.Pagos.FirstOrDefault()?.Contrato?.Inquilino?.Dni</p>
+                                        <p><strong>Email:</strong> @Model.Pagos.FirstOrDefault()?.Contrato?.Inquilino?.Email
+                                        </p>
+                                        <a href="@($"https://wa.me/549{Model.Pagos.FirstOrDefault()?.Contrato?.Inquilino?.Telefono}")"
+                                            target="_blank" style="cursor: pointer; color: var(--rojo-principal);">Telefono:
+                                            @Model.Pagos.FirstOrDefault()?.Contrato?.Inquilino?.Telefono</a>
+                                    </div>
+                                    <div class="col-6 text-start align-self-start fs-5">
+                                        <p class="mb-2" style="color: var(--rojo-principal);"><strong>Inmueble</strong></p>
+                                        <p><strong>Dirección:</strong> @Model.Contrato?.Inmueble?.Direccion</p>
+                                        <p><strong>Precio:</strong> $@Model.Pagos.FirstOrDefault()?.Contrato?.Inmueble?.Precio</p>
+                                        <p><strong>Coordenadas:</strong> @Model.Pagos.FirstOrDefault()?.Contrato?.Inmueble?.Coordenadas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <th>Número Pago</th>
+                <th>Detalles</th>
+                <th>Importe</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var pago in Model.Pagos)
             {
                 <tr>
-                    <td>@pago.Detalle</td>
+                    <td></td>
+                    <td>@pago.Num_pago</td>
+                    <td><a data-bs-toggle="modal" data-bs-target="#detallePagoModal-@pago.Id" style="cursor: pointer"><i
+                                class="fa-solid fa-eye ic-sz ic-color"></i></a></td>
+                    <div class="modal fade" id="detallePagoModal-@pago.Id" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark">
+                                    <h5 class="modal-title text-light" id="anularPagoModalLabel-@pago.Id">Detalle del Pago
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        style="filter: invert(1);"></button>
+                                </div>
+                                <div class="modal-body text-start">
+                                    <p class="fs-5 text-secondary">@pago.Detalle</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <td>$@pago.Importe</td>
                     <td>@String.Format("{0:dd/MM/yyyy}", pago.Fecha_pago)</td>
+                    <td>
+                        @if (pago.Activo)
+                        {
+                            <span class="badge bg-success">Activo</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Anulado</span>
+                        }
+                    </td>
                     <td>
                         @if (User.IsInRole("Administrador"))
                         {
                             <a href="/Pago/Delete/@pago.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                         }
                         <a href="/Pago/Edit/@pago.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                        <a href="/Pago/Details/@pago.Id"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a href="/Pago/Details/@pago.Id" class="me-2"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a data-bs-toggle="modal" class="me-2 text-decoration-none" data-bs-target="#nuevoPagoModal-@pago.Id" style="cursor: pointer">
+                            <i class="fa-solid fa-plus ic-sz ic-color"></i>
+                        </a>
+                        
+                        <div class="modal fade" id="nuevoPagoModal-@pago.Id" tabindex="-1"
+                            aria-labelledby="nuevoPagoModalLabel-@pago.Id" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-dark">
+                                        <h5 class="modal-title text-light" id="nuevoPagoModalLabel-@pago.Id">Nuevo Pago</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="d-flex flex-column w-100 text-start justify-content-start align-items-start">
+                                        <div class="form-group mt-2">
+                                            <p class="fs-5 text-secondary"><strong>Inmueble:</strong>
+                                                @pago.Contrato?.Inmueble?.Direccion</p>
+                                        </div>
+                                        <div class="form-group mt-2">
+                                            <p class="fs-5 text-secondary"><strong>Inquilino:</strong>
+                                                @pago.Contrato?.Inquilino?.Nombre
+                                                @pago.Contrato?.Inquilino?.Apellido</p>
+                                        </div>
+                                        </div>
+                                        <form asp-action="Crear" method="post" enctype="multipart/form-data">
+                                            <div class="form-group mt-3">
+                                                <label name="Importe" class="control-label">Importe</label>
+                                                <input name="Importe" class="form-control" value="@pago.Contrato?.Inmueble?.Precio"
+                                                    required readonly />
+                                            </div>
+                                            <div class="form-group mt-3">
+                                                <label name="Detalle" class="control-label">Detalle</label>
+                                                <textarea name="Detalle" class="form-control" required rows="3"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="hidden" name="Contrato_id" value="@pago.Contrato_id" />
+                                            </div>
+                                            <div class="form-group mt-3">
+                                                <input type="submit" value="Guardar" class="btn btn-custom">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a data-bs-toggle="modal" data-bs-target="#anularPagoModal-@pago.Id" style="cursor: pointer">
+                            <i class="fa-solid fa-ban ic-sz ic-color"></i>
+                        </a>
+                        <div class="modal fade" id="anularPagoModal-@pago.Id" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-dark">
+                                        <h5 class="modal-title text-light" id="anularPagoModalLabel-@pago.Id">Anular Pago</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                                    </div>
+                                    @if (pago.Activo)
+                                    {
+                                    <div class="modal-body text-start">
+                                        <p class="fs-5 text-secondary">¿Desea anular el pago?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form asp-controller="Pago" asp-action="AnularPago" asp-route-id="@pago.Id" method="post">
+                                            <button type="submit" class="btn btn-danger">Anular</button>
+                                        </form>
+                                        <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                    }else
+                                    {
+                                        <div class="modal-body text-start">
+                                            <p class="fs-5 text-secondary">El pago ya ha sido anulado.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
@@ -49,12 +244,8 @@
                 <div class="modal-body">
                     <form asp-controller="Pago" asp-action="Crear" method="post" enctype="multipart/form-data">
                         <div class="form-group mt-3">
-                            <label name="Fecha_pago" class="control-label">Fecha de Pago</label>
-                            <input name="Fecha_pago" class="form-control" type="date" required />
-                        </div>
-                        <div class="form-group mt-3">
                             <label name="Importe" class="control-label">Importe</label>
-                            <input type="number" name="Importe" class="form-control" required />
+                            <input name="Importe" class="form-control" required readonly value="@Model.Contrato?.Inmueble?.Precio"/>
                         </div>
                         <div class="form-group mt-3">
                             <label name="Detalle" class="control-label">Detalle</label>
@@ -84,22 +275,18 @@ else
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form asp-controller="Pago" asp-action="Crear" method="post" enctype="multipart/form-data">
-                        <div class="form-group mt-3">
-                            <label name="Fecha_pago" class="control-label">Fecha de Pago</label>
-                            <input name="Fecha_pago" class="form-control" type="date" required />
-                        </div>
-                        <div class="form-group mt-3">
-                            <label name="Importe" class="control-label">Importe</label>
-                            <input type="number" name="Importe" class="form-control" required />
+                    <form asp-controller="Pago" asp-action="Crear" method="post">
+                        <div class="row">
+                            <div class="form-group mt-3 col-md-8">
+                                <label name="Importe" class="control-label">Importe</label>
+                                <input name="Importe" class="form-control" required readonly value="@Model.Contrato?.Inmueble?.Precio"/>
+                            </div>
                         </div>
                         <div class="form-group mt-3">
                             <label name="Detalle" class="control-label">Detalle</label>
-                            <textarea name="Detalle" class="form-control" required rows="3"></textarea>
+                            <input name="Detalle" class="form-control" required rows="3"></input>
                         </div>
-                        <div class="form-group">
-                            <input type="hidden" name="Contrato_id" value="@Model.ContratoId" />
-                        </div>
+                        <input type="hidden" name="Contrato_id" value="@Model.Contrato?.Id" />
                         <div class="form-group mt-3">
                             <input type="submit" value="Guardar" class="btn btn-custom">
                         </div>
@@ -149,12 +336,12 @@ else
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    @if (TempData["ToastMessage"] != null)
-    {
-        <text>
+        @if (TempData["ToastMessage"] != null)
+            {
+                <text>
                     showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-        </text>
-    }
+                </text>
+        }
     });
 
     function showToast(message, type) {

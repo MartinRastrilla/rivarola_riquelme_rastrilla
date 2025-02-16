@@ -6,4 +6,6 @@ public class PagoViewModel
     public int CurrentPage { get; set; }
     public int TotalPages { get; set; }
     public int ContratoId { get; set; }
+    public Contratos? Contrato { get; set; }
+    public Multa? Multa { get; set; }
 }

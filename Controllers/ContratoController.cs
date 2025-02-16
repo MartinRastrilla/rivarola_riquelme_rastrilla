@@ -197,12 +197,16 @@ public class ContratoController : Controller
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
         var pagos = repoPago.ObtenerPagosPorContrato(contratoId, pagina, pageSize);
+        var contrato = repo.Obtener(contratoId);
+        var multa = repoMulta.ObtenerMultaPorContrato(contratoId);
         var model = new PagoViewModel
         {
             Pagos = pagos,
             CurrentPage = pagina,
             TotalPages = totalPages,
-            ContratoId = contratoId
+            ContratoId = contratoId,
+            Contrato = contrato,
+            Multa = multa
         };
 
         if (User?.Identity?.IsAuthenticated == true)
@@ -213,5 +217,11 @@ public class ContratoController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
+    }
+
+    public IActionResult ObtenerContrato(long id)
+    {
+        var contrato = repo.Obtener(id);
+        return Json(contrato);
     }
 }

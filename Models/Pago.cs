@@ -12,17 +12,14 @@ namespace rivarola_riquelme_rastrilla.Models
         public int? Contrato_id { get; set; }
         public Contratos? Contrato { get; set; }
 
-        [Required(ErrorMessage = "La fecha de pago es obligatoria.")]
-        [DataType(DataType.Date, ErrorMessage = "La fecha de pago debe tener un formato válido.")]
+        public int? Num_pago { get; set; }
+
         public DateTime? Fecha_pago { get; set; }
 
-        [Required(ErrorMessage = "El detalle no puede estar vacio.")]
-        [StringLength(255, ErrorMessage = "El detalle no puede tener más de 255 caracteres.")]
         public string? Detalle { get; set; }
 
         public bool Activo { get; set; } = true;
 
-        [Required(ErrorMessage = "El importe es obligatorio.")]
         public decimal? Importe { get; set; }
     }
 }

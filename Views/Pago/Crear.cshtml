@@ -6,13 +6,13 @@
 
 <h2>Crear Pago</h2>
 
-<form asp-action="Crear">
+<form asp-action="Crear" method="post" class="mt-3 w-75">
     <div class="form-group">
         <label asp-for="Contrato_id" class="control-label">Elija un Contrato:</label>
         <input type="text" id="ContratoTxt" class="form-control" list="ContratosList" placeholder="Buscar contrato..."
             required>
         <datalist id="ContratosList">
-            @foreach (var contrato in ViewBag.Contratos as IEnumerable<rivarola_riquelme_rastrilla.Models.Contratos>)
+            @foreach (var contrato in ViewBag.Contratos)
             {
                 <option
                     value="@contrato.Id - @contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido - @contrato.Inmueble?.Direccion">
@@ -23,18 +23,13 @@
         <small id="errorContrato" class="text-danger d-none">Debe seleccionar un elemento de la lista.</small>
     </div>
     <div class="form-group mt-3">
-        <label asp-for="Fecha_pago" class="control-label">Fecha de Pago</label>
-        <input asp-for="Fecha_pago" class="form-control" type="date" />
-        <span asp-validation-for="Fecha_pago" class="text-danger"></span>
-    </div>
-    <div class="form-group mt-3">
         <label asp-for="Detalle" class="control-label"></label>
-        <input asp-for="Detalle" class="form-control" />
+        <input asp-for="Detalle" class="form-control" required />
         <span asp-validation-for="Detalle" class="text-danger"></span>
     </div>
     <div class="form-group mt-3">
         <label asp-for="Importe" class="control-label"></label>
-        <input asp-for="Importe" class="form-control" />
+        <input type="number" asp-for="Importe" class="form-control" required readonly />
         <span asp-validation-for="Importe" class="text-danger"></span>
     </div>
     <div class="form-group mt-3">
@@ -43,26 +38,4 @@
     </div>
 </form>
 
-<script>
-    document.getElementById("ContratoTxt").addEventListener("blur", function () {
-        let inputField = this;
-        let inputValue = inputField.value;
-        let options = document.querySelectorAll("#ContratosList option");
-        let match = false;
-        let errorMessage = document.getElementById("errorContrato");
-
-        options.forEach(option => {
-            if (option.value === inputValue) {
-                document.getElementById("Contrato_id").value = option.value.split(" - ")[0]; // Extrae solo el ID
-                match = true;
-                errorMessage.classList.add("d-none");
-            }
-        });
-
-        if (!match) {
-            inputField.value = "";  // Borra el campo si la opción no es válida
-            document.getElementById("Contrato_id").value = "";
-            errorMessage.classList.remove("d-none");
-        }
-    });
-</script>
+<script src="~/js/PagoScript/CrearPago.js"></script>

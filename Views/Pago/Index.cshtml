@@ -34,7 +34,7 @@
                 <tr>
                     <td>@item.Contrato?.Inquilino?.Nombre @item.Contrato?.Inquilino?.Apellido</td>
                     <td>@item.Contrato?.Inmueble?.Direccion</td>
-                    <td>@Html.DisplayFor(modelItem => item.Fecha_pago)</td>
+                    <td>@String.Format("{0:dd/MM/yyyy}", item.Fecha_pago)</td>
                     <td><a data-bs-toggle="modal" data-bs-target="#detallePagoModal-@item.Id" style="cursor: pointer"><i
                                 class="fa-solid fa-eye ic-sz ic-color"></i></a></td>
                     <td>$@Html.DisplayFor(modelItem => item.Importe)</td>
@@ -69,15 +69,27 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                             style="filter: invert(1);"></button>
                                     </div>
-                                    <div class="modal-body">
-                                        <p class="fs-4 text-secondary">¿Desea anular el pago?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form asp-action="AnularPago" asp-route-id="@item.Id" method="post">
-                                            <button type="submit" class="btn btn-danger">Anular</button>
-                                        </form>
-                                        <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
-                                    </div>
+                                    @if (item.Activo)
+                                    {
+                                        <div class="modal-body">
+                                            <p class="fs-4 text-secondary">¿Desea anular el pago?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form asp-action="AnularPago" asp-route-id="@item.Id" method="post">
+                                                <button type="submit" class="btn btn-danger">Anular</button>
+                                            </form>
+                                            <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="modal-body">
+                                            <p class="fs-4 text-secondary">El pago ya ha sido anulado.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -122,12 +134,9 @@
                                 </div>
                                 <form asp-action="Crear" method="post" enctype="multipart/form-data">
                                     <div class="form-group mt-3">
-                                        <label name="Fecha_pago" class="control-label">Fecha de Pago</label>
-                                        <input name="Fecha_pago" class="form-control" type="date" required />
-                                    </div>
-                                    <div class="form-group mt-3">
                                         <label name="Importe" class="control-label">Importe</label>
-                                        <input type="number" name="Importe" class="form-control" required />
+                                        <input name="Importe" class="form-control" value="@item.Contrato?.Inmueble?.Precio"
+                                            required readonly />
                                     </div>
                                     <div class="form-group mt-3">
                                         <label name="Detalle" class="control-label">Detalle</label>

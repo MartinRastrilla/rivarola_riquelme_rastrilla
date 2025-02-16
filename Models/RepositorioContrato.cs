@@ -26,6 +26,7 @@ public class RepositorioContrato
                     i.telefono AS InquilinoTelefono,
                     i.email AS InquilinoEmail,
                     inm.direccion AS InmuebleDireccion,
+                    inm.precio AS InmueblePrecio,
                     t.id AS TipoId,
                     t.nombre AS TipoNombre
                 FROM contratos c
@@ -66,6 +67,7 @@ public class RepositorioContrato
                     {
                         Id = reader.GetInt32("InmuebleId"),
                         Direccion = reader.GetString("InmuebleDireccion"),
+                        Precio = reader.GetDecimal("InmueblePrecio"),
                         Tipo = tipo // Asignamos el objeto Tipo
                     };
 
@@ -124,6 +126,7 @@ public class RepositorioContrato
                     i.telefono AS InquilinoTelefono,
                     i.email AS InquilinoEmail,
                     inm.direccion AS InmuebleDireccion,
+                    inm.precio AS InmueblePrecio,
                     t.id AS TipoId,
                     t.nombre AS TipoNombre
                 FROM contratos c
@@ -167,6 +170,7 @@ public class RepositorioContrato
                         {
                             Id = reader.GetInt32("InmuebleId"),
                             Direccion = reader.GetString("InmuebleDireccion"),
+                            Precio = reader.GetDecimal("InmueblePrecio"),
                             Tipo = tipo // Asignamos el objeto Tipo
                         };
 
@@ -206,6 +210,7 @@ public class RepositorioContrato
                     c.fecha_inicio AS ContratoFechaInicio,
                     c.fecha_fin AS ContratoFechaFin,
                     inm.direccion AS InmuebleDireccion,
+                    inm.precio AS InmueblePrecio,
                     t.id AS TipoId,
                     t.nombre AS TipoNombre
                 FROM contratos c
@@ -231,6 +236,7 @@ public class RepositorioContrato
                         {
                             Id = reader.GetInt32("InmuebleId"),
                             Direccion = reader.GetString("InmuebleDireccion"),
+                            Precio = reader.GetDecimal("InmueblePrecio"),
                             Tipo = tipo
                         };
 

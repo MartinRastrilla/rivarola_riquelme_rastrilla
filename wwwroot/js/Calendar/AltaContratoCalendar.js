@@ -1,148 +1,106 @@
 document.addEventListener("DOMContentLoaded", function () {
-  var calendarEl = document.getElementById("calendar");
   var fechaInicioInput = document.getElementById("Fecha_inicio");
+  var selectInmuebles = document.getElementById("Inmueble_id");
+  var cantidadMesesInput = document.getElementById("Cantidad_meses");
   var fechaFinInput = document.getElementById("Fecha_fin");
   var InmuebleDiv = document.getElementById("InmuebleDiv");
   var MontoDiv = document.getElementById("MontoDiv");
-  var montoInput = document.querySelector("[asp-for='Monto']");
-  var today = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
-  let debounceTimeout;
+  var Monto = document.getElementById("Monto");
+  var today = new Date();
+  var todayString = today.toISOString().split("T")[0];
 
-  // Restringe fechas previas al día actual
-  fechaInicioInput.setAttribute("min", today);
-  fechaFinInput.setAttribute("min", today);
+  // Restringe la fecha mínima al día actual
+  fechaInicioInput.setAttribute("min", todayString);
 
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: "es",
-    initialView: "dayGridMonth",
-    height: 520,
-    contentHeight: 600,
-    editable: true,
-    selectable: true,
-    eventResizableFromStart: true,
-    eventDurationEditable: true,
-    buttonText: {
-      today: "Hoy",
-    },
-    select: function (info) {
-      let startDate = new Date(info.startStr);
-      let endDate = new Date(info.endStr);
-      endDate.setDate(endDate.getDate() - 1); // Ajustar porque FullCalendar da el día siguiente
+  fechaInicioInput.addEventListener("change", calcularFechaFin);
+  cantidadMesesInput.addEventListener("input", calcularFechaFin);
 
-      let startDateStr = startDate.toISOString().split("T")[0];
-      let endDateStr = endDate.toISOString().split("T")[0];
-
-      fechaInicioInput.value = startDateStr;
-      fechaFinInput.value = endDateStr;
-
-      validarFechas(startDateStr, endDateStr);
-    },
-    eventChange: function (info) {
-      let startDate = new Date(info.event.startStr);
-      let endDate = new Date(info.event.endStr);
-      endDate.setDate(endDate.getDate() - 1);
-
-      let startDateStr = startDate.toISOString().split("T")[0];
-      let endDateStr = endDate.toISOString().split("T")[0];
-
-      fechaInicioInput.value = startDateStr;
-      fechaFinInput.value = endDateStr;
-
-      validarFechas(startDateStr, endDateStr);
-    },
-  });
-
-  calendar.render();
-
-  function validarFechas(fechaInicio, fechaFin) {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-      if (!fechaInicio || !fechaFin) return;
-
-      let startDate = new Date(fechaInicio);
-      let endDate = new Date(fechaFin);
-      let currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Eliminar la parte de la hora para comparar solo fechas
-
-      // Validar si alguna fecha es menor a la actual
-      if (startDate < currentDate || endDate < currentDate) {
-        alert(
-          "Las fechas seleccionadas no pueden ser menores a la fecha actual."
-        );
-        fechaInicioInput.value = null;
-        fechaFinInput.value = null;
-        return;
-      }
-
-      // Validar si la fecha de inicio es mayor que la de fin
-      if (startDate > endDate) {
-        alert(
-          "La fecha de inicio no puede ser mayor que la fecha de finalización."
-        );
-        fechaInicioInput.value = null;
-        fechaFinInput.value = null;
-        return;
-      }
-
-      InmuebleDiv.classList.remove("d-none");
-      MontoDiv.classList.remove("d-none");
-
-      calendar.removeAllEvents();
-      calendar.addEvent({
-        title: "Reserva de Inmueble",
-        start: fechaInicio,
-        end: new Date(endDate.setDate(endDate.getDate() + 1))
-          .toISOString()
-          .split("T")[0], // Ajustar fin para FullCalendar
-        color: "#C0392B",
-        textColor: "white",
-      });
-
-      //Obtener los inmuebles disponibles
-      fetch(
-        `/Inmueble/ObtenerInmueblesDisponiblesFechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          actualizarSelectInmuebles(data);
-        })
-        .catch((error) =>
-          console.error("Error al obtener los inmuebles:", error)
-        );
-    }, 500);
+  // Actualiza el monto si cambia el inmueble
+  if (selectInmuebles) {
+    selectInmuebles.addEventListener("change", calcularMonto);
   }
 
-  function actualizarSelectInmuebles(inmuebles) {
-    let selectInmuebles = document.getElementById("Inmueble_id");
+  // Función universal para sumar meses a una fecha
+  function addMonths(date, months) {
+    const originalDay = date.getDate();
+    let newDate = new Date(date.getTime());
+    const desiredMonth = newDate.getMonth() + months;
 
-    // Vaciar el select
-    selectInmuebles.innerHTML = "";
+    // Ajustar el mes con el día original
+    newDate.setMonth(desiredMonth, originalDay);
 
-    if (inmuebles.length === 0) {
-      let option = document.createElement("option");
-      option.value = "";
-      option.textContent = "No hay inmuebles disponibles";
-      selectInmuebles.appendChild(option);
+    // Si hubo desbordamiento, setDate(0) pone el último día del mes anterior
+    if (newDate.getMonth() !== desiredMonth % 12) {
+      newDate.setDate(0);
+    }
+    return newDate;
+  }
+
+  function calcularFechaFin() {
+    let fechaInicio = new Date(fechaInicioInput.value);
+    let cantidadMeses = parseInt(cantidadMesesInput.value);
+
+    if (!fechaInicioInput.value || isNaN(cantidadMeses) || cantidadMeses <= 0) {
+      fechaFinInput.value = "";
+      fechaFinInput.parentElement.classList.add("d-none");
+      cantidadMesesInput.value = "";
       return;
     }
 
-    let option = document.createElement("option");
-    option.value = "";
-    option.textContent = "Seleccione un inmueble";
-    selectInmuebles.appendChild(option);
-    // Llenar con los nuevos inmuebles
-    inmuebles.forEach((inmueble) => {
-      let option = document.createElement("option");
-      option.value = inmueble.id; // Ajustar según la estructura del objeto recibido
-      option.textContent = inmueble.direccion; // Ajustar según la estructura del objeto recibido
-      selectInmuebles.appendChild(option);
-    });
+    let fechaFin = addMonths(fechaInicio, cantidadMeses);
+
+    fechaFinInput.value = fechaFin.toISOString().split("T")[0];
+    fechaFinInput.parentElement.classList.remove("d-none");
+
+    if (!isNaN(fechaInicio.getTime()) && !isNaN(fechaFin.getTime())) {
+      obtenerInmueblesDisponibles(fechaInicio, fechaFin);
+    }
   }
 
-  fechaInicioInput.addEventListener("change", () =>
-    validarFechas(fechaInicioInput.value, fechaFinInput.value)
-  );
-  fechaFinInput.addEventListener("change", () =>
-    validarFechas(fechaInicioInput.value, fechaFinInput.value)
-  );
+  function calcularMonto() {
+    let inmuebleSeleccionado = selectInmuebles.value;
+    let cantidadMeses = parseInt(cantidadMesesInput.value);
+
+    if (!inmuebleSeleccionado || isNaN(cantidadMeses) || cantidadMeses <= 0) {
+      Monto.value = "Seleccione un inmueble y una cantidad de meses.";
+      return;
+    }
+
+    fetch(`/Inmueble/ObtenerInmueble/${inmuebleSeleccionado}`)
+      .then((response) => response.json())
+      .then((data) => {
+        let monto = data.precio * cantidadMeses;
+        Monto.value = monto.toFixed(2);
+      })
+      .catch((error) => {
+        console.error("Error al obtener el inmueble:", error);
+        Monto.value = "Error al obtener el inmueble.";
+      });
+  }
+
+  function obtenerInmueblesDisponibles(fechaInicio, fechaFin) {
+    fetch(
+      `/Inmueble/ObtenerInmueblesDisponiblesFechas?fechaInicio=${
+        fechaInicio.toISOString().split("T")[0]
+      }&fechaFin=${fechaFin.toISOString().split("T")[0]}`
+    )
+      .then((response) => response.json())
+      .then((data) => actualizarSelectInmuebles(data))
+      .catch((error) =>
+        console.error("Error al obtener los inmuebles:", error)
+      );
+  }
+
+  function actualizarSelectInmuebles(inmuebles) {
+    selectInmuebles.innerHTML =
+      "<option value=''>Seleccione un inmueble</option>";
+    inmuebles.forEach((inmueble) => {
+      let option = document.createElement("option");
+      option.value = inmueble.id;
+      option.textContent = inmueble.direccion;
+      selectInmuebles.appendChild(option);
+    });
+    InmuebleDiv.classList.remove("d-none");
+    MontoDiv.classList.remove("d-none");
+  }
 });

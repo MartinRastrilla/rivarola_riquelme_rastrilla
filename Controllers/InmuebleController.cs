@@ -197,11 +197,21 @@ public class InmuebleController : Controller
         }
     }
 
+    public IActionResult ObtenerInmueble(int Id)
+    {
+        var inmueble = repoInmueble.Obtener(Id);
+        return Json(inmueble);
+    }
+
     [HttpGet]
     [Authorize(Policy = "Empleado")]
     public IActionResult ObtenerInmueblesDisponiblesFechas(DateTime fechaInicio, DateTime fechaFin)
     {
         var inmueblesDisponibles = repoInmueble.ObtenerInmueblesPorFecha(fechaInicio, fechaFin);
+        if (inmueblesDisponibles == null || inmueblesDisponibles.Count == 0)
+        {
+            return Json(repoInmueble.ObtenerInmueble());
+        }
 
         return Json(inmueblesDisponibles);
     }

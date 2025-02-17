@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-02-2025 a las 05:42:36
+-- Tiempo de generación: 17-02-2025 a las 22:19:31
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -42,8 +42,10 @@ CREATE TABLE `contratos` (
 --
 
 INSERT INTO `contratos` (`id`, `inquilino_dni`, `inmueble_id`, `estado`, `monto`, `fecha_inicio`, `fecha_fin`) VALUES
-(32, 12345601, 4, 'Activo', 5040000.00, '2025-03-09', '2026-03-09'),
-(35, 43490178, 21, 'Cancelado', 200000.00, '2025-05-01', '2025-12-31');
+(32, 12345601, 4, 'Cancelado', 1680000.00, '2025-03-09', '2026-03-09'),
+(35, 43490178, 21, 'Cancelado', 200000.00, '2025-05-01', '2025-12-31'),
+(36, 12345679, 21, 'Finalizado', 100000.00, '2025-03-08', '2025-07-08'),
+(37, 12345678, 6, 'Cancelado', 450000.00, '2025-05-19', '2025-11-19');
 
 -- --------------------------------------------------------
 
@@ -73,7 +75,7 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `uso`, `tipo_id`, `ambientes`, `coor
 (4, 'Av. Plazota 987', 'residencial', 2, 6, 'none', 420000.00, 12303111, 1),
 (6, 'Av. Testing 211', 'residencial', 1, 4, 'none', 150000.00, 12202124, 1),
 (20, 'Asa', 'comercial', 2, 1, 'none', 69.69, 23404908, 1),
-(21, 'Las Weas 722', 'residencial', 3, 2, 'none', 25000.00, 12303111, 0);
+(21, 'Las Weas 722', 'residencial', 3, 2, 'none', 25000.00, 12303111, 1);
 
 -- --------------------------------------------------------
 
@@ -123,7 +125,9 @@ CREATE TABLE `multa` (
 --
 
 INSERT INTO `multa` (`id`, `contrato_id`, `monto`, `fecha_multa`) VALUES
-(13, 35, 50000.00, '2025-02-15');
+(13, 35, 50000.00, '2025-02-15'),
+(15, 32, 840000.00, '2025-02-16'),
+(16, 37, 300000.00, '2025-02-16');
 
 -- --------------------------------------------------------
 
@@ -146,14 +150,27 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`id`, `contrato_id`, `num_pago`, `fecha_pago`, `detalle`, `importe`, `activo`) VALUES
-(43, 32, 1, '2025-02-15', 'Algo', 1500.00, 1),
+(43, 32, 1, '2025-02-15', 'Algo', 1500.00, 0),
 (44, 35, 1, '2025-02-15', 'Pago por el mes de hoy ndeah', 25000.00, 1),
 (45, 35, 2, '2025-02-15', 'Pago en concepto del mes Marzo', 25000.00, 0),
 (46, 35, 3, '2025-02-15', 'Pago en concepto de Abril', 25000.00, 0),
 (48, 35, 4, '2025-02-15', 'Pago por marzo', 25000.00, 1),
 (49, 35, 5, '2025-02-16', 'Vale x2', 50000.00, 1),
-(50, 32, 2, '2025-02-16', 'Febrero y Marzo (Se puso las pilas ahora)', 150000.00, 1),
-(51, 35, 6, '2025-02-16', 'prueba', 200000.00, 1);
+(50, 32, 2, '2025-02-16', 'Febrero y Marzo (Se puso las pilas ahora)', 150000.00, 0),
+(51, 35, 6, '2025-02-16', 'prueba', 200000.00, 1),
+(52, 32, 3, '2025-02-16', 'Mes 3', 420000.00, 0),
+(53, 32, 4, '2025-02-16', 'nuevo pago prueba', 420000.00, 1),
+(54, 36, 1, '2025-02-16', 'Pago por el mes de hoy ndeah', 25000.00, 1),
+(55, 36, 2, '2025-02-16', 'Mes 2/4', 25000.00, 1),
+(56, 32, 5, '2025-02-16', 'a', 420000.00, 1),
+(57, 36, 3, '2025-02-16', 'Mes 3', 25000.00, 1),
+(58, 36, 4, '2025-02-16', 'Mes 4', 25000.00, 0),
+(59, 36, 5, '2025-02-16', 'Mes 4', 25000.00, 0),
+(60, 36, 6, '2025-02-16', 'Mes 4', 25000.00, 0),
+(61, 36, 7, '2025-02-16', 'mes 4', 25000.00, 0),
+(62, 36, 8, '2025-02-16', 'Mes 4', 25000.00, 0),
+(63, 36, 9, '2025-02-16', 'mes 5', 25000.00, 1),
+(64, 37, 1, '2025-02-16', 'Mes Mayo', 150000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -202,8 +219,10 @@ CREATE TABLE `registro_contratos` (
 --
 
 INSERT INTO `registro_contratos` (`id`, `contrato_id`, `fecha_creacion`, `creado_por`, `fecha_cancelacion`, `cancelado_por`) VALUES
-(15, 32, '2025-02-15 19:14:39', 17, NULL, NULL),
-(18, 35, '2025-02-15 21:28:25', 17, '2025-02-15 21:30:05', 17);
+(15, 32, '2025-02-15 19:14:39', 17, '2025-02-17 00:18:20', 14),
+(18, 35, '2025-02-15 21:28:25', 17, '2025-02-15 21:30:05', 17),
+(19, 36, '2025-02-16 06:12:33', 14, NULL, NULL),
+(20, 37, '2025-02-17 00:28:43', 14, '2025-02-17 00:30:41', 14);
 
 -- --------------------------------------------------------
 
@@ -225,14 +244,27 @@ CREATE TABLE `registro_pagos` (
 --
 
 INSERT INTO `registro_pagos` (`id`, `pagos_id`, `fecha_creacion`, `creado_por`, `fecha_anulacion`, `anulado_por`) VALUES
-(7, 43, '2025-02-15 23:37:46', 14, NULL, NULL),
+(7, 43, '2025-02-15 23:37:46', 14, '2025-02-16 06:05:35', 14),
 (8, 44, '2025-02-15 23:38:40', 14, NULL, NULL),
 (9, 45, '2025-02-16 00:21:04', 14, '2025-02-16 00:22:33', 14),
 (10, 46, '2025-02-16 00:22:07', 14, '2025-02-16 03:15:18', 14),
 (12, 48, '2025-02-16 01:33:10', 14, NULL, NULL),
 (13, 49, '2025-02-16 03:15:56', 14, NULL, NULL),
-(14, 50, '2025-02-16 03:16:55', 14, NULL, NULL),
-(15, 51, '2025-02-16 03:40:11', 14, NULL, NULL);
+(14, 50, '2025-02-16 03:16:55', 14, '2025-02-16 06:05:47', 14),
+(15, 51, '2025-02-16 03:40:11', 14, NULL, NULL),
+(16, 52, '2025-02-16 05:30:10', 14, '2025-02-16 06:23:22', 14),
+(17, 53, '2025-02-16 05:44:18', 14, NULL, NULL),
+(18, 54, '2025-02-16 06:14:35', 14, NULL, NULL),
+(19, 55, '2025-02-16 06:25:13', 14, NULL, NULL),
+(20, 56, '2025-02-16 06:25:33', 14, NULL, NULL),
+(21, 57, '2025-02-16 21:50:49', 14, NULL, NULL),
+(22, 58, '2025-02-16 21:51:09', 14, '2025-02-16 22:03:08', 14),
+(23, 59, '2025-02-16 22:03:31', 14, '2025-02-16 22:03:58', 14),
+(24, 60, '2025-02-16 22:09:14', 14, '2025-02-16 22:14:51', 14),
+(25, 61, '2025-02-16 22:15:03', 14, '2025-02-16 22:28:41', 14),
+(26, 62, '2025-02-16 22:28:50', 14, '2025-02-16 22:31:57', 14),
+(27, 63, '2025-02-16 22:32:08', 14, NULL, NULL),
+(28, 64, '2025-02-17 00:29:37', 14, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -286,17 +318,19 @@ CREATE TABLE `usuarios` (
   `email` varchar(255) NOT NULL,
   `contrasenia` varchar(255) NOT NULL,
   `Rol` varchar(30) NOT NULL,
-  `avatar` varchar(255) DEFAULT NULL
+  `avatar` varchar(255) DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `token_expiracion` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `contrasenia`, `Rol`, `avatar`) VALUES
-(13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', '/Uploads\\avatar_13.png'),
-(14, 'Admin', 'Fort', 'admin@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Administrador', '/Uploads\\avatar_14.jpg'),
-(17, 'Martin', 'Rastrilla', 'rastrillamartin@gmail.com', 'O5znCj/g0RwkDe0y57pTA46z3DgcnKSm4srzokm+ks4=', 'Administrador', '/Uploads\\avatar_17.jpg');
+INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `contrasenia`, `Rol`, `avatar`, `reset_token`, `token_expiracion`) VALUES
+(13, 'Empleado', 'Empleado', 'empleado@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Empleado', '/Uploads\\avatar_13.png', NULL, NULL),
+(14, 'Admin', 'Fort', 'admin@gmail.com', 'KFzADE+l9G4eWlOER5sM5UnF2oVTzUE3uDZPL/T5s7Q=', 'Administrador', '/Uploads\\avatar_14.jpg', NULL, NULL),
+(17, 'Martin', 'Rastrilla', 'rastrillamartin@gmail.com', 'qnVF4b4CeidwYvu24jXjLuUuMibwQCZRcYyMTKiTBQs=', 'Administrador', '/Uploads\\avatar_17.jpg', 'qRduSqU3uBGK9rG1uhUjOg7iXZuHs5JHHmnIE9Vn8uQ=', '2025-02-17 12:45:16');
 
 -- --------------------------------------------------------
 
@@ -411,7 +445,7 @@ ALTER TABLE `usuarios_roles`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
@@ -429,13 +463,13 @@ ALTER TABLE `inquilinos`
 -- AUTO_INCREMENT de la tabla `multa`
 --
 ALTER TABLE `multa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`
@@ -447,13 +481,13 @@ ALTER TABLE `propietarios`
 -- AUTO_INCREMENT de la tabla `registro_contratos`
 --
 ALTER TABLE `registro_contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `registro_pagos`
 --
 ALTER TABLE `registro_pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`

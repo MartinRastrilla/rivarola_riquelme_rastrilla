@@ -112,7 +112,8 @@ public class RepositorioUsuarios
                             Avatar = reader.GetString("Avatar"),
                         };
                     }
-                };
+                }
+                ;
                 connection.Close();
             }
         }
@@ -144,7 +145,8 @@ public class RepositorioUsuarios
                             Avatar = reader.GetString("Avatar"),
                         };
                     }
-                };
+                }
+                ;
                 connection.Close();
             }
         }
@@ -260,6 +262,59 @@ public class RepositorioUsuarios
             }
         }
         return r;
+    }
+
+    public int CrearToken(Usuarios usuario, string token, DateTime tokenExpiration)
+    {
+        int r = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE usuarios SET reset_token=@ResetToken, token_expiracion=@TokenExpiration
+            WHERE Id = @Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@ResetToken", token);
+                command.Parameters.AddWithValue("@TokenExpiration", tokenExpiration);
+                command.Parameters.AddWithValue("@Id", usuario.Id);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
+
+    public Usuarios? ObtenerByToken(string token)
+    {
+        Usuarios? usuario = null;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"SELECT Id, Nombre, Apellido, Email, Rol, Contrasenia, Avatar FROM usuarios WHERE reset_token = @ResetToken AND token_expiracion > UTC_TIMESTAMP;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@ResetToken", token);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        usuario = new Usuarios
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Nombre = reader.GetString("Nombre"),
+                            Apellido = reader.GetString("Apellido"),
+                            Email = reader.GetString("Email"),
+                            Rol = reader.GetString("Rol"),
+                            Contrasenia = reader.GetString("Contrasenia"),
+                            Avatar = reader.GetString("Avatar")
+                        };
+                    }
+                }
+                ;
+                connection.Close();
+            }
+        }
+        return usuario;
     }
 
 }

@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -310,6 +313,12 @@ public class UsuariosController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult MailSent()
+    {
+        return View();
+    }
+
     [HttpPost]
     public async Task<IActionResult> Login(string Email, string Contrasenia)
     {
@@ -363,6 +372,97 @@ public class UsuariosController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        TempData["ToastMessage"] = "Sesión cerrada con éxito";
+        TempData["ToastType"] = "success";
+        return RedirectToAction("Login", "Usuarios");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EnviarCorreoRestaurarContrasenia(string Email)
+    {
+        var usuario = repo.ObtenerByEmail(Email);
+        if (usuario == null)
+        {
+            ViewBag.Error = "Correo no registrado";
+            return RedirectToAction("Login", "Usuarios");
+        }
+        int userId = usuario.Id;
+        string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        DateTime expirationDate = DateTime.UtcNow.AddHours(1);
+
+        repo.CrearToken(usuario, token, expirationDate);
+
+        var link = Url.Action("RestaurarContrasenia", "Usuarios", new { token = token }, Request.Scheme);
+
+        await EnviarCorreo(Email, "Restaurar Contraseña", $"Para restaurar tu contrasenia, haz click en el siguiente link: <a href='{link}'>Restablecer Contraseña</a>");
+
+        TempData["ToastMessage"] = "Correo enviado con éxito";
+        TempData["ToastType"] = "success";
+        return RedirectToAction("MailSent", "Usuarios");
+    }
+
+    private async Task EnviarCorreo(string destinatario, string asunto, string cuerpo)
+    {
+        string smtpHost = "fennazmarketing@gmail.com"; // Asegurar que el email esté completo
+        string? smtpPassword = Environment.GetEnvironmentVariable("SMTP_PASSWORD");
+
+        if (string.IsNullOrEmpty(smtpPassword))
+        {
+            throw new Exception("SMTP_PASSWORD no está configurado correctamente.");
+        }
+
+        using (var smtp = new SmtpClient("smtp.gmail.com", 587))
+        {
+            smtp.Credentials = new NetworkCredential(smtpHost, smtpPassword);
+            smtp.EnableSsl = true;
+
+            var mail = new MailMessage
+            {
+                From = new MailAddress(smtpHost),
+                Subject = asunto,
+                Body = cuerpo,
+                IsBodyHtml = true
+            };
+            mail.To.Add(destinatario);
+
+            await smtp.SendMailAsync(mail);
+        }
+    }
+
+    [HttpGet]
+    public IActionResult RestaurarContrasenia(string token)
+    {
+        var usuario = repo.ObtenerByToken(token);
+        if (usuario == null)
+        {
+            ViewBag.Error = "Token no valido";
+            return View("Login");
+        }
+        ViewBag.Token = token;
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ActualizarContrasenia(string token, string ContraseniaNueva)
+    {
+        var usuario = repo.ObtenerByToken(token);
+        if (usuario == null)
+        {
+            ViewBag.Error = "Token no valido";
+            return View("Login");
+        }
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: ContraseniaNueva,
+            salt: new byte[10],
+            prf: KeyDerivationPrf.HMACSHA1,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8
+        ));
+        usuario.Contrasenia = hashed;
+        repo.EditarContrasenia(usuario);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        TempData["ToastMessage"] = "Contraseña modificada con éxito";
+        TempData["ToastType"] = "success";
         return RedirectToAction("Login", "Usuarios");
     }
 }

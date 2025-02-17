@@ -10,4 +10,6 @@ public class Usuarios
     public string? Rol { get; set; }
     public string? Avatar { get; set; }
     public IFormFile? AvatarFile { get; set; }
+    public string? ResetToken { get; set; }
+    public DateTime? TokenExpiration { get; set; }
 }

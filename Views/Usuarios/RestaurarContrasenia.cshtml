@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Restablecer Contraseña";
+}
+
+<h2>Restablecer Contraseña</h2>
+<p class="text-muted my-3">Ingrese su nueva contraseña:</p>
+
+<form method="post" action="/Usuarios/ActualizarContrasenia">
+    <input type="hidden" name="token" value="@ViewBag.Token" />
+    <div class="mb-3 w-50">
+        <label for="ContraseniaNueva" class="form-label">Nueva Contraseña</label>
+        <input type="password" name="ContraseniaNueva" id="ContraseniaNueva" class="form-control" required>
+    </div>
+    <div class="w-50">
+        <label for="confContraseña" class="form-label">Confirmar Contraseña</label>
+        <input type="password" name="confContraseña" id="confContraseña" class="form-control" required>
+    </div>
+    <div class="mb-3 w-50">
+        <small id="passwordError" class="text-danger d-none">*Las Contraseñas no coinciden</small>
+    </div>
+    <button type="submit" class="btn btn-custom">Actualizar Contraseña</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var passwordInput = document.getElementById("ContraseniaNueva");
+        var confirmPasswordInput = document.getElementById("confContraseña");
+        var passwordError = document.getElementById("passwordError");
+        var form = document.querySelector("form");
+
+        form.addEventListener("submit", function (event) {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                event.preventDefault();
+                confirmPasswordInput.setCustomValidity("Las contraseñas no coinciden.");
+                passwordInput.classList.add("is-invalid");
+                confirmPasswordInput.classList.add("is-invalid");
+                passwordError.classList.remove("d-none");
+            } else {
+                confirmPasswordInput.setCustomValidity("");
+                passwordInput.classList.remove("is-invalid");
+                confirmPasswordInput.classList.remove("is-invalid");
+                passwordError.classList.add("d-none");
+            }
+
+        });
+        passwordInput.addEventListener("input", function () {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.setCustomValidity("Las contraseñas no coinciden.");
+                passwordInput.classList.add("is-invalid");
+                confirmPasswordInput.classList.add("is-invalid");
+                passwordError.classList.remove("d-none");
+            } else {
+                confirmPasswordInput.classList.remove("is-invalid")
+                passwordInput.classList.remove("is-invalid");
+                confirmPasswordInput.setCustomValidity("");
+                passwordError.classList.add("d-none");
+            }
+        });
+
+
+        confirmPasswordInput.addEventListener("input", function () {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.setCustomValidity("Las contraseñas no coinciden.");
+                passwordInput.classList.add("is-invalid");
+                confirmPasswordInput.classList.add("is-invalid");
+                passwordError.classList.remove("d-none");
+            } else {
+                confirmPasswordInput.setCustomValidity("");
+                passwordInput.classList.remove("is-invalid");
+                confirmPasswordInput.classList.remove("is-invalid");
+                passwordError.classList.add("d-none");
+            }
+        });
+    });
+</script>

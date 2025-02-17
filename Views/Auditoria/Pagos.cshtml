@@ -163,7 +163,7 @@
 <div class="pagination">
     @if (Model.CurrentPage > 1)
     {
-        <a href="/Auditoria/Contratos?pagina=1" class="btn btn-custom">Primera</a>
+        <a href="/Auditoria/Pagos?pagina=1" class="btn btn-custom">Primera</a>
     }
 
     @{
@@ -178,13 +178,13 @@
             }
             else
             {
-                <a href="/Auditoria/Contratos?pagina=@i" class="btn btn-custom">@i</a>
+                <a href="/Auditoria/Pagos?pagina=@i" class="btn btn-custom">@i</a>
             }
         }
     }
 
     @if (Model.CurrentPage < Model.TotalPages)
     {
-        <a href="/Auditoria/Contratos?pagina=@Model.TotalPages" class="btn btn-custom">Última</a>
+        <a href="/Auditoria/Pagos?pagina=@Model.TotalPages" class="btn btn-custom">Última</a>
     }
 </div>

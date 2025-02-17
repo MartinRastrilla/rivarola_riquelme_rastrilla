@@ -217,18 +217,20 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        @if (TempData["ToastMessage"] != null)
-            {
-                <text>
-                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-                </text>
+        let toastMessage = "@TempData["ToastMessage"]".split("||");
+        let toastType = "@TempData["ToastType"]".split("||");
+
+        if (toastMessage.length > 0 && toastMessage[0] !== "") {
+            for (let i = 0; i < toastMessage.length; i++) {
+                showToast(toastMessage[i], toastType[i]);
+            }
         }
     });
 
     function showToast(message, type) {
         const toastId = `toast-${Date.now()}`; // ID único para el toast
         const toastHtml = `
-            <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0 mt-3" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
                         ${message}

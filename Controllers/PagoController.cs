@@ -135,17 +135,31 @@ public class PagoController : Controller
                 return View(pago);
             }
 
-            TempData["ToastMessage"] = "Pago creado con éxito";
-            TempData["ToastType"] = "success";
-
             var newPago = pago;
             newPago.Fecha_pago = DateTime.Now;
+
+            //Calcular el TOTAL PAGADO por el MONTO DEL CONTRATO para Finalizar el Contrato
+            var pagosDelContrato = repo.ObtenerPagosActivosPorContrato(newPago.Contrato_id);
+            decimal? totalPagado = pagosDelContrato.Sum(p => p.Importe);
+            totalPagado += newPago.Importe;
+
+            var contrato = repositorioContrato.Obtener((int)newPago.Contrato_id);
+
+            if (totalPagado == contrato?.Monto)
+            {
+                repositorioContrato.FinalizarContrato((int)newPago.Contrato_id);
+                TempData["ToastMessage"] = "¡Felicitaciones! El Contrato ha sido pagado en su totalidad.";
+                TempData["ToastType"] = "success";
+            }
 
             // Contar cantidad de pagos para contrato
             int numPago = repo.ObtenerTotalPagosPorContrato(newPago.Contrato_id);
             newPago.Num_pago = numPago + 1;
 
             var pagoId = repo.Agregar(newPago);
+
+            TempData["ToastMessage"] += "||Pago creado con éxito";
+            TempData["ToastType"] += "||success";
 
             RegistroPagos registroPago = new RegistroPagos();
             registroPago.Pago_id = pagoId;

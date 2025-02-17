@@ -22,42 +22,44 @@
             <th>Apellido</th>
             <th>Telefono</th>
             <th>Email</th>
-            <th>Accion</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @if (Model.Propietarios != null)
             @foreach (var item in Model.Propietarios)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Dni)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Apellido)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telefono)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <a href="/Propietarios/Delete/@item.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
-                    }
-                    <a href="/Propietarios/Edit/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                    <a href="/Propietarios/Details/@item.Id" class="me-2"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
-                    <a asp-controller="Propietarios" asp-action="Inmuebles" asp-route-dni="@item.Dni">
-                        <i class="fa-solid fa-building ic-sz ic-color"></i>
-                    </a>
-                </td>
-            </tr>
-        }
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dni)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Apellido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telefono)
+                    </td>
+                    <td>
+                        <a href="mailto:@item.Email" style="color: #C0392B;">@item.Email</a>
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a href="/Propietarios/Delete/@item.Id" class="me-2"><i
+                                    class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                        }
+                        <a href="/Propietarios/Edit/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                        <a href="/Propietarios/Details/@item.Id" class="me-2"><i
+                                class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a asp-controller="Propietarios" asp-action="Inmuebles" asp-route-dni="@item.Dni">
+                            <i class="fa-solid fa-building ic-sz ic-color"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
     </tbody>
 </table>
 <div class="pagination">
@@ -98,10 +100,10 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         @if (TempData["ToastMessage"] != null)
-        {
-            <text>
-            showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-            </text>
+            {
+                <text>
+                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+                </text>
         }
     });
 

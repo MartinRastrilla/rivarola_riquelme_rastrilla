@@ -143,12 +143,12 @@
                         @if (item.Estado)
                         {
                             <span class="badge bg-success badge-toggle">Disponible</span>
-                            <a href="/Inmueble/Baja/@item.Id" class="btn btn-sm btn-outline-danger toggle-btn">Desactivar</a>
+                            <a href="#" class="btn btn-sm btn-outline-danger toggle-btn btnDesactivar" data-inmueble-id="@item.Id">Desactivar</a>
                         }
                         else
                         {
                             <span class="badge bg-danger badge-toggle">No Disponible</span>
-                            <a href="/Inmueble/Activar/@item.Id" class="btn btn-sm btn-outline-success toggle-btn">Activar</a>
+                            <a href="/Inmueble/Activar/@item.Id" class="btn btn-sm btn-outline-success toggle-btn" id="btnActivar">Activar</a>
                         }
                     </td>
 
@@ -168,7 +168,22 @@
             }
     </tbody>
 </table>
-
+<div class="modal fade" id="modalAdvertencia" tabindex="-1" aria-labelledby="modalAdvertenciaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalAdvertenciaLabel">Advertencia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMensaje"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="pagination">
     <!-- Botón "Primera página" -->
     @if (Model.CurrentPage > 1)
@@ -225,6 +240,7 @@
     <div id="toastContainer"></div>
 </div>
 
+<script src="~/js/InmuebleScript/IndexInmueble.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     @if (TempData["ToastMessage"] != null)

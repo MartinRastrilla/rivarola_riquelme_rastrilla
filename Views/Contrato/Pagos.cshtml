@@ -3,10 +3,6 @@
 @{
     var totalPagado = Model.Pagos?.Where(p => p.Activo).Sum(p => p.Importe) ?? 0;
     var montoTotal = Model.Contrato?.Monto ?? 1;
-    if (Model.Contrato?.Estado == Contratos.EstadoContrato.Cancelado)
-    {
-        montoTotal += Model.Multa?.Monto ?? 0;
-    }
     var porcentajePagado = (totalPagado / montoTotal) * 100;
     porcentajePagado = (int)porcentajePagado;
     ViewData["Title"] = "Pagos de Contrato";
@@ -28,12 +24,21 @@
                 @porcentajePagado%
             </div>
         </div>
-    }else{
+    }else if (totalPagado == montoTotal){
         <div class="d-flex justify-content-center mt-4 text-success fw-bold">
-            <small>$@totalPagado / $@montoTotal</small>
+            <small>$@totalPagado / $@montoTotal *MONTO ALCANZADO*</small>
         </div>
         <div class="progress mt-1 bg-light" role="progressbar" aria-label="Animated striped example" style="height: 25px;">
             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: @porcentajePagado%;" aria-valuenow="@porcentajePagado" aria-valuemin="0" aria-valuemax="100">
+                @porcentajePagado%
+            </div>
+        </div>
+    }else{
+        <div class="d-flex justify-content-center mt-4 fw-bold" style="color: #800a03;">
+            <small>$@totalPagado / $@montoTotal</small>
+        </div>
+        <div class="progress mt-1 bg-light" role="progressbar" aria-label="Animated striped example" style="height: 25px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: @porcentajePagado%;background-color: #800a03;" aria-valuenow="@porcentajePagado" aria-valuemin="0" aria-valuemax="100">
                 @porcentajePagado%
             </div>
         </div>

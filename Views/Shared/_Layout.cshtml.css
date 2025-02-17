@@ -50,8 +50,8 @@ button.accept-policy {
   color: rgb(190, 190, 190);
   background: linear-gradient(
     90deg,
-    rgba(70, 19, 19, 1) 36%,
-    rgba(59, 59, 59, 1) 79%
+    rgba(63, 0, 0, 1) 36%,
+    rgb(105, 57, 57) 79%
   );
 
   box-shadow: 0 0.1rem 1.5rem rgba(0, 0, 0, 0.2);

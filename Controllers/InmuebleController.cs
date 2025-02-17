@@ -11,6 +11,7 @@ public class InmuebleController : Controller
     private RepositorioPropietario repoPropietario = new RepositorioPropietario();
     private RepositorioInmueble repoInmueble = new RepositorioInmueble();
     private RepositorioTipo repoTipo = new RepositorioTipo();
+    private RepositorioContrato repoContrato = new RepositorioContrato();
 
 
     public InmuebleController(ILogger<InmuebleController> logger)
@@ -111,6 +112,8 @@ public class InmuebleController : Controller
     [Authorize(Policy = "Administrador")]
     public IActionResult Baja(int Id)
     {
+        TempData["ToastMessage"] = "Inmueble dado de baja con éxito";
+        TempData["ToastType"] = "danger";
         var result = repoInmueble.DesactivarInmueble(Id);
         return RedirectToAction(nameof(Index));
     }
@@ -119,6 +122,8 @@ public class InmuebleController : Controller
     [Authorize(Policy = "Empleado")]
     public IActionResult Activar(int Id)
     {
+        TempData["ToastMessage"] = "Inmueble activado con éxito";
+        TempData["ToastType"] = "success";
         var result = repoInmueble.ActivarInmueble(Id);
         return RedirectToAction(nameof(Index));
     }
@@ -214,5 +219,18 @@ public class InmuebleController : Controller
         }
 
         return Json(inmueblesDisponibles);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult VerificarContratos(int inmuebleId)
+    {
+        int contratos = repoContrato.ObtenerContratosActivosPorInmueble(inmuebleId);
+
+        if (contratos > 0)
+        {
+            return Json(true);
+        }
+        return Json(false);
     }
 }

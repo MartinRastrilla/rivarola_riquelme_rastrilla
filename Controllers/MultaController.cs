@@ -12,6 +12,7 @@ public class MultaController : Controller
     private readonly ILogger<MultaController> _logger;
     private RepositorioMulta repositorioMulta = new RepositorioMulta();
     private RepositorioContrato repositorioContrato = new RepositorioContrato();
+    private RepositorioPago repositorioPago = new RepositorioPago();
     private RepositorioRegistroContratos repositorioRegistroContratos = new RepositorioRegistroContratos();
     public MultaController(ILogger<MultaController> logger)
     {
@@ -42,12 +43,35 @@ public class MultaController : Controller
             registroContrato.Cancelado_por = Convert.ToInt32(User.FindFirstValue("Id"));
             registroContrato.Fecha_cancelacion = DateTime.Now;
 
+
+
+            var contrato = repositorioContrato.Obtener(contrato_id);
+            if (contrato == null)
+            {
+                TempData["ToastMessage"] = "Error al aplicar la multa. No se pudo obtener el contrato";
+                TempData["ToastType"] = "danger";
+                return RedirectToAction("Index", "Contrato");
+            }
+            else
+            {
+                //Recalcular el monto del contrato
+                var pagosDelContrato = repositorioPago.ObtenerPagosActivosPorContrato(contrato_id);
+                //Sumamos los importes de los pagos
+                decimal? totalPagado = pagosDelContrato.Sum(p => p.Importe);
+
+                contrato.Monto = (decimal)totalPagado + multa.Monto;
+                repositorioContrato.Guardar(contrato);
+                TempData["ToastMessage"] = "Monto del contrato recalculado con éxito";
+                TempData["ToastType"] = "success";
+            }
+
+
             repositorioMulta.AltaMulta(multa);
             repositorioContrato.CancelarContrato(multa.Contrato_id);
             repositorioRegistroContratos.CrearCancelacionRegistro(registroContrato);
 
-            TempData["ToastMessage"] = "Multa aplicada con exito";
-            TempData["ToastType"] = "success";
+            TempData["ToastMessage"] += "||Multa aplicada con éxito";
+            TempData["ToastType"] += "||success";
 
             return RedirectToAction("Index", "Contrato");
         }

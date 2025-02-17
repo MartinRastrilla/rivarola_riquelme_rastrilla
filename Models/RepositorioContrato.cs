@@ -489,4 +489,38 @@ public class RepositorioContrato
         return r;
     }
 
+    public int FinalizarContrato(int contratoId)
+    {
+        int r = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = @"UPDATE contratos SET estado='Finalizado' WHERE Id=@Id;";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@Id", contratoId);
+                connection.Open();
+                r = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        return r;
+    }
+
+    public int ObtenerContratosActivosPorInmueble(int inmuebleId)
+    {
+        int totalContratos = 0;
+        using (MySqlConnection connection = new MySqlConnection(Conexion))
+        {
+            var sqlquery = "SELECT COUNT(*) FROM contratos WHERE inmueble_id = @inmuebleId AND estado = 'Activo';";
+            using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
+            {
+                command.Parameters.AddWithValue("@inmuebleId", inmuebleId);
+                connection.Open();
+                totalContratos = Convert.ToInt32(command.ExecuteScalar());
+                connection.Close();
+            }
+        }
+        return totalContratos;
+    }
+
 }

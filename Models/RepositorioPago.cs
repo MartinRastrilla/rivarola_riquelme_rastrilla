@@ -386,6 +386,36 @@ public class RepositorioPago
         }
         return totalPagos;
     }
+
+    public List<Pago> ObtenerPagosActivosPorContrato(int? contratoId)
+    {
+        List<Pago> pagos = new List<Pago>();
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+        {
+            var query = $"SELECT * FROM pagos WHERE {nameof(Pago.Contrato_id)} = @contrato_id AND activo = 1;";
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@contrato_id", contratoId);
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    pagos.Add(new Pago
+                    {
+                        Id = reader.GetInt32("id"),
+                        Contrato_id = reader.GetInt32("contrato_id"),
+                        Fecha_pago = reader.GetDateTime("fecha_pago"),
+                        Detalle = reader.GetString("detalle"),
+                        Importe = reader.GetDecimal("importe"),
+                        Activo = reader.GetBoolean("activo"),
+                        Num_pago = reader.GetInt32("num_pago"),
+                    });
+                }
+                connection.Close();
+            }
+        }
+        return pagos;
+    }
 }
 
 

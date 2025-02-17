@@ -10,6 +10,13 @@
     <div class="display-5">Lista de Inquilinos</div>
 </div>
 
+<form asp-action="Index" method="GET">
+    <div class="mb-3">
+        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar inquilino..." value="@ViewBag.Search">
+        <button type="submit" class="btn btn-custom">Buscar</button>
+    </div>
+</form>
+
 <h3>
     <a href="/Inquilino/AltaInquilino"  class="btn btn-custom">Agregar Inquilino</a>
 </h3>
@@ -126,4 +133,14 @@
             toastElement.remove();
         });
     }
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+        let searchValue = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#inquilinosTable tr");
+
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? "" : "none";
+        });
+    });
 </script>

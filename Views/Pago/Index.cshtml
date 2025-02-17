@@ -10,6 +10,13 @@
     <h1 class="display-5">Lista de Pagos</h1>
 </div>
 
+<form asp-action="Index" method="GET">
+    <div class="mb-3">
+        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar Propietario..." value="@ViewBag.Search">
+        <button type="submit" class="btn btn-custom">Buscar</button>
+    </div>
+</form>
+
 <p>
     <a asp-action="Crear" class="btn btn-custom">Agregar Pago</a>
 </p>

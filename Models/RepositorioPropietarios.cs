@@ -41,17 +41,19 @@ public class RepositorioPropietario
         }
     }
 
-    public int ObtenerTotalPropietarios()
+    public int ObtenerTotalPropietarios(string search = "")
     {
         int totalPropietarios = 0;
 
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
-            var query = $@"SELECT COUNT(*) FROM propietarios";
+            var query = $@"SELECT COUNT(*) FROM propietarios
+                        WHERE (@Search IS NULL OR Nombre LIKE @Search OR Apellido LIKE @Search OR Dni LIKE @Search);";
 
             using (var command = new MySqlCommand(query, connection))
             {
                 connection.Open();
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 totalPropietarios = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();
             }
@@ -59,14 +61,17 @@ public class RepositorioPropietario
         return totalPropietarios;
     }
 
-    public List<Propietarios> ObtenerPaginado(int page, int pageSize)
+    public List<Propietarios> ObtenerPaginado(int page, int pageSize,string search = "")
     {
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
             connection.Open();
-            var sqlquery = @"SELECT * FROM propietarios LIMIT @Offset, @PageSize;";
+            var sqlquery = @"SELECT * FROM propietarios 
+                            WHERE (@Search IS NULL OR Nombre LIKE @Search OR Apellido LIKE @Search OR Dni LIKE @Search) 
+                            LIMIT @Offset, @PageSize;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
                 command.Parameters.AddWithValue("@PageSize", pageSize);
 

@@ -17,16 +17,18 @@ public class InquilinoController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int pagina = 1)
+    public IActionResult Index(int pagina = 1, string search="")
     {
+        ViewBag.Search = search; 
+        
         const int pageSize = 10;
-        int totalInquilinos = repo.ObtenerTotalInquilinos();
+        int totalInquilinos = repo.ObtenerTotalInquilinos(search);
         int totalPages = (int)Math.Ceiling((double)totalInquilinos / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var inquilinos = repo.ObtenerPaginado(pagina, pageSize);
+        var inquilinos = repo.ObtenerPaginado(pagina, pageSize, search);
 
         var model = new InquilinosViewModel
         {

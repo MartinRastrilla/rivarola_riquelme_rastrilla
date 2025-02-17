@@ -21,15 +21,17 @@ public class InmuebleController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int? tipo, string uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page = 1, int pageSize = 10)
+    public IActionResult Index(int? tipo, string uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page = 1, int pageSize = 10, string search = "")
     {
-        int totalInmuebles = repoInmueble.ObtenerTotalInmuebles(tipo, uso, precioMin, precioMax, ambientes);
+        ViewBag.Search = search; 
+
+        int totalInmuebles = repoInmueble.ObtenerTotalInmuebles(tipo, uso, precioMin, precioMax, ambientes,search);
         int totalPages = (int)Math.Ceiling((double)totalInmuebles / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         page = Math.Max(1, Math.Min(page, totalPages));
 
-        var inmuebles = repoInmueble.ObtenerInmueblesFiltrados(tipo, uso, precioMin, precioMax, ambientes, page, pageSize);
+        var inmuebles = repoInmueble.ObtenerInmueblesFiltrados(tipo, uso, precioMin, precioMax, ambientes, page, pageSize,search);
         if (inmuebles == null || inmuebles.Count == 0)
         {
             TempData["Error"] = $"No se encontraron inmuebles con los criterios especificados.";

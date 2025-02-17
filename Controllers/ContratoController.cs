@@ -23,16 +23,17 @@ public class ContratoController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int pagina = 1)
+    public IActionResult Index(int pagina = 1,string search = "")
     {
+        ViewBag.Search = search; 
         const int pageSize = 10;
-        int totalContratos = repo.ObtenerTotalContratos();
+        int totalContratos = repo.ObtenerTotalContratos(search);
         int totalPages = (int)Math.Ceiling((double)totalContratos / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var contratos = repo.ObtenerPaginado(pagina, pageSize);
+        var contratos = repo.ObtenerPaginado(pagina, pageSize,search);
         var multas = repoMulta.ObtenerMultas();
 
         var model = new ContratoViewModel

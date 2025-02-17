@@ -91,15 +91,21 @@ public class RepositorioContrato
         }
     }
 
-    public int ObtenerTotalContratos()
+    public int ObtenerTotalContratos(string search = "")
     {
         int totalContratos = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = "SELECT COUNT(*) FROM contratos";
+            var sqlquery = @"
+            SELECT COUNT(*)
+            FROM contratos c
+            JOIN inquilinos i ON c.inquilino_dni = i.dni
+            JOIN inmuebles inm ON c.inmueble_id = inm.id
+            WHERE (i.nombre LIKE @Search OR i.apellido LIKE @Search OR inm.direccion LIKE @Search)";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 connection.Open();
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 totalContratos = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();
             }
@@ -107,36 +113,38 @@ public class RepositorioContrato
         return totalContratos;
     }
 
-    public List<Contratos> ObtenerPaginado(int page, int pageSize)
+    public List<Contratos> ObtenerPaginado(int page, int pageSize,string search = "")
     {
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             connection.Open();
             var sqlquery = @"
-                SELECT 
-                    c.id AS ContratoId,
-                    c.inquilino_dni AS InquilinoDni,
-                    c.inmueble_id AS InmuebleId,
-                    c.estado AS ContratoEstado,
-                    c.monto AS ContratoMonto,
-                    c.fecha_inicio AS ContratoFechaInicio,
-                    c.fecha_fin AS ContratoFechaFin,
-                    i.nombre AS InquilinoNombre,
-                    i.apellido AS InquilinoApellido,
-                    i.telefono AS InquilinoTelefono,
-                    i.email AS InquilinoEmail,
-                    inm.direccion AS InmuebleDireccion,
-                    inm.precio AS InmueblePrecio,
-                    t.id AS TipoId,
-                    t.nombre AS TipoNombre
-                FROM contratos c
-                JOIN inquilinos i ON c.inquilino_dni = i.dni
-                JOIN inmuebles inm ON c.inmueble_id = inm.id
-                JOIN tipos t ON inm.tipo_id = t.id
-                LIMIT @Offset, @PageSize;";
+            SELECT 
+                c.id AS ContratoId,
+                c.inquilino_dni AS InquilinoDni,
+                c.inmueble_id AS InmuebleId,
+                c.estado AS ContratoEstado,
+                c.monto AS ContratoMonto,
+                c.fecha_inicio AS ContratoFechaInicio,
+                c.fecha_fin AS ContratoFechaFin,
+                i.nombre AS InquilinoNombre,
+                i.apellido AS InquilinoApellido,
+                i.telefono AS InquilinoTelefono,
+                i.email AS InquilinoEmail,
+                inm.direccion AS InmuebleDireccion,
+                inm.precio AS InmueblePrecio,
+                t.id AS TipoId,
+                t.nombre AS TipoNombre
+            FROM contratos c
+            JOIN inquilinos i ON c.inquilino_dni = i.dni
+            JOIN inmuebles inm ON c.inmueble_id = inm.id
+            JOIN tipos t ON inm.tipo_id = t.id
+            WHERE (@search IS NULL OR i.nombre LIKE @Search OR i.apellido LIKE @Search OR inm.direccion LIKE @Search)
+            LIMIT @Offset, @PageSize;";
 
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
                 command.Parameters.AddWithValue("@PageSize", pageSize);
 

@@ -54,7 +54,7 @@ public class RepositorioInmueble
         }
     }
 
-    public int ObtenerTotalInmuebles(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes)
+    public int ObtenerTotalInmuebles(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes,string search = "")
     {
         int totalInmuebles = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -63,11 +63,13 @@ public class RepositorioInmueble
             var sqlquery = @"SELECT COUNT(*)FROM inmuebles i
                 WHERE (@tipo IS NULL OR i.tipo_id = @tipo)
                 AND (@uso IS NULL OR i.uso = @uso)
+                AND (@search IS NULL OR i.direccion LIKE @search)
                 AND (@precioMin IS NULL OR i.precio >= @precioMin)
                 AND (@precioMax IS NULL OR i.precio <= @precioMax)
                 AND (@ambientes IS NULL OR i.ambientes = @ambientes);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@tipo", tipo);
                 command.Parameters.AddWithValue("@uso", uso);
                 command.Parameters.AddWithValue("@precioMin", precioMin);
@@ -79,7 +81,7 @@ public class RepositorioInmueble
         return totalInmuebles;
     }
 
-    public List<Inmueble> ObtenerInmueblesFiltrados(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page, int pageSize)
+    public List<Inmueble> ObtenerInmueblesFiltrados(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page, int pageSize,string search = "")
     {
         var inmuebles = new List<Inmueble>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -94,6 +96,7 @@ public class RepositorioInmueble
                 JOIN propietarios p ON i.propietario_dni = p.dni
                 WHERE (@tipo IS NULL OR i.tipo_id = @tipo)
                 AND (@uso IS NULL OR i.uso = @uso)
+                AND (@search IS NULL OR i.direccion LIKE @search)
                 AND (@precioMin IS NULL OR i.precio >= @precioMin)
                 AND (@precioMax IS NULL OR i.precio <= @precioMax)
                 AND (@ambientes IS NULL OR i.ambientes = @ambientes)
@@ -101,6 +104,7 @@ public class RepositorioInmueble
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@tipo", tipo);
                 command.Parameters.AddWithValue("@uso", uso);
                 command.Parameters.AddWithValue("@precioMin", precioMin);
@@ -144,6 +148,7 @@ public class RepositorioInmueble
         }
         return inmuebles;
     }
+    
     public Inmueble? Obtener(int Id)
     {
         Inmueble? inmueble = null;

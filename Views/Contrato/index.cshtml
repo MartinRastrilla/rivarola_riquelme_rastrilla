@@ -10,6 +10,13 @@
     <h1 class="display-5">Lista de Contratos</h1>
 </div>
 
+<form asp-action="Index" method="GET">
+    <div class="mb-3">
+        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar Propietario..." value="@ViewBag.Search">
+        <button type="submit" class="btn btn-custom">Buscar</button>
+    </div>
+</form>
+
 <p>
     <a href="/Contrato/AltaContrato" class="btn btn-custom">Crear Contrato</a>
 </p>

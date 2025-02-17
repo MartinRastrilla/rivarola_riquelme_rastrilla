@@ -11,6 +11,13 @@
     <h1 class="display-4">Lista de Inmuebles</h1>
 </div>
 
+<form asp-action="Index" method="GET">
+    <div class="mb-3">
+        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar Inmueble..." value="@ViewBag.Search">
+        <button type="submit" class="btn btn-custom">Buscar</button>
+    </div>
+</form>
+
 <p>
     <a asp-action="AltaInmueble" class="btn btn-custom">Agregar
         <i class="fa-solid fa-plus"></i>

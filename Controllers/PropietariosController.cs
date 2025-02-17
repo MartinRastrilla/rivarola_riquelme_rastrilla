@@ -19,16 +19,17 @@ public class PropietariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int pagina = 1)
+    public IActionResult Index(int pagina = 1, string search="")
     {
+        ViewBag.Search = search; 
         const int pageSize = 10;
-        int totalPropietarios = repo.ObtenerTotalPropietarios();
+        int totalPropietarios = repo.ObtenerTotalPropietarios(search);
         int totalPages = (int)Math.Ceiling((double)totalPropietarios / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var propietarios = repo.ObtenerPaginado(pagina, pageSize);
+        var propietarios = repo.ObtenerPaginado(pagina, pageSize, search);
 
         var model = new PropietarioViewModel
         {

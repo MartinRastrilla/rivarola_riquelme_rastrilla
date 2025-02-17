@@ -38,15 +38,18 @@ public class RepositorioInquilino
         }
     }
 
-    public int ObtenerTotalInquilinos()
+    public int ObtenerTotalInquilinos(string search = "")
     {
         int total = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = @"SELECT COUNT(*) FROM inquilinos;";
+            var sqlquery = @"SELECT COUNT(*) FROM inquilinos 
+                         WHERE (@Search IS NULL OR Nombre LIKE @Search OR Apellido LIKE @Search OR Dni LIKE @Search);";
+
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 connection.Open();
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 total = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();
             }
@@ -54,13 +57,16 @@ public class RepositorioInquilino
         return total;
     }
 
-    public List<Inquilino> ObtenerPaginado(int page, int pageSize) {
+    public List<Inquilino> ObtenerPaginado(int page, int pageSize,string search = "") {
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             connection.Open();
-            var sqlquery = @"SELECT * FROM inquilinos LIMIT @Offset, @PageSize;";
+             var sqlquery = @"SELECT * FROM inquilinos 
+                         WHERE (@Search IS NULL OR Nombre LIKE @Search OR Apellido LIKE @Search OR Dni LIKE @Search)
+                         LIMIT @Offset, @PageSize;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
                 command.Parameters.AddWithValue("@PageSize", pageSize);
 

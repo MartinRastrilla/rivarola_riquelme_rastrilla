@@ -17,8 +17,8 @@
     <style>
         /* Colores personalizados */
         :root {
-            --rojo-principal: #e73c3c;
-            --rojo-oscuro: #C0392B;
+            --rojo-principal: #b82020;
+            --rojo-oscuro: #911b1b;
             --blanco: #FFFFFF;
             --gris-claro: #e2e2e2;
             --gris-oscuro: #7F8C8D;
@@ -95,7 +95,7 @@
         .btn-custom {
             background-color: var(--rojo-principal);
             color: var(--blanco);
-            border-radius: 7px;
+            border-radius: 1px;
         }
 
         .btn-custom:hover {
@@ -236,8 +236,8 @@
         </div>
     </footer>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
     <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>

@@ -10,16 +10,18 @@
     <h1 class="display-5">Lista de Pagos</h1>
 </div>
 
-<form asp-action="Index" method="GET">
-    <div class="mb-3">
-        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar Propietario..." value="@ViewBag.Search">
-        <button type="submit" class="btn btn-custom">Buscar</button>
-    </div>
-</form>
-
-<p>
-    <a asp-action="Crear" class="btn btn-custom">Agregar Pago</a>
-</p>
+<div class="my-3 row">
+    <p class="col-md-9 mb-0 align-self-center">
+        <a asp-action="Crear" class="btn btn-custom">Agregar <i class="fa-solid fa-plus"></i></a>
+    </p>
+    <form asp-action="Index" method="GET" class="input-wrapper col-md-3" id="searchForm">
+        <button type="submit" class="icon" id="searchButton">
+            <i class="fa-solid fa-magnifying-glass fs-3 fa-bounce"></i>
+        </button>
+        <input type="text" name="search" id="searchInput" class="input" placeholder="Buscar Pagos..."
+            value="@ViewBag.Search">
+    </form>
+</div>
 
 <table class="table text-center table-striped table-hover mt-4">
     <thead>

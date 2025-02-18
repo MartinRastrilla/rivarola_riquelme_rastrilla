@@ -10,16 +10,22 @@
     <div class="display-5">Lista de Inquilinos</div>
 </div>
 
-<form asp-action="Index" method="GET">
-    <div class="mb-3">
-        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar inquilino..." value="@ViewBag.Search">
-        <button type="submit" class="btn btn-custom">Buscar</button>
-    </div>
-</form>
+<div class="my-3 row">
+    <h3 class="col-md-9 mb-0 align-self-center">
+        <a href="/Inquilino/AltaInquilino" class="btn btn-custom">Agregar Inquilino</a>
+    </h3>
+    <form asp-action="Index" method="GET" class="input-wrapper col-md-3" id="searchForm">
+        <button type="submit" class="icon" id="searchButton">
+            <i class="fa-solid fa-magnifying-glass fs-3 fa-bounce"></i>
+        </button>
+        <input type="text" name="search" id="searchInput" class="input" placeholder="Buscar inquilino..."
+            value="@ViewBag.Search">
+    </form>
+</div>
 
-<h3>
-    <a href="/Inquilino/AltaInquilino"  class="btn btn-custom">Agregar Inquilino</a>
-</h3>
+
+
+
 <table class="table table-striped table-hover text-center">
     <thead>
         <tr>
@@ -52,12 +58,15 @@
                         @Inquilino.Email
                     </td>
                     <td>
-                        @if(User.IsInRole("Administrador"))
+                        @if (User.IsInRole("Administrador"))
                         {
-                            <a href="/Inquilino/Delete?Id=@Inquilino.Id" class="me-2" ><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
+                            <a href="/Inquilino/Delete?Id=@Inquilino.Id" class="me-2"><i
+                                    class="fa-solid fa-trash ic-sz ic-color"></i></a>
                         }
-                        <a href="/Inquilino/Editar?Id=@Inquilino.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                        <a href="/Inquilino/Details?Dni=@Inquilino.Dni"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
+                        <a href="/Inquilino/Editar?Id=@Inquilino.Id" class="me-2"><i
+                                class="fa-solid fa-pencil ic-sz ic-color"></i></a>
+                        <a href="/Inquilino/Details?Dni=@Inquilino.Dni"><i
+                                class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                     </td>
                 </tr>
             }
@@ -101,10 +110,10 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         @if (TempData["ToastMessage"] != null)
-        {
-            <text>
-            showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-            </text>
+            {
+                <text>
+                    showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+                </text>
         }
     });
 
@@ -143,4 +152,5 @@
             row.style.display = text.includes(searchValue) ? "" : "none";
         });
     });
+
 </script>

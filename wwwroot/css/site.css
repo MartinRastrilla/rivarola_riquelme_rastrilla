@@ -34,3 +34,71 @@ body {
   transform: translateY(-10px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
+
+/* ESTILO DE BÚSQUEDA */
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  position: relative;
+}
+
+.input {
+  border-style: none;
+  height: 50px;
+  width: 50px;
+  padding: 10px;
+  outline: none;
+  border-radius: 50%;
+  transition: 0.5s ease-in-out;
+  background-color: var(--gris-claro);
+  box-shadow: 0px 0px 3px var(--gris-claro);
+  padding-right: 40px;
+  color: var(--gris-oscuro);
+}
+
+.input::placeholder,
+.input {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: 17px;
+  color: #911b1b;
+}
+
+.input::placeholder {
+  color: #8a4f4f;
+}
+
+/* Animación del botón */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  outline: none;
+  border-style: none;
+  border-radius: 50%;
+  pointer-events: painted;
+  background-color: transparent;
+  color: #490d0d;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Cuando el input se expande, movemos el botón */
+.input.expanded {
+  width: 250px;
+  border-radius: 0px;
+  background-color: transparent;
+  border-bottom: 3px solid #911b1b;
+  transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2);
+}
+
+/* Mover el botón hacia la derecha */
+.icon.move {
+  transform: translateX(100px);
+  color: var(--gris-oscuro);
+}

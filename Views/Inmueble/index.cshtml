@@ -10,19 +10,27 @@
 <div>
     <h1 class="display-4">Lista de Inmuebles</h1>
 </div>
-
-<form asp-action="Index" method="GET">
-    <div class="mb-3">
-        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar Inmueble..." value="@ViewBag.Search">
-        <button type="submit" class="btn btn-custom">Buscar</button>
-    </div>
-</form>
-
-<p>
-    <a asp-action="AltaInmueble" class="btn btn-custom">Agregar
-        <i class="fa-solid fa-plus"></i>
+<div class="my-3 row">
+    <p class="col-md-9 mb-0 align-self-center">
+        <a asp-action="AltaInmueble" class="btn btn-custom">Agregar
+            <i class="fa-solid fa-plus"></i>
+        </a>
+        @* MODAL FILTROS *@
+    <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarModal">
+        <i class="fa-solid fa-filter"></i> Filtrar
+    </button>
+    <a href="@Url.Action("Index")" class="btn btn-custom">
+        <i class="fa-solid fa-xmark"></i>
     </a>
-</p>
+    </p>
+    <form asp-action="Index" method="GET" class="input-wrapper col-md-3" id="searchForm">
+            <button type="submit" class="icon" id="searchButton">
+                <i class="fa-solid fa-magnifying-glass fs-3 fa-bounce"></i>
+            </button>
+            <input type="text" name="search" id="searchInput" class="input" placeholder="Buscar Inmueble..."
+                value="@ViewBag.Search">
+        </form>
+</div>
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">
@@ -30,13 +38,6 @@
     </div>
 }
 
-@* MODAL FILTROS *@
-<button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarModal">
-    <i class="fa-solid fa-filter"></i> Filtrar
-</button>
-<a href="@Url.Action("Index")" class="btn btn-custom">
-    <i class="fa-solid fa-xmark"></i>
-</a>
 
 <div class="modal fade" id="filtrarModal" tabindex="-1" aria-labelledby="filtrarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

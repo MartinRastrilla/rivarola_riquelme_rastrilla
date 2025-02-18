@@ -9,25 +9,28 @@
 <div>
     <h1 class="display-5">Lista de Contratos</h1>
 </div>
+<div class="my-3 row">
+    <p class="col-md-9 mb-0 align-self-center">
+        <a href="/Contrato/AltaContrato" class="btn btn-custom" style="margin-right: 15px">Agregar <i class="fa-solid fa-plus"></i></a>
+        <!-- Botón para abrir el modal -->
+        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarFechaModal">
+            <i class="fa-regular fa-calendar"></i> Filtrar por Fecha
+        </button>
+        <a href="@Url.Action("Index")" class="btn btn-custom">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </p>
+    <form asp-action="Index" method="GET" class="input-wrapper col-md-3" id="searchForm">
+            <button type="submit" class="icon" id="searchButton">
+                <i class="fa-solid fa-magnifying-glass fs-3 fa-bounce"></i>
+            </button>
+            <input type="text" name="search" id="searchInput" class="input" placeholder="Buscar Contrato..."
+                value="@ViewBag.Search">
+    </form>
+</div>
 
-<form asp-action="Index" method="GET">
-    <div class="mb-3">
-        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Buscar Propietario..." value="@ViewBag.Search">
-        <button type="submit" class="btn btn-custom">Buscar</button>
-    </div>
-</form>
 
-<p>
-    <a href="/Contrato/AltaContrato" class="btn btn-custom">Crear Contrato</a>
-</p>
 
-<!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#filtrarFechaModal">
-    <i class="fa-regular fa-calendar"></i> Filtrar por Fecha
-</button>
-<a href="@Url.Action("Index")" class="btn btn-custom">
-    <i class="fa-solid fa-xmark"></i>
-</a>
 
 <!-- Modal de Bootstrap -->
 <div class="modal fade" id="filtrarFechaModal" tabindex="-1" aria-labelledby="filtrarFechaModalLabel"

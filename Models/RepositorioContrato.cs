@@ -412,7 +412,7 @@ public class RepositorioContrato
         return contratos;
     }
 
-    public List<Contratos> ObtenerContratosPorInmueble(int inmuebleId, int page, int pageSize)
+    public List<Contratos> ObtenerContratosPorInmueble(int inmuebleId, int page, int pageSize,string search = "")
     {
         List<Contratos> contratos = new List<Contratos>();
 
@@ -426,11 +426,12 @@ public class RepositorioContrato
                 JOIN Inquilinos i ON c.inquilino_dni = i.DNI
                 JOIN Inmuebles inm ON c.inmueble_id = inm.Id
                 JOIN Tipos t ON inm.Tipo_id = t.Id
-                WHERE c.inmueble_id = @inmuebleId
+                WHERE c.inmueble_id = @inmuebleId AND (@Search IS NULL OR i.Nombre LIKE @Search OR i.Apellido LIKE @Search)
                 LIMIT @Offset, @PageSize;";
 
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
                 command.Parameters.AddWithValue("@PageSize", pageSize);
                 command.Parameters.AddWithValue("@inmuebleId", inmuebleId);
@@ -477,15 +478,16 @@ public class RepositorioContrato
         return contratos;
     }
 
-    public int ObtenerTotalContratosPorInmueble(int inmuebleId)
+    public int ObtenerTotalContratosPorInmueble(int inmuebleId,string search = "")
     {
         int totalContratos = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            var sqlquery = "SELECT COUNT(*) FROM contratos WHERE inmueble_id = @inmuebleId;";
+            var sqlquery = "SELECT COUNT(*) FROM contratos WHERE inmueble_id = @inmuebleId AND (@Search IS NULL OR inquilino_dni LIKE @Search);";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 command.Parameters.AddWithValue("@inmuebleId", inmuebleId);
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 connection.Open();
                 totalContratos = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();

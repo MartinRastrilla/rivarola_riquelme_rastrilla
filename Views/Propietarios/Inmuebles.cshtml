@@ -6,7 +6,20 @@
 
 <link href="~/css/pagination.css" rel="stylesheet" />
 
+
+<a href="/Propietarios/Index?pagina=1" class="btn btn-custom">Volver</a>
+
 <h2>Lista de Inmuebles</h2>
+
+
+<form asp-action="Inmuebles" method="GET" class="input-wrapper col-md-3" id="searchForm">
+    <input type="hidden" name="dni" value="@Model?.Propietario_dni" />
+        <button type="submit" class="icon" id="searchButton">
+            <i class="fa-solid fa-magnifying-glass fs-3 fa-bounce"></i>
+        </button>
+        <input type="text" name="search" id="searchInput" class="input" placeholder="Buscar Propietario..."
+            value="@ViewBag.Search">
+    </form>
 
 @if (Model != null && Model.Inmuebles.Any())
 {

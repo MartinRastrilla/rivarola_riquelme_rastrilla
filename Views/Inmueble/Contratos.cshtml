@@ -6,9 +6,18 @@
 
 <link rel="stylesheet" href="~/css/pagination.css">
 
+
 @if (Model != null && Model.Contratos.Any())
 {
     <h1>Lista de Contratos para @Model.Contratos.First().Inmueble?.Direccion</h1>
+    <form asp-action="Contratos" method="GET" class="input-wrapper col-md-3" id="searchForm">
+    <input type="hidden" name="inmuebleId" value="@Model?.InmuebleId" />
+        <button type="submit" class="icon" id="searchButton">
+            <i class="fa-solid fa-magnifying-glass fs-3 fa-bounce"></i>
+        </button>
+        <input type="text" name="search" id="searchInput" class="input" placeholder="Buscar Inmueble..."
+            value="@ViewBag.Search">
+    </form>
     <table class="table table-striped table-hover text-center mt-5">
         <thead>
             <tr>

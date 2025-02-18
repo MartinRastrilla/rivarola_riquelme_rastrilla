@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using rivarola_riquelme_rastrilla.Models;
+using ZstdSharp.Unsafe;
 
 namespace rivarola_riquelme_rastrilla.Controllers;
 
@@ -19,9 +20,9 @@ public class PropietariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int pagina = 1, string search="")
+    public IActionResult Index(int pagina = 1, string search = "")
     {
-        ViewBag.Search = search; 
+        ViewBag.Search = search;
         const int pageSize = 10;
         int totalPropietarios = repo.ObtenerTotalPropietarios(search);
         int totalPages = (int)Math.Ceiling((double)totalPropietarios / pageSize);
@@ -50,16 +51,20 @@ public class PropietariosController : Controller
 
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Inmuebles(int dni, int pagina = 1)
+    public IActionResult Inmuebles(int dni, int pagina = 1, string search = "")
     {
+        if (dni == 0)
+        {
+            return RedirectToAction("Index"); // Evita búsquedas sin un propietario válido
+        }
         const int pageSize = 10;
-        int totalInmuebles = repoInmueble.ObtenerCantInmueblesPorPropietario(dni);
+        int totalInmuebles = repoInmueble.ObtenerCantInmueblesPorPropietario(dni, search);
         int totalPages = (int)Math.Ceiling((double)totalInmuebles / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var inmuebles = repoInmueble.ObtenerInmueblesPorPropietario(dni, pagina, pageSize);
+        var inmuebles = repoInmueble.ObtenerInmueblesPorPropietario(dni, pagina, pageSize, search);
 
         var model = new InmuebleViewModel
         {
@@ -108,16 +113,16 @@ public class PropietariosController : Controller
     public IActionResult Edit(Propietarios propietario)
     {
 
-            Propietarios? propietarioExistente = repo.ObtenerPorDni(propietario.Dni);
-            if (propietarioExistente != null && propietarioExistente.Id != propietario.Id)
-            {
-                ViewBag.Error = "Ya existe un propietario con el Dni ingresado.";
-                return View(propietario);
-            }
-            repo.Editar(propietario);
-            TempData["ToastMessage"] = "Propietario editado con éxito.";
-            TempData["ToastType"] = "success";
-            return RedirectToAction(nameof(Index));
+        Propietarios? propietarioExistente = repo.ObtenerPorDni(propietario.Dni);
+        if (propietarioExistente != null && propietarioExistente.Id != propietario.Id)
+        {
+            ViewBag.Error = "Ya existe un propietario con el Dni ingresado.";
+            return View(propietario);
+        }
+        repo.Editar(propietario);
+        TempData["ToastMessage"] = "Propietario editado con éxito.";
+        TempData["ToastType"] = "success";
+        return RedirectToAction(nameof(Index));
 
     }
 

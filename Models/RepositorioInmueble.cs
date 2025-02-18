@@ -301,7 +301,7 @@ public class RepositorioInmueble
         return r;
     }
 
-    public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni, int page, int pageSize)
+    public List<Inmueble> ObtenerInmueblesPorPropietario(int propietarioDni, int page, int pageSize,string search="")
     {
         var inmuebles = new List<Inmueble>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -312,11 +312,12 @@ public class RepositorioInmueble
                     i.coordenadas, i.precio, i.propietario_dni, i.estado
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
-                WHERE i.propietario_dni = @PropietarioDni
+                WHERE i.propietario_dni = @PropietarioDni AND @Search IS NULL OR i.direccion LIKE @Search
                 LIMIT @Offset, @PageSize;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
                 command.Parameters.AddWithValue("@PageSize", pageSize);
                 command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
@@ -349,7 +350,7 @@ public class RepositorioInmueble
         return inmuebles;
     }
 
-    public int ObtenerCantInmueblesPorPropietario(int propietarioDni)
+    public int ObtenerCantInmueblesPorPropietario(int propietarioDni,string search="")
     {
         int r = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -357,10 +358,11 @@ public class RepositorioInmueble
             connection.Open();
             var sqlquery = @"
                 SELECT COUNT(*) FROM inmuebles
-                WHERE propietario_dni = @PropietarioDni;
+                WHERE propietario_dni = @PropietarioDni AND @Search IS NULL OR direccion LIKE @Search
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@PropietarioDni", propietarioDni);
                 r = Convert.ToInt32(command.ExecuteScalar());
             }

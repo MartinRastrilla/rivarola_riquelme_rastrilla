@@ -174,17 +174,21 @@ public class InmuebleController : Controller
     }
     [HttpGet]
     [Authorize(Policy = "Empleado")]
-    public IActionResult Contratos(int inmuebleId, int pagina = 1)
+    public IActionResult Contratos(int inmuebleId, int pagina = 1,string search = "")
     {
+        if (inmuebleId == 0)
+        {
+            return RedirectToAction("Index"); // Evita búsquedas sin un Inmueble válido
+        }
         var repoContrato = new RepositorioContrato();
         const int pageSize = 10;
-        int totalContratos = repoContrato.ObtenerTotalContratosPorInmueble(inmuebleId);
+        int totalContratos = repoContrato.ObtenerTotalContratosPorInmueble(inmuebleId,search);
         int totalPages = (int)Math.Ceiling((double)totalContratos / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var contratos = repoContrato.ObtenerContratosPorInmueble(inmuebleId, pagina, pageSize);
+        var contratos = repoContrato.ObtenerContratosPorInmueble(inmuebleId, pagina, pageSize,search);
 
         var model = new ContratoViewModel
         {

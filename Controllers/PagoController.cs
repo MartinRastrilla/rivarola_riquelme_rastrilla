@@ -146,11 +146,14 @@ public class PagoController : Controller
 
             var contrato = repositorioContrato.Obtener((int)newPago.Contrato_id);
 
+            TempData["ToastMessage"] = "Pago creado con éxito";
+            TempData["ToastType"] = "success";
+
             if (totalPagado == contrato?.Monto)
             {
                 repositorioContrato.FinalizarContrato((int)newPago.Contrato_id);
-                TempData["ToastMessage"] = "¡Felicitaciones! El Contrato ha sido pagado en su totalidad.";
-                TempData["ToastType"] = "success";
+                TempData["ToastMessage"] += "||¡Felicitaciones! El Contrato ha sido pagado en su totalidad.";
+                TempData["ToastType"] += "||success";
             }
 
             // Contar cantidad de pagos para contrato
@@ -158,9 +161,6 @@ public class PagoController : Controller
             newPago.Num_pago = numPago + 1;
 
             var pagoId = repo.Agregar(newPago);
-
-            TempData["ToastMessage"] += "||Pago creado con éxito";
-            TempData["ToastType"] += "||success";
 
             RegistroPagos registroPago = new RegistroPagos();
             registroPago.Pago_id = pagoId;
@@ -198,13 +198,32 @@ public class PagoController : Controller
             TempData["ToastType"] = "danger";
             return RedirectToAction(nameof(Index));
         }
+        //AUDITORIA DE PAGOS
         RegistroPagos registroPago = repositorioRegistroPagos.ObtenerRegistroPorPago(id);
         registroPago.Anulado_por = Convert.ToInt32(User.FindFirstValue("Id"));
         registroPago.Fecha_anulacion = DateTime.Now;
         repositorioRegistroPagos.CrearAnulacionRegistroPago(registroPago);
-        repo.DesactivarPago(id);
+
+        Pago? pago = repo.ObtenerPorId(id);
+        Contratos? contrato = repositorioContrato.Obtener((int)pago.Contrato_id);
         TempData["ToastMessage"] = "Pago anulado con éxito";
         TempData["ToastType"] = "success";
+        if (pago != null && contrato != null && contrato?.Estado == Contratos.EstadoContrato.Finalizado)
+        {
+            //Calcular el TOTAL PAGADO por el MONTO DEL CONTRATO para Finalizar el Contrato
+            var pagosDelContrato = repo.ObtenerPagosActivosPorContrato(pago.Contrato_id);
+            decimal? totalPagado = pagosDelContrato.Sum(p => p.Importe);
+
+            if (totalPagado == contrato?.Monto)
+            {
+                contrato.Estado = Contratos.EstadoContrato.Activo;
+                repositorioContrato.Guardar(contrato);
+                TempData["ToastMessage"] += "||El Contrato ha sido reactivado debido a la anulación del pago.";
+                TempData["ToastType"] += "||danger";
+            }
+        }
+
+        repo.DesactivarPago(id);
         return RedirectToAction(nameof(Index));
     }
     [HttpGet]

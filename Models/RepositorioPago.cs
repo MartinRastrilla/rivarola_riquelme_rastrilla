@@ -79,16 +79,22 @@ public class RepositorioPago
         }
     }
 
-    public int ObtenerTotalPagos()
+    public int ObtenerTotalPagos(string search = "")
     {
         int totalPagos = 0;
 
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
-            var query = "SELECT COUNT(*) FROM pagos";
+            var query = @"SELECT COUNT(*) 
+                      FROM pagos p
+                      JOIN contratos c ON p.Contrato_id = c.Id
+                      WHERE (@Search IS NULL OR 
+                             c.Inmueble_id LIKE @Search OR
+                             c.Inquilino_dni LIKE @Search);";
             using (var command = new MySqlCommand(query, connection))
             {
                 connection.Open();
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 totalPagos = Convert.ToInt32(command.ExecuteScalar());
                 connection.Close();
             }
@@ -96,36 +102,43 @@ public class RepositorioPago
         return totalPagos;
     }
 
-    public List<Pago> ObtenerPaginado(int page, int pageSize)
+    public List<Pago> ObtenerPaginado(int page, int pageSize,string search = "")
     {
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
             connection.Open();
             var query = $@"
-        SELECT 
-            p.{nameof(Pago.Id)} AS id, 
-            p.{nameof(Pago.Contrato_id)} AS contrato_id, 
-            p.fecha_pago AS {nameof(Pago.Fecha_pago)}, 
-            p.{nameof(Pago.Detalle)} AS detalle, 
-            p.{nameof(Pago.Importe)} AS importe,
-            p.num_pago AS num_pago,
-            p.activo AS activo, 
-            i.{nameof(Inmueble.Id)} AS inmueble_id, 
-            i.{nameof(Inmueble.Direccion)} AS inmueble_direccion, 
-            i.precio AS inmueble_precio,
-            inq.{nameof(Inquilino.Dni)} AS inquilino_dni, 
-            inq.{nameof(Inquilino.Nombre)} AS inquilino_nombre, 
-            inq.{nameof(Inquilino.Apellido)} AS inquilino_apellido,
-            inq.{nameof(Inquilino.Email)} AS inquilino_email,
-            inq.{nameof(Inquilino.Telefono)} AS inquilino_telefono
-        FROM pagos p
-        JOIN contratos c ON p.{nameof(Pago.Contrato_id)} = c.{nameof(Contratos.Id)}
-        JOIN inmuebles i ON c.{nameof(Contratos.Inmueble_id)} = i.{nameof(Inmueble.Id)}
-        JOIN inquilinos inq ON c.{nameof(Contratos.Inquilino_dni)} = inq.{nameof(Inquilino.Dni)}
-        LIMIT @Offset, @PageSize";
+            SELECT 
+                p.{nameof(Pago.Id)} AS id, 
+                p.{nameof(Pago.Contrato_id)} AS contrato_id, 
+                p.fecha_pago AS {nameof(Pago.Fecha_pago)}, 
+                p.{nameof(Pago.Detalle)} AS detalle, 
+                p.{nameof(Pago.Importe)} AS importe,
+                p.num_pago AS num_pago,
+                p.activo AS activo, 
+                i.{nameof(Inmueble.Id)} AS inmueble_id, 
+                i.{nameof(Inmueble.Direccion)} AS inmueble_direccion, 
+                i.precio AS inmueble_precio,
+                inq.{nameof(Inquilino.Dni)} AS inquilino_dni, 
+                inq.{nameof(Inquilino.Nombre)} AS inquilino_nombre, 
+                inq.{nameof(Inquilino.Apellido)} AS inquilino_apellido,
+                inq.{nameof(Inquilino.Email)} AS inquilino_email,
+                inq.{nameof(Inquilino.Telefono)} AS inquilino_telefono
+            FROM pagos p
+            JOIN contratos c ON p.{nameof(Pago.Contrato_id)} = c.{nameof(Contratos.Id)}
+            JOIN inmuebles i ON c.{nameof(Contratos.Inmueble_id)} = i.{nameof(Inmueble.Id)}
+            JOIN inquilinos inq ON c.{nameof(Contratos.Inquilino_dni)} = inq.{nameof(Inquilino.Dni)}
+            WHERE (@Search IS NULL OR 
+                   i.{nameof(Inmueble.Direccion)} LIKE @Search OR
+                   inq.{nameof(Inquilino.Dni)} LIKE @Search OR
+                   inq.{nameof(Inquilino.Nombre)} LIKE @Search OR
+                   inq.{nameof(Inquilino.Apellido)} LIKE @Search)
+            LIMIT @Offset, @PageSize";
+
 
             using (var command = new MySqlCommand(query, connection))
             {
+                command.Parameters.AddWithValue("@Search", string.IsNullOrEmpty(search) ? (object)DBNull.Value : $"%{search}%");
                 command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
                 command.Parameters.AddWithValue("@PageSize", pageSize);
                 var pagos = new List<Pago>();

@@ -22,16 +22,17 @@ public class PagoController : Controller
     }
 
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int pagina = 1)
+    public IActionResult Index(int pagina = 1,string search = "")
     {
+        ViewBag.Search = search; 
         const int pageSize = 10;
-        int totalPagos = repo.ObtenerTotalPagos();
+        int totalPagos = repo.ObtenerTotalPagos(search);
         int totalPages = (int)Math.Ceiling((double)totalPagos / pageSize);
 
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var pagos = repo.ObtenerPaginado(pagina, pageSize);
+        var pagos = repo.ObtenerPaginado(pagina, pageSize,search);
 
         var viewModel = new PagoViewModel
         {

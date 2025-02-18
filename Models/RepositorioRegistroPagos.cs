@@ -54,6 +54,7 @@ public class RepositorioRegistroPagos
             JOIN inquilinos inq ON c.inquilino_dni = inq.dni
             JOIN usuarios u ON rp.creado_por = u.id
             LEFT JOIN usuarios u2 ON rp.anulado_por = u2.id
+            ORDER BY rp.fecha_creacion DESC
             LIMIT @Offset, @PageSize;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {

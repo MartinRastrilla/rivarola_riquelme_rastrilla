@@ -6,7 +6,7 @@
 
 <link rel="stylesheet" href="~/css/pagination.css">
 
-<div>
+<div class="text-center mb-5">
     <h1 class="display-5">Lista de Pagos</h1>
 </div>
 
@@ -63,13 +63,37 @@
                             <a href="/Pago/Delete/@item.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                         }
                         <a href="/Pago/Edit/@item.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                        <a href="/Pago/Details/@item.Id" class="me-2"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                         <a data-bs-toggle="modal" class="me-2 text-decoration-none" data-bs-target="#nuevoPagoModal-@item.Id">
                             <i class="fa-solid fa-plus ic-sz ic-color"></i>
                         </a>
-                        <a data-bs-toggle="modal" data-bs-target="#anularPagoModal-@item.Id">
+                        <a data-bs-toggle="modal" data-bs-target="#anularPagoModal-@item.Id" class="me-2 text-decoration-none">
                             <i class="fa-solid fa-ban ic-sz ic-color"></i>
                         </a>
+                        <a data-bs-toggle="modal" data-bs-target="#descargarPagoModal-@item.Id">
+                            <i class="fa-solid fa-download ic-sz ic-color"></i>
+                        </a>
+                        <div class="modal fade" id="descargarPagoModal-@item.Id">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-dark">
+                                        <h5 class="modal-title text-light" id="descargarPagoModalLabel-@item.Id">Descargar Pago
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                            style="filter: invert(1);"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="fs-5 text-secondary">¿Desea descargar el comprobante de pago?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form asp-action="Descargar" asp-controller="Pago" asp-route-id="@item.Id"
+                                            method="post">
+                                            <button type="submit" class="btn btn-custom">Descargar</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="modal fade" id="anularPagoModal-@item.Id" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">

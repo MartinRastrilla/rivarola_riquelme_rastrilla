@@ -132,7 +132,9 @@ public class RepositorioRegistroContratos
         var registros = new List<RegistroContratos>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
-            string sqlquery = "SELECT id, contrato_id, fecha_creacion, creado_por, fecha_cancelacion, cancelado_por FROM registro_contratos;";
+            string sqlquery = @"SELECT id, contrato_id, fecha_creacion, creado_por, fecha_cancelacion, cancelado_por 
+                            FROM registro_contratos
+                            ORDER BY fecha_creacion DESC;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
                 connection.Open();

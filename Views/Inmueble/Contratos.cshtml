@@ -32,7 +32,20 @@
                     <td>$@contrato.Monto</td>
                     <td>@contrato.Fecha_inicio.ToString("dd/MM/yyyy")</td>
                     <td>@contrato.Fecha_fin.ToString("dd/MM/yyyy")</td>
-                    <td>@contrato.Estado</td>
+                    <td>
+                        @if (contrato.Estado == Contratos.EstadoContrato.Activo)
+                        {
+                            <span class="badge" style="background-color: #dab900;">Activo</span>
+                        }
+                        else if (contrato.Estado == Contratos.EstadoContrato.Cancelado)
+                        {
+                            <span class="badge bg-danger">Cancelado</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Finalizado</span>
+                        }
+                    </td>
                     <td>
                         @if (User.IsInRole("Administrador"))
                         {

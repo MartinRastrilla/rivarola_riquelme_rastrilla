@@ -1,0 +1,31 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #comprobante,
+  #comprobante * {
+    visibility: visible;
+  }
+
+  #comprobante {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    font-size: 18px;
+    /* Texto más grande */
+    padding: 20px;
+  }
+
+  .logo {
+    width: 100px !important;
+    height: 100px !important;
+    opacity: 0.8;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 2px solid #000 !important;
+  }
+}

@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchForm = document.getElementById("searchForm");
   const searchButton = document.getElementById("searchButton");
   const searchInput = document.getElementById("searchInput");
+  const icon = searchButton.querySelector("i");
 
   searchButton.addEventListener("click", function (event) {
     // Si el input no está expandido, lo expandimos y movemos el botón
@@ -10,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault(); // Evita que se envíe el formulario
       searchInput.classList.add("expanded");
       searchButton.classList.add("move"); // Mueve el botón a la derecha
+      icon.classList.remove("fa-bounce");
       searchInput.focus();
     }
   });
@@ -26,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!searchForm.contains(event.target)) {
       searchInput.classList.remove("expanded");
       searchButton.classList.remove("move"); // Regresar el botón a su posición original
+      icon.classList.add("fa-bounce");
     }
   });
 });

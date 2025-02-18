@@ -4,12 +4,12 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Iniciar Sesión</h2>
+<h2 class="text-center mb-5">Iniciar Sesión</h2>
 
 <div class="row justify-content-center">
     <div class="col-md-4">
         <form asp-action="Login" method="post">
-            <div class="form-group">
+            <div class="form-group mb-4">
                 <label asp-for="Email" class="control-label">Email</label>
                 <input asp-for="Email" class="form-control" placeholder="Ingrese su email" required />
                 <span asp-validation-for="Email" class="text-danger"></span>

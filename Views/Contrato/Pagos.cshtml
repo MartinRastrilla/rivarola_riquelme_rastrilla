@@ -155,7 +155,6 @@
                             <a href="/Pago/Delete/@pago.Id" class="me-2"><i class="fa-solid fa-trash ic-sz ic-color"></i></a>
                         }
                         <a href="/Pago/Edit/@pago.Id" class="me-2"><i class="fa-solid fa-pencil ic-sz ic-color"></i></a>
-                        <a href="/Pago/Details/@pago.Id" class="me-2"><i class="fa-solid fa-circle-info ic-sz ic-color"></i></a>
                         <a data-bs-toggle="modal" class="me-2 text-decoration-none" data-bs-target="#nuevoPagoModal-@pago.Id" style="cursor: pointer">
                             <i class="fa-solid fa-plus ic-sz ic-color"></i>
                         </a>
@@ -201,7 +200,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a data-bs-toggle="modal" data-bs-target="#anularPagoModal-@pago.Id" style="cursor: pointer">
+                        <a data-bs-toggle="modal" data-bs-target="#anularPagoModal-@pago.Id" class="me-2 text-decoration-none" style="cursor: pointer">
                             <i class="fa-solid fa-ban ic-sz ic-color"></i>
                         </a>
                         <div class="modal fade" id="anularPagoModal-@pago.Id" tabindex="-1">
@@ -231,6 +230,31 @@
                                             <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Cerrar</button>
                                         </div>
                                     }
+                                </div>
+                            </div>
+                        </div>
+                        <a data-bs-toggle="modal" data-bs-target="#descargarPagoModal-@pago.Id">
+                            <i class="fa-solid fa-download ic-sz ic-color"></i>
+                        </a>
+                        <div class="modal fade" id="descargarPagoModal-@pago.Id">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-dark">
+                                        <h5 class="modal-title text-light" id="descargarPagoModalLabel-@pago.Id">Descargar Pago
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                            style="filter: invert(1);"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="fs-5 text-secondary">¿Desea descargar el comprobante de pago?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form asp-action="Descargar" asp-controller="Pago" asp-route-id="@pago.Id"
+                                            method="post">
+                                            <button type="submit" class="btn btn-custom">Descargar</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

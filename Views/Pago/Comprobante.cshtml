@@ -1,0 +1,52 @@
+@model PagoViewModel
+@{
+    ViewData["Title"] = "Comprobante";
+}
+
+<link rel="stylesheet" href="~/css/PagosStyle/Comprobante.css">
+
+<div class="text-center mb-5">
+    <h1 class="display-5">Comprobante de Pago</h1>
+</div>
+
+<div class="row d-flex justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4 shadow-lg" id="comprobante">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title m-0">Comprobante de Pago</h5>
+                    <img src="~/images/logo-inmb.png" alt="Logo" class="logo" style="width: 80px; height: 80px;">
+                </div>
+                <hr>
+                <h5 class="card-title">Datos del Pago</h5>
+                <p class="card-text">
+                    <strong>Fecha:</strong> @DateTime.Now.ToString("dd/MM/yyyy")<br />
+                    <strong>Importe:</strong> $@Model.Pago.Importe<br />
+                    <strong>Detalle:</strong> @Model.Pago.Detalle
+                </p>
+                <h5 class="card-title mt-3">Datos del Contrato</h5>
+                <p class="card-text">
+                    <strong>Inmueble:</strong> @Model.Contrato?.Inmueble?.Direccion<br />
+                    <strong>Inquilino:</strong> @Model.Contrato?.Inquilino?.Nombre
+                    @Model.Contrato?.Inquilino?.Apellido<br />
+                    <strong>DNI:</strong> @Model.Contrato?.Inquilino?.Dni<br />
+                </p>
+            </div>
+            <div class="card-footer text-center text-white" style="background-color: var(--rojo-principal);">
+                <p class="m-0">Gracias por su pago.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón para imprimir -->
+<button onclick="imprimirComprobante()" class="btn btn-custom text-center w-50 mt-3 d-block mx-auto">
+    Descargar PDF <i class="fa-solid fa-file-pdf"></i>
+</button>
+
+<!-- JavaScript para imprimir solo el comprobante -->
+<script>
+    function imprimirComprobante() {
+        window.print();
+    }
+</script>

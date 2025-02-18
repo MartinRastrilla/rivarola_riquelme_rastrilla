@@ -29,7 +29,8 @@ public class RepositorioPago
         FROM pagos p
         JOIN contratos c ON p.{nameof(Pago.Contrato_id)} = c.{nameof(Contratos.Id)}
         JOIN inmuebles i ON c.{nameof(Contratos.Inmueble_id)} = i.{nameof(Inmueble.Id)}
-        JOIN inquilinos inq ON c.{nameof(Contratos.Inquilino_dni)} = inq.{nameof(Inquilino.Dni)}";
+        JOIN inquilinos inq ON c.{nameof(Contratos.Inquilino_dni)} = inq.{nameof(Inquilino.Dni)}
+        ORDER BY p.{nameof(Pago.Fecha_pago)} DESC;";
 
             using (var command = new MySqlCommand(query, connection))
             {
@@ -102,7 +103,7 @@ public class RepositorioPago
         return totalPagos;
     }
 
-    public List<Pago> ObtenerPaginado(int page, int pageSize,string search = "")
+    public List<Pago> ObtenerPaginado(int page, int pageSize, string search = "")
     {
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
@@ -133,6 +134,7 @@ public class RepositorioPago
                    inq.{nameof(Inquilino.Dni)} LIKE @Search OR
                    inq.{nameof(Inquilino.Nombre)} LIKE @Search OR
                    inq.{nameof(Inquilino.Apellido)} LIKE @Search)
+            ORDER BY p.{nameof(Pago.Fecha_pago)} DESC
             LIMIT @Offset, @PageSize";
 
 
@@ -268,17 +270,13 @@ public class RepositorioPago
     {
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
-            var query = $@"UPDATE pagos SET {nameof(Pago.Contrato_id)} = @{nameof(Pago.Contrato_id)}, 
-                                  fecha_pago = @{nameof(Pago.Fecha_pago)}, 
-                                  {nameof(Pago.Detalle)} = @{nameof(Pago.Detalle)}, 
-                                  {nameof(Pago.Importe)} = @{nameof(Pago.Importe)} 
-                                  WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)}";
+            var query = $@"UPDATE pagos 
+                                SET
+                                {nameof(Pago.Detalle)} = @{nameof(Pago.Detalle)}
+                                WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)}";
             using (var command = new MySqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue($"@{nameof(Pago.Contrato_id)}", pago.Contrato_id);
-                command.Parameters.AddWithValue($"@{nameof(Pago.Fecha_pago)}", pago.Fecha_pago);
                 command.Parameters.AddWithValue($"@{nameof(Pago.Detalle)}", pago.Detalle);
-                command.Parameters.AddWithValue($"@{nameof(Pago.Importe)}", pago.Importe);
                 command.Parameters.AddWithValue($"@{nameof(Pago.Id)}", pago.Id);
                 connection.Open();
                 command.ExecuteNonQuery();

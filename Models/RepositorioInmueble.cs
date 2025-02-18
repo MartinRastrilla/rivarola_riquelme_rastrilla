@@ -15,7 +15,8 @@ public class RepositorioInmueble
                     p.nombre, p.apellido
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
-                JOIN propietarios p ON i.propietario_dni = p.dni;
+                JOIN propietarios p ON i.propietario_dni = p.dni
+                ORDER BY i.direccion ASC;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -54,7 +55,7 @@ public class RepositorioInmueble
         }
     }
 
-    public int ObtenerTotalInmuebles(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes,string search = "")
+    public int ObtenerTotalInmuebles(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes, string search = "")
     {
         int totalInmuebles = 0;
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -81,7 +82,7 @@ public class RepositorioInmueble
         return totalInmuebles;
     }
 
-    public List<Inmueble> ObtenerInmueblesFiltrados(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page, int pageSize,string search = "")
+    public List<Inmueble> ObtenerInmueblesFiltrados(int? tipo, string? uso, decimal? precioMin, decimal? precioMax, int? ambientes, int page, int pageSize, string search = "")
     {
         var inmuebles = new List<Inmueble>();
         using (MySqlConnection connection = new MySqlConnection(Conexion))
@@ -100,6 +101,7 @@ public class RepositorioInmueble
                 AND (@precioMin IS NULL OR i.precio >= @precioMin)
                 AND (@precioMax IS NULL OR i.precio <= @precioMax)
                 AND (@ambientes IS NULL OR i.ambientes = @ambientes)
+                ORDER BY i.direccion ASC
                 LIMIT @Offset, @PageSize;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
@@ -148,7 +150,7 @@ public class RepositorioInmueble
         }
         return inmuebles;
     }
-    
+
     public Inmueble? Obtener(int Id)
     {
         Inmueble? inmueble = null;

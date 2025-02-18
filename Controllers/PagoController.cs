@@ -22,9 +22,9 @@ public class PagoController : Controller
     }
 
     [Authorize(Policy = "Empleado")]
-    public IActionResult Index(int pagina = 1,string search = "")
+    public IActionResult Index(int pagina = 1, string search = "")
     {
-        ViewBag.Search = search; 
+        ViewBag.Search = search;
         const int pageSize = 10;
         int totalPagos = repo.ObtenerTotalPagos(search);
         int totalPages = (int)Math.Ceiling((double)totalPagos / pageSize);
@@ -32,7 +32,7 @@ public class PagoController : Controller
         // Asegurarse de que la página no sea mayor que el número total de páginas
         pagina = Math.Max(1, Math.Min(pagina, totalPages));
 
-        var pagos = repo.ObtenerPaginado(pagina, pageSize,search);
+        var pagos = repo.ObtenerPaginado(pagina, pageSize, search);
 
         var viewModel = new PagoViewModel
         {
@@ -236,4 +236,25 @@ public class PagoController : Controller
         repo.Agregar(pago);
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    [Authorize(Policy = "Empleado")]
+    public IActionResult Descargar(int id)
+    {
+        Pago? pago = repo.ObtenerPorId(id);
+        Contratos contrato = repositorioContrato.Obtener((int)pago.Contrato_id);
+        if (pago == null || contrato == null)
+        {
+            return NotFound();
+        }
+
+        var model = new PagoViewModel
+        {
+            Pago = pago,
+            Contrato = contrato
+        };
+
+        return View("Comprobante", model);
+    }
+
 }

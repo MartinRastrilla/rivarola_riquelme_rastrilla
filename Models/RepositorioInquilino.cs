@@ -14,7 +14,7 @@ public class RepositorioInquilino
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             //query 
-            var sqlquery = @"SELECT Id, Dni, Nombre, Apellido, Telefono, Email FROM inquilinos;";
+            var sqlquery = @"SELECT Id, Dni, Nombre, Apellido, Telefono, Email FROM inquilinos ORDER BY Nombre ASC;";
             //Comando para ejecutar la query
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -57,12 +57,14 @@ public class RepositorioInquilino
         return total;
     }
 
-    public List<Inquilino> ObtenerPaginado(int page, int pageSize,string search = "") {
+    public List<Inquilino> ObtenerPaginado(int page, int pageSize, string search = "")
+    {
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
             connection.Open();
-             var sqlquery = @"SELECT * FROM inquilinos 
+            var sqlquery = @"SELECT * FROM inquilinos 
                          WHERE (@Search IS NULL OR Nombre LIKE @Search OR Apellido LIKE @Search OR Dni LIKE @Search)
+                         ORDER BY Nombre ASC
                          LIMIT @Offset, @PageSize;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -94,7 +96,8 @@ public class RepositorioInquilino
     //Obtener solamente un inquilino por Dni
     public Inquilino? Obtener(long? Dni = null, long? Id = null)
     {
-        if (Dni == null && Id == null) {
+        if (Dni == null && Id == null)
+        {
             throw new ArgumentException("Debe ingresar un Dni o un Id");
         }
 
@@ -133,7 +136,8 @@ public class RepositorioInquilino
                             Email = reader.GetString("Email"),
                         };
                     }
-                };
+                }
+                ;
                 connection.Close();
             }
         }

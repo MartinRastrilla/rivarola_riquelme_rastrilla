@@ -6,13 +6,13 @@
 
 <link href="~/css/pagination.css" rel="stylesheet" />
 
-<div>
+<div class="text-center">
     <h1 class="display-5">Lista de Propietarios</h1>
 </div>
 
 <div class="my-3 row">
     <p class="col-md-9 mb-0 align-self-center">
-        <a asp-action="Crear" class="btn btn-custom">Agregar Propietario</a>
+        <a asp-action="Crear" class="btn btn-custom">Agregar <i class="fa-solid fa-plus"></i></a>
     </p>
     <form asp-action="Index" method="GET" class="input-wrapper col-md-3" id="searchForm">
         <button type="submit" class="icon" id="searchButton">

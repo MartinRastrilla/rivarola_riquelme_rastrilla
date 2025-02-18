@@ -10,18 +10,20 @@ public class RepositorioPropietario
     public List<Propietarios> ObtenerTodos()
     {
 
-    List<Propietarios> propietarios = new List<Propietarios>();
+        List<Propietarios> propietarios = new List<Propietarios>();
 
-    using (MySqlConnection connection = new MySqlConnection(ConnectionString))
-    {
-        var query = $@"SELECT {nameof(Propietarios.Id)}, {nameof(Propietarios.Nombre)} , {nameof(Propietarios.Apellido)} , {nameof(Propietarios.Dni)} , {nameof(Propietarios.Telefono)} , {nameof(Propietarios.Email)} FROM propietarios";
-
-        using (var command = new MySqlCommand(query, connection))
+        using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
-            connection.Open();
+            var query = $@"SELECT {nameof(Propietarios.Id)}, {nameof(Propietarios.Nombre)} , {nameof(Propietarios.Apellido)} , {nameof(Propietarios.Dni)} , {nameof(Propietarios.Telefono)} , {nameof(Propietarios.Email)} 
+        FROM propietarios
+        ORDER BY {nameof(Propietarios.Nombre)} ASC;";
 
-            var reader = command.ExecuteReader();
-            
+            using (var command = new MySqlCommand(query, connection))
+            {
+                connection.Open();
+
+                var reader = command.ExecuteReader();
+
                 while (reader.Read())
                 {
                     propietarios.Add(new Propietarios
@@ -34,9 +36,9 @@ public class RepositorioPropietario
                         Email = reader.GetString("Email")
                     });
                 }
-            connection.Close();    
-        }
-        return propietarios;
+                connection.Close();
+            }
+            return propietarios;
 
         }
     }
@@ -61,13 +63,14 @@ public class RepositorioPropietario
         return totalPropietarios;
     }
 
-    public List<Propietarios> ObtenerPaginado(int page, int pageSize,string search = "")
+    public List<Propietarios> ObtenerPaginado(int page, int pageSize, string search = "")
     {
         using (MySqlConnection connection = new MySqlConnection(ConnectionString))
         {
             connection.Open();
             var sqlquery = @"SELECT * FROM propietarios 
                             WHERE (@Search IS NULL OR Nombre LIKE @Search OR Apellido LIKE @Search OR Dni LIKE @Search) 
+                            ORDER BY Nombre ASC
                             LIMIT @Offset, @PageSize;";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {

@@ -6,14 +6,14 @@
 
 <link href="~/css/pagination.css" rel="stylesheet" />
 
-<div>
+<div class="text-center">
     <div class="display-5">Lista de Usuarios</div>
 </div>
 
-<h3>
-    <a href="/Usuarios/Crear" class="btn btn-custom">Agregar Usuarios</a>
+<h3 class="mt-4">
+    <a href="/Usuarios/Crear" class="btn btn-custom">Agregar <i class="fa-solid fa-plus"></i></a>
 </h3>
-<table class="table text-center table-striped table-hover mt-4">
+<table class="table text-center table-striped table-hover mt-2">
     <thead>
         <tr>
             <th>Usuario</th>
@@ -90,12 +90,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    @if (TempData["ToastMessage"] != null)
-    {
-        <text>
+        @if (TempData["ToastMessage"] != null)
+            {
+                <text>
                     showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
-        </text>
-    }
+                </text>
+        }
     });
 
     function showToast(message, type) {

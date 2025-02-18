@@ -32,7 +32,8 @@ public class RepositorioContrato
                 FROM contratos c
                 JOIN inquilinos i ON c.inquilino_dni = i.dni
                 JOIN inmuebles inm ON c.inmueble_id = inm.id
-                JOIN tipos t ON inm.tipo_id = t.id"; // Relación con tipos
+                JOIN tipos t ON inm.tipo_id = t.id
+                ORDER BY i.nombre ASC;"; // Relación con tipos
 
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
@@ -113,7 +114,7 @@ public class RepositorioContrato
         return totalContratos;
     }
 
-    public List<Contratos> ObtenerPaginado(int page, int pageSize,string search = "")
+    public List<Contratos> ObtenerPaginado(int page, int pageSize, string search = "")
     {
         using (MySqlConnection connection = new MySqlConnection(Conexion))
         {
@@ -140,6 +141,7 @@ public class RepositorioContrato
             JOIN inmuebles inm ON c.inmueble_id = inm.id
             JOIN tipos t ON inm.tipo_id = t.id
             WHERE (@search IS NULL OR i.nombre LIKE @Search OR i.apellido LIKE @Search OR inm.direccion LIKE @Search)
+            ORDER BY i.nombre ASC
             LIMIT @Offset, @PageSize;";
 
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
@@ -219,11 +221,15 @@ public class RepositorioContrato
                     c.fecha_fin AS ContratoFechaFin,
                     inm.direccion AS InmuebleDireccion,
                     inm.precio AS InmueblePrecio,
+                    i.nombre AS InquilinoNombre,
+                    i.apellido AS InquilinoApellido,
+                    i.dni AS InquilinoDni,
                     t.id AS TipoId,
                     t.nombre AS TipoNombre
                 FROM contratos c
                 JOIN inmuebles inm ON c.inmueble_id = inm.id
                 JOIN tipos t ON inm.tipo_id = t.id
+                JOIN inquilinos i ON c.inquilino_dni = i.dni
                 WHERE c.id=@Id"; // Unimos también la tabla tipos
 
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
@@ -240,6 +246,13 @@ public class RepositorioContrato
                             Nombre = reader.GetString("TipoNombre")
                         };
 
+                        var inquilino = new Inquilino
+                        {
+                            Nombre = reader.GetString("InquilinoNombre"),
+                            Apellido = reader.GetString("InquilinoApellido"),
+                            Dni = reader.GetInt64("InquilinoDni")
+                        };
+
                         var inmueble = new Inmueble
                         {
                             Id = reader.GetInt32("InmuebleId"),
@@ -252,6 +265,7 @@ public class RepositorioContrato
                         {
                             Id = reader.GetInt32("ContratoId"),
                             Inquilino_dni = reader.GetInt64("InquilinoDni"),
+                            Inquilino = inquilino,
                             Inmueble_id = reader.GetInt32("InmuebleId"),
                             Inmueble = inmueble,
                             Estado = (Contratos.EstadoContrato)Enum.Parse(typeof(Contratos.EstadoContrato), reader.GetString("ContratoEstado")),

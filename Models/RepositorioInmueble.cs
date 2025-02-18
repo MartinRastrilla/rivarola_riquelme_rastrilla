@@ -312,7 +312,7 @@ public class RepositorioInmueble
                     i.coordenadas, i.precio, i.propietario_dni, i.estado
                 FROM inmuebles i
                 JOIN tipos t ON i.tipo_id = t.id
-                WHERE i.propietario_dni = @PropietarioDni AND @Search IS NULL OR i.direccion LIKE @Search
+                WHERE i.propietario_dni = @PropietarioDni AND (@Search IS NULL OR i.direccion LIKE @Search)
                 LIMIT @Offset, @PageSize;
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
@@ -358,7 +358,7 @@ public class RepositorioInmueble
             connection.Open();
             var sqlquery = @"
                 SELECT COUNT(*) FROM inmuebles
-                WHERE propietario_dni = @PropietarioDni AND @Search IS NULL OR direccion LIKE @Search
+                WHERE propietario_dni = @PropietarioDni AND (@Search IS NULL OR direccion LIKE @Search)
             ";
             using (MySqlCommand command = new MySqlCommand(sqlquery, connection))
             {
